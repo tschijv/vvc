@@ -12,11 +12,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Dark mode is controlled via .dark class on <html>, not media query */
+.dark {
+  --background: #0f172a;
+  --foreground: #e2e8f0;
 }
 
 body {
@@ -24,3 +23,330 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ─── Dark mode overrides for Tailwind utility classes ──────────────────────── */
+/* This approach avoids adding dark: variants to every component */
+
+.dark .bg-white { background-color: #1e293b; }
+.dark .bg-gray-50 { background-color: #0f172a; }
+.dark .bg-gray-100 { background-color: #1e293b; }
+.dark .text-gray-900 { color: #e2e8f0; }
+.dark .text-gray-800 { color: #e2e8f0; }
+.dark .text-gray-700 { color: #cbd5e1; }
+.dark .text-gray-600 { color: #94a3b8; }
+.dark .text-gray-500 { color: #94a3b8; }
+.dark .text-gray-400 { color: #64748b; }
+.dark .border-gray-200 { border-color: #334155; }
+.dark .border-gray-100 { border-color: #1e293b; }
+.dark .border-gray-300 { border-color: #475569; }
+.dark .border-b.border-gray-200 { border-color: #334155; }
+.dark .hover\:bg-gray-50:hover { background-color: #1e293b; }
+.dark .hover\:bg-gray-100:hover { background-color: #334155; }
+.dark .text-blue-700 { color: #60a5fa; }
+.dark .text-blue-600 { color: #60a5fa; }
+.dark .bg-blue-50 { background-color: #1e3a5f; }
+.dark .bg-green-50 { background-color: #14532d; }
+.dark .bg-orange-50 { background-color: #431407; }
+.dark .bg-yellow-50 { background-color: #422006; }
+.dark .bg-purple-50 { background-color: #2e1065; }
+.dark .bg-teal-50 { background-color: #042f2e; }
+.dark .bg-amber-50 { background-color: #451a03; }
+.dark .bg-red-50 { background-color: #450a0a; }
+.dark .bg-green-100 { background-color: #166534; }
+.dark .bg-blue-100 { background-color: #1e3a5f; }
+.dark .bg-yellow-100 { background-color: #713f12; }
+.dark .bg-red-100 { background-color: #7f1d1d; }
+.dark .text-green-800 { color: #86efac; }
+.dark .text-blue-800 { color: #93c5fd; }
+.dark .text-yellow-800 { color: #fde047; }
+.dark .text-red-800 { color: #fca5a5; }
+.dark .text-green-700 { color: #86efac; }
+.dark .text-orange-700 { color: #fdba74; }
+.dark .text-purple-700 { color: #c4b5fd; }
+.dark .text-teal-700 { color: #5eead4; }
+.dark .text-amber-700 { color: #fbbf24; }
+.dark .border { border-color: #334155; }
+.dark .shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+.dark .shadow-lg { box-shadow: 0 10px 15px rgba(0,0,0,0.5); }
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e293b;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+.dark input::placeholder { color: #64748b; }
+.dark .border-yellow-200 { border-color: #854d0e; }
+.dark .border-green-200 { border-color: #166534; }
+.dark .border-orange-200 { border-color: #9a3412; }
+.dark .border-blue-200 { border-color: #1e40af; }
+.dark .text-yellow-800 { color: #fde68a; }
+
+/* ─── CMS content styling — voor pagina's uit de database ─────────────────── */
+.cms-content h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a6ca8;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.cms-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a6ca8;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.cms-content h3 {
+  font-weight: 600;
+  color: #1a6ca8;
+  margin-bottom: 0.25rem;
+}
+
+.cms-content h4 {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.cms-content p {
+  line-height: 1.625;
+  margin-bottom: 1rem;
+}
+
+.cms-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.cms-content ul li {
+  margin-bottom: 0.5rem;
+}
+
+.cms-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.cms-content ol li {
+  margin-bottom: 0.5rem;
+}
+
+.cms-content a {
+  color: #1a6ca8;
+  text-decoration: none;
+}
+
+.cms-content a:hover {
+  text-decoration: underline;
+}
+
+.cms-content blockquote {
+  border-left: 4px solid #e35b10;
+  padding-left: 1rem;
+  background-color: #f9fafb;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+.cms-content strong {
+  font-weight: 600;
+}
+
+.cms-content em {
+  font-style: italic;
+}
+
+.cms-content hr {
+  border: none;
+  border-top: 2px solid #e5e7eb;
+  margin: 1.5rem 0;
+}
+
+.cms-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+
+.cms-content figure {
+  margin: 1.5rem 0;
+}
+
+.cms-content figcaption {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.cms-content .video-embed {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  border-radius: 0.5rem;
+}
+
+.cms-content .video-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+.cms-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.cms-content table th,
+.cms-content table td {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.cms-content table th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+.cms-content table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.cms-content code {
+  background-color: #f3f4f6;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-family: monospace;
+}
+
+.cms-content pre {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.cms-content pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* CMS content dark mode */
+.dark .cms-content h1,
+.dark .cms-content h2,
+.dark .cms-content h3 {
+  color: #60a5fa;
+}
+
+.dark .cms-content h4 {
+  color: #cbd5e1;
+}
+
+.dark .cms-content a {
+  color: #60a5fa;
+}
+
+.dark .cms-content blockquote {
+  background-color: #1e293b;
+  border-color: #f97316;
+}
+
+.dark .cms-content hr {
+  border-color: #334155;
+}
+
+.dark .cms-content figcaption {
+  color: #94a3b8;
+}
+
+.dark .cms-content table th,
+.dark .cms-content table td {
+  border-color: #475569;
+}
+
+.dark .cms-content table th {
+  background-color: #1e293b;
+}
+
+.dark .cms-content table tr:nth-child(even) {
+  background-color: #0f172a;
+}
+
+.dark .cms-content code {
+  background-color: #1e293b;
+  color: #e2e8f0;
+}
+
+/* ─── TipTap editor specifieke styling ──────────────────────────────────────── */
+.tiptap:focus {
+  outline: none;
+}
+
+.tiptap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tiptap td,
+.tiptap th {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  position: relative;
+}
+
+.tiptap th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+}
+
+.tiptap .selectedCell {
+  background-color: #dbeafe;
+}
+
+.tiptap img {
+  max-width: 100%;
+  height: auto;
+}
+
+.tiptap img.ProseMirror-selectednode {
+  outline: 2px solid #1a6ca8;
+  border-radius: 0.25rem;
+}
+
+/* Leaflet z-index containment — prevent map from overlapping nav dropdown */
+.leaflet-container {
+  z-index: 0;
+}
+
+/* Glossary term — stippellijn + tooltip */
+.glossary-term {
+  border-bottom: 1px dotted #9ca3af;
+  cursor: help;
+  position: relative;
+}
+
+.dark .glossary-term {
+  border-bottom-color: #64748b;
+}
+
+/* Tooltip styles are inline in GlossaryHighlighter.tsx */

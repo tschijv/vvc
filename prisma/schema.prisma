@@ -1,0 +1,399 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Referentiemodel ────────────────────────────────────────────────────────
+
+model Referentiecomponent {
+  id                    String                            @id @default(uuid())
+  naam                  String
+  guid                  String?
+  beschrijving          String?
+  status                String?
+  pakketversies         PakketversieReferentiecomponent[]
+  createdAt             DateTime                          @default(now())
+  updatedAt             DateTime                          @updatedAt
+}
+
+model Standaard {
+  id                    String            @id @default(uuid())
+  naam                  String
+  guid                  String?
+  beschrijving          String?
+  versies               Standaardversie[]
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+}
+
+model Standaardversie {
+  id                    String                  @id @default(uuid())
+  naam                  String
+  guid                  String?
+  status                String?
+  compliancyMonitor     Boolean                 @default(false)
+  standaard             Standaard               @relation(fields: [standaardId], references: [id])
+  standaardId           String
+  pakketversies         PakketversieStandaard[]
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+}
+
+model Applicatiefunctie {
+  id                    String                          @id @default(uuid())
+  naam                  String                          @unique
+  guid                  String?
+  beschrijving          String?
+  pakketversies         PakketversieApplicatiefunctie[]
+  createdAt             DateTime                        @default(now())
+  updatedAt             DateTime                        @updatedAt
+}
+
+// ─── GEMMA Views ───────────────────────────────────────────────────────────
+
+model GemmaView {
+  id        String   @id @default(uuid())
+  objectId  String   @unique
+  titel     String
+  domein    String   @default("")
+  laag      String   @default("")
+  modelId   String
+  volgorde  Int      @default(0)
+  actief    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Gebruikers & Autorisatie ────────────────────────────────────────────────
+
+enum Role {
+  GEVERIFIEERD
+  GEMEENTE_RAADPLEGER
+  GEMEENTE_BEHEERDER
+  SAMENWERKING_BEHEERDER
+  LEVERANCIER
+  REDACTEUR
+  KING_RAADPLEGER
+  KING_BEHEERDER
+  ADMIN
+  API_USER
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  naam          String
+  passwordHash  String?
+  actief        Boolean      @default(true)
+  rollen        Role[]       @default([GEVERIFIEERD])
+  gemeenteId    String?
+  gemeente      Gemeente?    @relation(fields: [gemeenteId], references: [id])
+  leverancierId String?
+  leverancier   Leverancier? @relation(fields: [leverancierId], references: [id])
+  laatsteToegangOp DateTime?
+  registratieBron  String       @default("admin")
+  organisatieType  String?
+  organisatieNaam  String?
+  afgewezen        Boolean      @default(false)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+// ─── Leveranciers ───────────────────────────────────────────────────────────
+
+model Leverancier {
+  id                    String                @id @default(uuid())
+  naam                  String
+  slug                  String                @unique
+  logo                  String?
+  contactpersoon        String?
+  email                 String?
+  telefoon              String?
+  website               String?
+  heeftGeldigConvenant  Boolean               @default(false)
+  beschrijvingDiensten  String?
+  supportPortalUrl      String?
+  documentatieUrl       String?
+  kennisbankUrl         String?
+  aanmaakdatum          DateTime?
+  lastActivity          DateTime?
+  pakketten             Pakket[]
+  addenda               LeverancierAddendum[]
+  users                 User[]
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+}
+
+model Addendum {
+  id                    String                @id @default(uuid())
+  naam                  String                @unique
+  beschrijving          String?
+  url                   String?
+  leveranciers          LeverancierAddendum[]
+  createdAt             DateTime              @default(now())
+}
+
+model LeverancierAddendum {
+  leverancier           Leverancier @relation(fields: [leverancierId], references: [id])
+  leverancierId         String
+  addendum              Addendum    @relation(fields: [addendumId], references: [id])
+  addendumId            String
+
+  @@id([leverancierId, addendumId])
+}
+
+// ─── Pakketten ───────────────────────────────────────────────────────────────
+
+model Pakket {
+  id                    String         @id @default(uuid())
+  naam                  String
+  slug                  String         @unique
+  beschrijving          String?
+  urlProductpagina      String?
+  aantalGemeenten       Int            @default(0)
+  mutatiedatum          DateTime?
+  leverancier           Leverancier    @relation(fields: [leverancierId], references: [id])
+  leverancierId         String
+  versies               Pakketversie[]
+  contactpersonen       PakketContact[]
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}
+
+model PakketContact {
+  id            String  @id @default(uuid())
+  naam          String
+  email         String?
+  telefoon      String?
+  rol           String?
+  pakket        Pakket  @relation(fields: [pakketId], references: [id], onDelete: Cascade)
+  pakketId      String
+  createdAt     DateTime @default(now())
+}
+
+model Pakketversie {
+  id                    String                            @id @default(uuid())
+  naam                  String
+  status                String
+  beschrijving          String?
+  startOntwikkeling     DateTime?
+  startTest             DateTime?
+  startDistributie      DateTime?
+  aantalGemeenten       Int                               @default(0)
+  mutatiedatum          DateTime?
+  pakket                Pakket                            @relation(fields: [pakketId], references: [id])
+  pakketId              String
+  referentiecomponenten PakketversieReferentiecomponent[]
+  standaarden           PakketversieStandaard[]
+  applicatiefuncties    PakketversieApplicatiefunctie[]
+  gemeentePakketten     GemeentePakket[]
+  technologieen         PakketversieTechnologie[]
+  koppelingenAlsBron    Koppeling[]                       @relation("koppelingBron")
+  koppelingenAlsDoel    Koppeling[]                       @relation("koppelingDoel")
+  koppelingenAlsIntermediair Koppeling[]                  @relation("koppelingIntermediair")
+  createdAt             DateTime                          @default(now())
+  updatedAt             DateTime                          @updatedAt
+}
+
+// ─── Koppeltabellen ──────────────────────────────────────────────────────────
+
+model PakketversieReferentiecomponent {
+  pakketversie          Pakketversie        @relation(fields: [pakketversieId], references: [id])
+  pakketversieId        String
+  referentiecomponent   Referentiecomponent @relation(fields: [referentiecomponentId], references: [id])
+  referentiecomponentId String
+  type                  String              // leverancier | gemeente
+  aantalGemeenten       Int                 @default(0)
+
+  @@id([pakketversieId, referentiecomponentId, type])
+}
+
+model PakketversieStandaard {
+  pakketversie          Pakketversie    @relation(fields: [pakketversieId], references: [id])
+  pakketversieId        String
+  standaardversie       Standaardversie @relation(fields: [standaardversieId], references: [id])
+  standaardversieId     String
+  compliancy            Boolean?
+  testrappportUrl       String?
+  compliancyIndicated   Boolean?
+
+  @@id([pakketversieId, standaardversieId])
+}
+
+model PakketversieApplicatiefunctie {
+  pakketversie          Pakketversie      @relation(fields: [pakketversieId], references: [id])
+  pakketversieId        String
+  applicatiefunctie     Applicatiefunctie @relation(fields: [applicatiefunctieId], references: [id])
+  applicatiefunctieId   String
+  ondersteund           Boolean           @default(true)
+
+  @@id([pakketversieId, applicatiefunctieId])
+}
+
+model PakketversieTechnologie {
+  pakketversie          Pakketversie @relation(fields: [pakketversieId], references: [id])
+  pakketversieId        String
+  technologie           String
+
+  @@id([pakketversieId, technologie])
+}
+
+// ─── Gemeenten ───────────────────────────────────────────────────────────────
+
+model Gemeente {
+  id                    String                 @id @default(uuid())
+  naam                  String
+  cbsCode               String?
+  contactpersoon        String?
+  email                 String?
+  telefoon              String?
+  website               String?
+  progress              Int                    @default(0)
+  lastActivity          DateTime?
+  pakketten             GemeentePakket[]
+  samenwerkingen        SamenwerkingGemeente[]
+  koppelingen           Koppeling[]
+  users                 User[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+}
+
+model GemeentePakket {
+  gemeente              Gemeente     @relation(fields: [gemeenteId], references: [id])
+  gemeenteId            String
+  pakketversie          Pakketversie @relation(fields: [pakketversieId], references: [id])
+  pakketversieId        String
+  status                String?
+  datumIngangStatus     DateTime?
+  technologie           String?
+  mutatiedatum          DateTime?
+  verantwoordelijke     String?
+  licentievorm          String?
+  aantalGebruikers      Int?
+  maatwerk              String?
+
+  @@id([gemeenteId, pakketversieId])
+}
+
+// ─── Samenwerkingen ──────────────────────────────────────────────────────────
+
+model Samenwerking {
+  id                    String                 @id @default(uuid())
+  naam                  String
+  type                  String?
+  contactpersoon        String?
+  email                 String?
+  gemeenten             SamenwerkingGemeente[]
+  createdAt             DateTime               @default(now())
+}
+
+model SamenwerkingGemeente {
+  samenwerking          Samenwerking @relation(fields: [samenwerkingId], references: [id])
+  samenwerkingId        String
+  gemeente              Gemeente     @relation(fields: [gemeenteId], references: [id])
+  gemeenteId            String
+
+  @@id([samenwerkingId, gemeenteId])
+}
+
+// ─── Koppelingen ─────────────────────────────────────────────────────────────
+
+model Koppeling {
+  id                        String        @id @default(uuid())
+  gemeente                  Gemeente      @relation(fields: [gemeenteId], references: [id])
+  gemeenteId                String
+  bronPakketversie          Pakketversie? @relation("koppelingBron", fields: [bronPakketversieId], references: [id])
+  bronPakketversieId        String?
+  bronExternPakket          ExternPakket? @relation("koppelingBronExtern", fields: [bronExternPakketId], references: [id])
+  bronExternPakketId        String?
+  richting                  String        @default("beide") // "heen" (→), "weer" (←), "beide" (↔)
+  doelPakketversie          Pakketversie? @relation("koppelingDoel", fields: [doelPakketversieId], references: [id])
+  doelPakketversieId        String?
+  doelExternPakket          ExternPakket? @relation("koppelingDoelExtern", fields: [doelExternPakketId], references: [id])
+  doelExternPakketId        String?
+  buitengemeentelijk        Boolean       @default(false)
+  status                    String?
+  standaard                 String?
+  datumIngangStatus         DateTime?
+  transportprotocol         String?
+  aanvullendeInformatie     String?
+  intermediairPakketversie  Pakketversie? @relation("koppelingIntermediair", fields: [intermediairPakketversieId], references: [id])
+  intermediairPakketversieId String?
+  createdAt                 DateTime      @default(now())
+  updatedAt                 DateTime      @updatedAt
+}
+
+// ─── CMS Pagina's ──────────────────────────────────────────────────────────
+
+model Pagina {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  titel     String
+  inhoud    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Begrippen (NL-SBB / SKOSMOS) ───────────────────────────────────────────
+
+model Begrip {
+  id            String   @id @default(uuid())
+  term          String                   // skos:prefLabel
+  definitie     String                  // skos:definition
+  toelichting   String?                 // rdfs:comment
+  scopeNote     String?                 // skos:scopeNote
+  bron          String?                 // Bronverwijzing
+  uri           String   @unique        // NL-SBB concept URI
+  synoniemen    String[] @default([])   // skos:altLabel
+  vocab         String   @default("")   // SKOSMOS vocabulary ID
+  status        String   @default("actief")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([term, vocab])
+}
+
+// ─── Audit Log ──────────────────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  userEmail String?
+  actie     String   // login, create, update, delete, sync, merge, etc.
+  entiteit  String   // User, Gemeente, Pakket, etc.
+  entiteitId String?
+  details   String?
+  ipAdres   String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([entiteit])
+}
+
+// ─── Extern Pakket ───────────────────────────────────────────────────────────
+
+model ExternPakket {
+  id                    String        @id @default(uuid())
+  naam                  String
+  leverancierNaam       String?
+  versie                String?
+  beschrijving          String?
+  koppelingenAlsBron    Koppeling[]   @relation("koppelingBronExtern")
+  koppelingenAlsDoel    Koppeling[]   @relation("koppelingDoelExtern")
+  createdAt             DateTime      @default(now())
+}

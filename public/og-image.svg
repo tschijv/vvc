@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#1a6ca8"/>
+
+  <!-- Logo icon (simplified) -->
+  <g transform="translate(440, 140) scale(0.5)">
+    <rect width="512" height="512" rx="96" fill="white" opacity="0.15"/>
+    <rect x="110" y="80" width="300" height="370" rx="20" fill="white" opacity="0.9"/>
+    <rect x="150" y="130" width="160" height="18" rx="9" fill="#1a6ca8"/>
+    <circle cx="160" cy="190" r="10" fill="#e35b10"/>
+    <rect x="185" y="183" width="185" height="14" rx="7" fill="#d1d5db"/>
+    <circle cx="160" cy="230" r="10" fill="#e35b10"/>
+    <rect x="185" y="223" width="160" height="14" rx="7" fill="#d1d5db"/>
+    <circle cx="160" cy="270" r="10" fill="#e35b10"/>
+    <rect x="185" y="263" width="175" height="14" rx="7" fill="#d1d5db"/>
+    <circle cx="160" cy="310" r="10" fill="#e35b10"/>
+    <rect x="185" y="303" width="145" height="14" rx="7" fill="#d1d5db"/>
+    <circle cx="385" cy="385" r="55" stroke="#e35b10" stroke-width="22" fill="none"/>
+    <line x1="425" y1="425" x2="465" y2="465" stroke="#e35b10" stroke-width="22" stroke-linecap="round"/>
+  </g>
+
+  <!-- Title text -->
+  <text x="600" y="480" text-anchor="middle" font-family="Arial, sans-serif" font-size="52" font-weight="bold" fill="white">VNG Voorzieningencatalogus</text>
+  <text x="600" y="530" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" fill="white" opacity="0.8">Pakketten · Leveranciers · Standaarden · Gemeenten</text>
+</svg>

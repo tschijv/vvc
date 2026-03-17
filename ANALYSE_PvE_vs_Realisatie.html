@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyse PvE vs. Gerealiseerde Functionaliteit — Voorzieningencatalogus</title>
+<style>
+  :root { --blue: #1a6ca8; --orange: #e35b10; --green: #16a34a; --red: #dc2626; --amber: #d97706; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1e293b; background: #f8fafc; line-height: 1.6; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 1.75rem; color: var(--blue); margin-bottom: 0.25rem; }
+  h2 { font-size: 1.35rem; color: var(--blue); margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
+  h3 { font-size: 1.1rem; color: #334155; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+  .subtitle { color: #64748b; font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .meta { color: #94a3b8; font-size: 0.85rem; margin-bottom: 2rem; }
+  .meta strong { color: #64748b; }
+
+  /* Summary cards */
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0; }
+  .summary-card { background: white; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-left: 4px solid #e2e8f0; }
+  .summary-card.green { border-left-color: var(--green); }
+  .summary-card.amber { border-left-color: var(--amber); }
+  .summary-card.red { border-left-color: var(--red); }
+  .summary-card.blue { border-left-color: var(--blue); }
+  .summary-card .label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+  .summary-card .value { font-size: 1.75rem; font-weight: 700; margin: 0.25rem 0; }
+  .summary-card.green .value { color: var(--green); }
+  .summary-card.amber .value { color: var(--amber); }
+  .summary-card.red .value { color: var(--red); }
+  .summary-card.blue .value { color: var(--blue); }
+  .summary-card .detail { font-size: 0.8rem; color: #94a3b8; }
+
+  /* Big summary table */
+  .summary-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .summary-table th { background: var(--blue); color: white; padding: 0.75rem 1rem; text-align: left; font-size: 0.85rem; font-weight: 600; }
+  .summary-table td { padding: 0.6rem 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+  .summary-table tr:last-child td { border-bottom: none; font-weight: 700; background: #f8fafc; }
+  .summary-table td:not(:first-child) { text-align: center; }
+
+  /* Conclusion box */
+  .conclusion-box { background: linear-gradient(135deg, #eff6ff, #f0fdf4); border: 1px solid #bfdbfe; border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin: 1.5rem 0; font-size: 0.95rem; }
+  .conclusion-box strong { color: var(--blue); }
+
+  /* Legend */
+  .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0 2rem; padding: 1rem 1.25rem; background: white; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: #475569; }
+
+  /* Detail tables */
+  table.detail { width: 100%; border-collapse: collapse; margin: 1rem 0 2rem; background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-size: 0.88rem; }
+  table.detail th { background: #f1f5f9; color: #334155; padding: 0.6rem 0.75rem; text-align: left; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 2px solid #e2e8f0; }
+  table.detail td { padding: 0.6rem 0.75rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  table.detail tr:hover { background: #f8fafc; }
+  table.detail td:nth-child(1) { width: 50px; color: #94a3b8; text-align: center; }
+  table.detail td:nth-child(3) { width: 80px; text-align: center; }
+  table.detail td:nth-child(4) { width: 60px; text-align: center; }
+
+  /* Status badges */
+  .status { display: inline-block; font-size: 1.1rem; }
+  .tag { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+  .tag-eis { background: #dbeafe; color: #1e40af; }
+  .tag-wens { background: #fef3c7; color: #92400e; }
+  .tag-could { background: #f3e8ff; color: #7c3aed; }
+  .tag-nvt { background: #f1f5f9; color: #64748b; }
+
+  .toelichting { color: #475569; }
+  .peter { background: #fffbeb; border-left: 3px solid var(--orange); padding: 0.25rem 0.5rem; margin-top: 0.35rem; font-size: 0.82rem; color: #92400e; display: block; border-radius: 0 0.25rem 0.25rem 0; }
+
+  /* Section cards for opmerkingen */
+  .opmerking-card { background: white; border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin: 0.75rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .opmerking-card h4 { color: var(--blue); font-size: 0.95rem; margin-bottom: 0.5rem; }
+  .opmerking-card p { font-size: 0.9rem; color: #475569; }
+  .opmerking-card .check { color: var(--green); }
+
+  /* Gaps / strong points */
+  .points-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; }
+  .points-card { background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .points-card h3 { margin-top: 0; color: var(--green); }
+  .points-card.gaps h3 { color: var(--red); }
+  .points-card ol { padding-left: 1.25rem; }
+  .points-card li { margin-bottom: 0.5rem; font-size: 0.9rem; color: #475569; }
+  .points-card li strong { color: #1e293b; }
+
+  /* Aanbeveling */
+  .aanbeveling { background: linear-gradient(135deg, #1a6ca8, #0f4c75); color: white; border-radius: 0.75rem; padding: 1.5rem 2rem; margin: 2rem 0; }
+  .aanbeveling h3 { color: white; margin-top: 0; margin-bottom: 0.75rem; }
+  .aanbeveling ol { padding-left: 1.25rem; }
+  .aanbeveling li { margin-bottom: 0.4rem; font-size: 0.9rem; opacity: 0.95; }
+  .aanbeveling li strong { color: #93c5fd; }
+
+  hr { border: none; border-top: 1px solid #e2e8f0; margin: 2rem 0; }
+
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .points-grid { grid-template-columns: 1fr; }
+    .legend { flex-direction: column; gap: 0.5rem; }
+  }
+
+  @media print {
+    body { padding: 0; background: white; }
+    .summary-card, .points-card, .opmerking-card, table.detail, .summary-table { box-shadow: none; border: 1px solid #e2e8f0; }
+    .aanbeveling { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Analyse Programma van Eisen vs. Gerealiseerde Functionaliteit</h1>
+<p class="subtitle">Voorzieningencatalogus <span style="color:#94a3b8">(voorheen Softwarecatalogus)</span></p>
+<p class="meta">
+  <strong>Datum:</strong> 16 maart 2026 &nbsp;·&nbsp;
+  <strong>Bron:</strong> Bijlage 1.2 — Programma van Eisen (Peter Makkes) &nbsp;·&nbsp;
+  <strong>Vergeleken met:</strong> Huidige applicatie (Next.js / Prisma / PostgreSQL)
+</p>
+
+<!-- ─── SAMENVATTING ─── -->
+<h2>Samenvatting</h2>
+
+<div class="summary-grid">
+  <div class="summary-card blue">
+    <div class="label">Totaal eisen &amp; wensen</div>
+    <div class="value">104</div>
+    <div class="detail">68 eisen · 34 wensen · 2 could have</div>
+  </div>
+  <div class="summary-card green">
+    <div class="label">Gerealiseerd ✅</div>
+    <div class="value">34</div>
+    <div class="detail">33% van totaal</div>
+  </div>
+  <div class="summary-card amber">
+    <div class="label">Deels gerealiseerd ⚠</div>
+    <div class="value">20</div>
+    <div class="detail">19% van totaal</div>
+  </div>
+  <div class="summary-card red">
+    <div class="label">Niet gerealiseerd ❌</div>
+    <div class="value">50</div>
+    <div class="detail">48% van totaal</div>
+  </div>
+</div>
+
+<table class="summary-table">
+  <thead><tr><th>Categorie</th><th>Aantal</th><th>✅ Gerealiseerd</th><th>⚠ Deels</th><th>❌ Niet</th></tr></thead>
+  <tbody>
+    <tr><td>Eisen (must have)</td><td>68</td><td>30</td><td>15</td><td>23</td></tr>
+    <tr><td>Wensen (nice to have)</td><td>34</td><td>4</td><td>5</td><td>25</td></tr>
+    <tr><td>Could have</td><td>2</td><td>0</td><td>0</td><td>2</td></tr>
+    <tr><td>Totaal</td><td>104</td><td>34 (33%)</td><td>20 (19%)</td><td>50 (48%)</td></tr>
+  </tbody>
+</table>
+
+<div class="conclusion-box">
+  <strong>Conclusie:</strong> Circa <strong>52%</strong> van alle eisen en wensen is geheel of gedeeltelijk gerealiseerd. Van de 68 harde <strong>eisen</strong> is <strong>66%</strong> (45 van 68) geheel of deels gerealiseerd.
+</div>
+
+<!-- ─── LEGENDA ─── -->
+<div class="legend">
+  <div class="legend-item">✅ <strong>Gerealiseerd</strong> — aanwezig en werkend</div>
+  <div class="legend-item">⚠ <strong>Deels</strong> — basis aanwezig, niet volledig</div>
+  <div class="legend-item">❌ <strong>Niet gerealiseerd</strong> — ontbreekt</div>
+  <div class="legend-item">📌 <strong>Opmerking Peter</strong> — context uit mail</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>1. Aanbod (Functioneel)</h2>
+<h3>Eisen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Zoeken/filteren op standaarden</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Standaardenpagina met versies en pakketfiltering. Compliancy-monitor toont compliance per standaard.</td></tr>
+    <tr><td>2</td><td>Zoeken/filteren op referentiecomponenten</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Referentiecomponentenpagina met zoekfunctie en pakkettellingen. Inkoop-pagina filtert op referentiecomponent.</td></tr>
+    <tr><td>3</td><td>Registreren pakketten</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Upload-functie voor leveranciers (CSV/JSON/Excel). Admin kan ook pakketten beheren.</td></tr>
+    <tr><td>4</td><td>Registreren koppelingen bij pakket</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Koppelingen-systeem met bron/doel, richting, protocol, standaard. Ondersteunt externe pakketten en tussenliggende systemen.</td></tr>
+    <tr><td>5</td><td>Beheren content &amp; configuratie</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">CMS-systeem (Pagina model) met TipTap editor. Admin kan pagina's aanmaken en bewerken.</td></tr>
+    <tr><td>6</td><td>Data-migratie</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Import-functionaliteit aanwezig (CSV/JSON/Excel upload), maar specifieke migratie van oude softwarecatalogus-data is niet als aparte feature gebouwd.</td></tr>
+  </tbody>
+</table>
+
+<h3>Wensen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>7</td><td>Registreren dienstverleners</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen apart concept voor "dienstverleners" naast leveranciers.</td></tr>
+    <tr><td>8</td><td>Registreren cloud-providers</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen cloud-provider registratie.</td></tr>
+    <tr><td>9</td><td>Raadplegen review scores</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen review/score-systeem voor pakketten.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>2. Aanbod en Gebruik Wensen</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>10</td><td>AI-advisering</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen AI-gebaseerde adviesfunctionaliteit.</td></tr>
+    <tr><td>11</td><td>Registreren business rules</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen business rules engine.</td></tr>
+    <tr><td>12–15</td><td>Adviseren Common Ground, SaaS</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen automatische advisering op basis van CG/SaaS criteria.</td></tr>
+    <tr><td>16</td><td>Statistieken gebruik</td><td><span class="tag tag-wens">Wens</span></td><td class="status">⚠</td><td class="toelichting">Dashboard toont basisstatistieken. Geen uitgebreide gebruiksstatistieken per pakket.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>3. Common Ground Wensen</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>17–20</td><td>Common Ground registratie/filtering</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen CG-laag concept, geen CG-compliance tracking.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>4. Gebruik (Functioneel)</h2>
+<h3>Eisen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>21</td><td>Beheren applicatielandschap gemeente</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Dashboard met pakketoverzicht, upload-functie, koppelingen-beheer.</td></tr>
+    <tr><td>22</td><td>Vergelijken gebruik (gemeente vs gemeente)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Vergelijkfunctie op /gemeenten/vergelijk met side-by-side tabel, gemeenschappelijke/unieke pakketten.</td></tr>
+    <tr><td>23</td><td>Vergelijken gebruik (gemeente vs aanbod)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Compliancy-monitor vergelijkt gebruik met standaarden. Geen directe vergelijking gemeente-portfolio vs totaal aanbod.</td></tr>
+    <tr><td>24</td><td>Exporteren gebruik</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Export-API met CSV, IBD-foto en AMEFF XML formaten.</td></tr>
+    <tr><td>25</td><td>Ontsluiten gebruik</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Gemeente-detailpagina toont portfolio, koppelingen, voortgang. Rolgebaseerde zichtbaarheid.</td></tr>
+    <tr><td>26</td><td>Raadplegen gebruik</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Gemeenten-overzicht met zoek/filter, sterren-systeem, paginering.</td></tr>
+  </tbody>
+</table>
+
+<h3>Wensen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>27</td><td>Registreren maatwerk bij pakket</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen maatwerk-registratie per gemeente.</td></tr>
+    <tr><td>28</td><td>Registreren verantwoordelijke bij pakket</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen verantwoordelijke-veld per pakket per gemeente.</td></tr>
+    <tr><td>29</td><td>Registreren licentievorm bij pakket</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen licentievorm-registratie.</td></tr>
+    <tr><td>30</td><td>Registreren gebruikersaantallen</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen gebruikersaantallen per pakket per gemeente.</td></tr>
+    <tr><td>31</td><td>Wijzigingshistorie bijhouden</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen audit trail/wijzigingshistorie op pakketgebruik.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>5. GT Inkoop Wensen</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>32–35</td><td>Contractbeheer, verloopdatums, BIO compliance</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen contractbeheerfunctionaliteit. Inkoop-pagina bevat alleen referentiecomponent-selectie en GEMMA/GIBIT richtlijnen.</td></tr>
+    <tr><td>36</td><td>Exporteren inkoop-gegevens</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen specifieke inkoop-export.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>6. IBD Wensen</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>37–44</td><td>BIO compliance, DPIA verplichting, SLA-criteria</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen BIO/DPIA/SLA tracking.</td></tr>
+    <tr><td>45–48</td><td>Pen-test resultaten, DigiD-assessments</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen beveiligingsbeoordelingen-module.</td></tr>
+    <tr><td>49–53</td><td>Verklaringen/overeenkomsten delen en fiatteren</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen document-sharing/fiatteringsworkflow.</td></tr>
+    <tr><td>54–55</td><td>Register van verwerkingen genereren</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen AVG register. Vereist ook GEMMA-uitbreiding.</td></tr>
+    <tr><td>56–58</td><td>Kwetsbaarheden notificatie, NIST CVE</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen vulnerability tracking/notification.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>7. Management Informatie</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>59</td><td>Database-toegang voor rapportages</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Database is PostgreSQL en technisch toegankelijk. Geen specifieke rapportage-interface, maar data is via API beschikbaar.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>8. Organisatie</h2>
+<h3>Eisen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>60</td><td>Zelf organisatiegegevens registreren (concept)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen zelf-registratie met concept-status. Admin maakt organisaties aan.</td></tr>
+    <tr><td>61</td><td>Fiatteren concept-organisaties</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen fiatteringsworkflow voor organisaties.</td></tr>
+    <tr><td>62</td><td>Samenvoegen organisaties (herindeling)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen samenvoeging-functionaliteit.</td></tr>
+    <tr><td>63</td><td>Aanmaken organisaties + accounts</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Admin kan gebruikers aanmaken met gemeente/leverancier-koppeling.</td></tr>
+    <tr><td>64</td><td>Gebruik-beheerder registreert aanbieder</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Niet direct mogelijk; admin moet leverancier aanmaken. Upload-functie accepteert wel nieuwe namen.</td></tr>
+    <tr><td>65</td><td>Overzicht aanbiedende organisaties</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Leveranciers-pagina met zoek/filter en paginering.</td></tr>
+    <tr><td>66</td><td>Overzicht gebruikende organisaties</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Gemeenten-pagina met zoek/filter, sterren, paginering.<span class="peter">📌 Peter: gemeenten zien elkaars landschappen; leveranciers alleen hun eigen pakketten.</span></td></tr>
+    <tr><td>67</td><td>Contactpersonen per pakket</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Leverancier heeft contactpersoon + email, maar niet meerdere contactpersonen per pakket.</td></tr>
+    <tr><td>68</td><td>Aanvullende organisatie-info, links</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Leverancier heeft basisgegevens. Geen uitgebreide diensten-omschrijving of support-portal links.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>9. Referentiearchitectuur</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>69</td><td>Exporteren ArchiMate (AMEFF)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">AMEFF XML export beschikbaar via /api/export?format=ameff.</td></tr>
+    <tr><td>70</td><td>Importeren ArchiMate</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">GEMMA sync via admin panel. Import van ArchiMate model.</td></tr>
+    <tr><td>71</td><td>Ontsluiten architectuurconcepten</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Referentiecomponenten, standaarden, applicatiefuncties. GEMMA Views met domein/volgorde.</td></tr>
+    <tr><td>72</td><td>GEMMA-concepten uitleggen (Glossary)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Begrippen-module met NL-SBB/NORA termen. GlossaryHighlighter markeert termen automatisch.</td></tr>
+    <tr><td>73</td><td>Doorverwijzen naar GEMMA online</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Begrippen hebben externe URI's. Geen directe deep-links vanuit referentiecomponenten naar GEMMA online.</td></tr>
+    <tr><td>74</td><td>Plotten op GEMMA views (SVG download)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Kaart-functionaliteit (/kaart) met GEMMA Views, interactief.<span class="peter">📌 Peter verwijst naar <a href="https://vng-realisatie.github.io/Over-GEMMA-Archi-repository/?view=id-26040" target="_blank">GEMMA Archi view</a></span></td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>10. Toegangsbeveiliging</h2>
+<h3>Eisen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>75</td><td>Collega's toegang geven (beheerder)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Admin kan gebruikers aanmaken. Organisatie-beheerders kunnen dit niet zelf.</td></tr>
+    <tr><td>76</td><td>Meerdere gebruikersrollen met rechten</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">10 rollen gedefinieerd (ADMIN, LEVERANCIER, GEMEENTE_BEHEERDER, etc.). Rolgebaseerde toegangscontrole.</td></tr>
+    <tr><td>77</td><td>Eerste account aanmaken/fiatteren</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Admin maakt eerste account aan voor organisatie.</td></tr>
+    <tr><td>78</td><td>Gebruiker gekoppeld aan organisatie</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">User model heeft gemeenteId en leverancierId. Ongekoppelde gebruiker = bezoeker.</td></tr>
+    <tr><td>79</td><td>Nieuwe gebruikers aanmelden bij organisatie</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen zelf-aanmeldflow met fiatteringsproces.</td></tr>
+    <tr><td>80</td><td>Multi-organisatie toegang</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">User heeft één gemeenteId. Kan niet schakelen tussen meerdere organisaties.</td></tr>
+    <tr><td>81</td><td>Leveranciers zien geen gemeente-landschappen</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">filterGemeentePakketten() filtert leveranciers tot alleen hun eigen pakketten.<span class="peter">📌 Peter bevestigt: leveranciers zien alleen hun eigen aanbod en gebruik.</span></td></tr>
+  </tbody>
+</table>
+
+<h3>Wensen</h3>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>82</td><td>Impersonatie (functioneel beheerder)</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen impersonatie-functionaliteit.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>11. API's (Functioneel)</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Functionaliteit</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>100</td><td>Raadplegen aanbod API</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Publieke API v1 met leveranciers, pakketten, standaarden, begrippen. OpenAPI documentatie.</td></tr>
+    <tr><td>101</td><td>Raadplegen gebruik API</td><td><span class="tag tag-wens">Wens</span></td><td class="status">✅</td><td class="toelichting">API v1 endpoints voor gemeenten en hun pakketten. Beveiligd met rolcontrole.</td></tr>
+    <tr><td>102</td><td>Registreren aanbod API</td><td><span class="tag tag-could">Could</span></td><td class="status">❌</td><td class="toelichting">Geen write-API voor aanbod. Alleen upload via UI.</td></tr>
+    <tr><td>103</td><td>Registreren gebruik API</td><td><span class="tag tag-could">Could</span></td><td class="status">❌</td><td class="toelichting">Geen write-API voor gebruik. Alleen upload via UI.</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>12. Non-functionele Eisen</h2>
+<table class="detail">
+  <thead><tr><th>ID</th><th>Categorie</th><th>Prio</th><th>Status</th><th>Toelichting</th></tr></thead>
+  <tbody>
+    <tr><td>83</td><td>API standaarden (OpenAPI, REST)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">OpenAPI spec, REST endpoints, Swagger UI.</td></tr>
+    <tr><td>84</td><td>Betrouwbaarheid / beheerorganisatie</td><td><span class="tag tag-wens">Wens</span></td><td class="status"><span class="tag tag-nvt">n.v.t.</span></td><td class="toelichting">Organisatorische eis, niet technisch.</td></tr>
+    <tr><td>85</td><td>Gebruikersvriendelijkheid</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Intuïtieve UI, formuliervalidatie, foutmeldingen. Mobiel responsive.</td></tr>
+    <tr><td>86</td><td>Digitoegankelijkheid</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Semantic HTML, maar geen formele WCAG audit. Dark mode ondersteunt contrast.</td></tr>
+    <tr><td>87</td><td>Logging activiteiten</td><td><span class="tag tag-wens">Wens</span></td><td class="status">❌</td><td class="toelichting">Geen audit logging geïmplementeerd.</td></tr>
+    <tr><td>88</td><td>Internetstandaarden (nl.internet.nl 100%)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Afhankelijk van hosting-configuratie. Applicatie gebruikt HTTPS.</td></tr>
+    <tr><td>89</td><td>2FA / RBAC</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">RBAC is geïmplementeerd (10 rollen). <strong>2FA/TOTP is NIET geïmplementeerd.</strong> Alleen email+wachtwoord.</td></tr>
+    <tr><td>90</td><td>Informatiemodel voorzieningencatalogus</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Prisma schema volgt conceptueel het informatiemodel maar wijkt mogelijk af in details.<span class="peter">📌 Peter: naam wordt "Voorzieningencatalogus".</span></td></tr>
+    <tr><td>91</td><td>E-mail standaarden (DKIM/DMARC)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen e-mailfunctionaliteit (geen wachtwoord-reset, geen notificaties).</td></tr>
+    <tr><td>92</td><td>Open source (EUPL licentie)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Broncode in git repository. Geen EUPL licentie expliciet toegevoegd.</td></tr>
+    <tr><td>93</td><td>Modulariteit</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Next.js App Router structuur, gescheiden API/UI, Prisma als data-laag.</td></tr>
+    <tr><td>94</td><td>Webstatistieken (Matomo)</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen analytics tool geïntegreerd.</td></tr>
+    <tr><td>95</td><td>Toekomstvaste techniek</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Next.js 16, TypeScript, React, Tailwind CSS, PostgreSQL — mainstream stack.</td></tr>
+    <tr><td>96</td><td>Open source componenten</td><td><span class="tag tag-wens">Wens</span></td><td class="status">✅</td><td class="toelichting">Volledig gebouwd op open source: Next.js, Prisma, PostgreSQL, Tailwind.</td></tr>
+    <tr><td>97</td><td>Containerisatie / CI/CD</td><td><span class="tag tag-eis">Eis</span></td><td class="status">⚠</td><td class="toelichting">Geen Dockerfile of CI/CD pipeline. Wel geschikt voor containerisatie (standaard Next.js).</td></tr>
+    <tr><td>98</td><td>OTAP omgevingen</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen meervoudige omgevingen geconfigureerd.</td></tr>
+    <tr><td>99</td><td>Foutmeldingen</td><td><span class="tag tag-eis">Eis</span></td><td class="status">✅</td><td class="toelichting">Error handling, formuliervalidatie, lege-staat berichten.</td></tr>
+    <tr><td>100</td><td>Testen</td><td><span class="tag tag-eis">Eis</span></td><td class="status">❌</td><td class="toelichting">Geen geautomatiseerde tests (unit/integration/e2e).</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>Opmerkingen n.a.v. mail Peter Makkes</h2>
+
+<div class="opmerking-card">
+  <h4>1. Naamswijziging</h4>
+  <p>De applicatie heet nu "GEMMA Softwarecatalogus" en moet hernoemd worden naar <strong>"Voorzieningencatalogus"</strong>. Dit raakt layout, metadata, OG-image, en alle referenties in de code.</p>
+</div>
+
+<div class="opmerking-card">
+  <h4>2. Rollenmodel</h4>
+  <p>Peter beschrijft drie hoofdrollen:</p>
+  <ul style="margin: 0.5rem 0 0 1.25rem; font-size: 0.9rem; color: #475569;">
+    <li><strong>Aanbod-beheerder</strong> (leveranciers) — geïmplementeerd als LEVERANCIER rol</li>
+    <li><strong>Gebruik-beheerder</strong> (gemeenten/samenwerkingen) — geïmplementeerd als GEMEENTE_BEHEERDER</li>
+    <li><strong>Gebruik-raadpleger</strong> — geïmplementeerd als GEMEENTE_RAADPLEGER</li>
+  </ul>
+  <p style="margin-top: 0.5rem;">De huidige implementatie matcht redelijk maar mist het zelf-registratie en fiatteringsproces.</p>
+</div>
+
+<div class="opmerking-card">
+  <h4>3. Autorisatie</h4>
+  <ul style="margin: 0.5rem 0 0 1.25rem; font-size: 0.9rem; color: #475569;">
+    <li><span class="check">✅</span> Gemeenten zien alles inclusief elkaars landschappen</li>
+    <li><span class="check">✅</span> Leveranciers zien alleen hun eigen aanbod en gebruik</li>
+    <li><span class="check">✅</span> Bezoekers zien alleen openbare info</li>
+  </ul>
+</div>
+
+<div class="opmerking-card">
+  <h4>4. Suite-concept</h4>
+  <p>Peter geeft aan dat het suite-concept voorlopig is losgelaten. Geen actie nodig.</p>
+</div>
+
+<div class="opmerking-card">
+  <h4>5. GEMMA Views</h4>
+  <p>Peter verwijst naar <a href="https://vng-realisatie.github.io/Over-GEMMA-Archi-repository/?view=id-26040" target="_blank" style="color: var(--blue);">GEMMA Archi repository view</a>. De kaart-functionaliteit (/kaart) biedt al GEMMA views, maar de specifieke view-structuur zou gevalideerd moeten worden.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<h2>Conclusies</h2>
+
+<div class="points-grid">
+  <div class="points-card">
+    <h3>✅ Sterke punten</h3>
+    <ol>
+      <li><strong>Kernfunctionaliteit aanbod &amp; gebruik</strong> — Pakketten, leveranciers, gemeenten, standaarden volledig uitgewerkt</li>
+      <li><strong>GEMMA-integratie</strong> — Views, glossary, AMEFF export/import</li>
+      <li><strong>Autorisatiemodel</strong> — 10 rollen, correct filteren per rol</li>
+      <li><strong>API</strong> — Publieke REST API met OpenAPI docs</li>
+      <li><strong>Vergelijkfunctie</strong> — Side-by-side gemeente-vergelijking</li>
+      <li><strong>Fuzzy search</strong> — Typfouten-tolerant (pg_trgm)</li>
+      <li><strong>Responsiveness &amp; Dark mode</strong></li>
+    </ol>
+  </div>
+  <div class="points-card gaps">
+    <h3>❌ Belangrijkste gaps</h3>
+    <ol>
+      <li><strong>Zelf-registratie &amp; fiattering</strong> — Alles gaat via admin</li>
+      <li><strong>2FA/TOTP</strong> — Alleen email + wachtwoord</li>
+      <li><strong>Multi-organisatie toegang</strong> — User = 1 organisatie</li>
+      <li><strong>Organisatie-samenvoegen</strong> — Essentieel bij herindeling</li>
+      <li><strong>Geautomatiseerde tests</strong> — Geen tests aanwezig</li>
+      <li><strong>OTAP / CI/CD</strong> — Geen pipeline of omgevingen</li>
+      <li><strong>Webstatistieken</strong> — Geen Matomo of vergelijkbaar</li>
+      <li><strong>E-mailfunctionaliteit</strong> — Geen wachtwoord-reset/notificaties</li>
+    </ol>
+  </div>
+</div>
+
+<div class="conclusion-box" style="background: linear-gradient(135deg, #fef3c7, #fff7ed); border-color: #f59e0b;">
+  <strong>IBD-wensen: volledig open terrein</strong><br>
+  Alle IBD-gerelateerde wensen (BIO compliance, DPIA, pen-tests, DigiD, kwetsbaarheden, register van verwerkingen) zijn niet gerealiseerd. Dit is een groot functioneel domein dat aanzienlijke ontwikkeltijd vergt en deels afhankelijk is van GEMMA-uitbreidingen.
+</div>
+
+<div class="aanbeveling">
+  <h3>Aanbeveling prioritering</h3>
+  <p style="margin-bottom: 0.75rem; opacity: 0.9;">De huidige applicatie dekt de kernfunctionaliteit goed af. De grootste gaps zitten in:</p>
+  <ol>
+    <li><strong>Gebruikersbeheer-workflows</strong> — zelf-registratie, fiattering, multi-org</li>
+    <li><strong>Beveiligingseisen</strong> — 2FA, audit logging</li>
+    <li><strong>DevOps</strong> — testen, CI/CD, OTAP</li>
+    <li><strong>IBD/compliance domein</strong> — volledig nieuw te bouwen</li>
+  </ol>
+  <p style="margin-top: 0.75rem; opacity: 0.85; font-size: 0.85rem;">Prioritering zou moeten liggen bij de harde eisen die nog niet gerealiseerd zijn, met name de gebruikersbeheer-workflows en beveiligingseisen, aangezien deze randvoorwaardelijk zijn voor productie-gebruik.</p>
+</div>
+
+</body>
+</html>
