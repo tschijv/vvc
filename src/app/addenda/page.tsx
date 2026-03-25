@@ -8,6 +8,8 @@ import {
 } from "@/service/addendum";
 import EditAddendumModal from "./EditAddendumModal";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 interface Props {
   searchParams: Promise<{
     type?: string;

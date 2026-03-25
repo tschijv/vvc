@@ -2,6 +2,9 @@ import Link from "next/link";
 import MobileFilterToggle from "@/ui/components/MobileFilterToggle";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getPakketten, getPakketCount, getAlleLeveranciers, getAlleReferentiecomponenten } from "@/service/pakket";
+import { getPakkettenWithAvgScore } from "@/service/review";
+
+export const revalidate = 3600; // ISR: regenerate every hour
 
 interface Props {
   searchParams: Promise<{
@@ -21,7 +24,7 @@ export default async function PakkettenPage({ searchParams }: Props) {
   const refCompId = params.referentiecomponent || "";
   const pagina = parseInt(params.pagina || "1");
 
-  const [pakketten, totaal, alleLeveranciers, alleRefComps] = await Promise.all([
+  const [pakketten, totaal, alleLeveranciers, alleRefComps, scoreMap] = await Promise.all([
     getPakketten({
       zoek: zoek || undefined,
       leverancierId: leverancierId || undefined,
@@ -36,6 +39,7 @@ export default async function PakkettenPage({ searchParams }: Props) {
     }),
     getAlleLeveranciers(),
     getAlleReferentiecomponenten(),
+    getPakkettenWithAvgScore(),
   ]);
 
   const aantalPaginas = Math.ceil(totaal / PER_PAGE);
@@ -174,6 +178,7 @@ export default async function PakkettenPage({ searchParams }: Props) {
                   <Link href={buildUrl({})} className="hover:underline">Naam</Link>
                 </th>
                 <th scope="col" className="pb-2 pr-4 font-semibold">Leverancier</th>
+                <th scope="col" className="pb-2 pr-4 font-semibold hidden md:table-cell">Score</th>
                 <th scope="col" className="pb-2 font-semibold hidden sm:table-cell">Beschrijving</th>
               </tr>
             </thead>
@@ -192,6 +197,21 @@ export default async function PakkettenPage({ searchParams }: Props) {
                     >
                       {p.leverancier.naam}
                     </Link>
+                  </td>
+                  <td className="py-2 pr-4 hidden md:table-cell">
+                    {(() => {
+                      const s = scoreMap.get(p.id);
+                      if (!s || s.count === 0) return <span className="text-gray-400 text-xs">-</span>;
+                      return (
+                        <span className="inline-flex items-center gap-1 text-sm">
+                          <svg className="w-3.5 h-3.5 text-[#e35b10]" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                          </svg>
+                          <span className="font-medium text-gray-700 dark:text-gray-300">{s.avg}</span>
+                          <span className="text-xs text-gray-400">({s.count})</span>
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td className="py-2 text-gray-600 max-w-md truncate hidden sm:table-cell">
                     {p.beschrijving?.slice(0, 120)}

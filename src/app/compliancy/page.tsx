@@ -4,6 +4,8 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
 import HelpLink from "@/ui/components/HelpLink";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 export const metadata = {
   title: "Compliancy Monitor - Voorzieningencatalogus",
 };

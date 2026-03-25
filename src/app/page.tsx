@@ -4,6 +4,8 @@ import { getSessionUser, canEditPagina } from "@/process/auth-helpers";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
 import { unstable_cache } from "next/cache";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 const getHomepageStats = unstable_cache(
   async () => {
     const [aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang] = await Promise.all([

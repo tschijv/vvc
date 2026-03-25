@@ -2,6 +2,8 @@ import { prisma } from "@/data/prisma";
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 export const metadata = {
   title: "Samenwerkingen - Voorzieningencatalogus",
 };

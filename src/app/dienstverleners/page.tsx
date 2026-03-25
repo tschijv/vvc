@@ -2,6 +2,8 @@ import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getDienstverleners, getDienstverlenerCount } from "@/service/dienstverlener";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 interface Props {
   searchParams: Promise<{ zoek?: string; type?: string; pagina?: string }>;
 }

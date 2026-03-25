@@ -3,12 +3,16 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/data/prisma";
 import { getPakketBySlug } from "@/service/pakket";
+import { getReviewsForPakket, getReviewStats, getMyReview } from "@/service/review";
 import { getSessionUser, canEditLeverancierPakket } from "@/process/auth-helpers";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import ShareButton from "@/ui/components/ShareButton";
 import FavorietButton from "@/ui/components/FavorietButton";
 import QRCode from "@/ui/components/QRCode";
+import ReviewStats from "@/ui/components/ReviewStats";
+import RadarChart from "@/ui/components/RadarChart";
+import ReviewList from "@/ui/components/ReviewList";
 import PakketEditSection from "./PakketEditSection";
 import PakketversieEditModal from "./PakketversieEditModal";
 import PakketContactEditModal from "./PakketContactEditModal";
@@ -328,7 +332,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
           </div>
 
           <div className="flex gap-1 mb-4 overflow-x-auto">
-            {["standaarden", "functionaliteit", "technologie", "testrapporten"].map((t) => (
+            {["standaarden", "functionaliteit", "technologie", "testrapporten", ...(user ? ["reviews"] : [])].map((t) => (
               <Link
                 key={t}
                 href={`/pakketten/${slug}?tab=${t}`}
@@ -490,6 +494,10 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
               )}
             </div>
           )}
+
+          {tab === "reviews" && user && (
+            <ReviewsSection pakketId={pakket.id} user={user} />
+          )}
         </div>
       )}
 
@@ -552,6 +560,71 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Async server component for the reviews tab content.
+ * Fetches review data and renders stats, radar chart, and review list.
+ */
+async function ReviewsSection({
+  pakketId,
+  user,
+}: {
+  pakketId: string;
+  user: NonNullable<Awaited<ReturnType<typeof getSessionUser>>>;
+}) {
+  const [reviews, stats, myReview] = await Promise.all([
+    getReviewsForPakket(pakketId),
+    getReviewStats(pakketId),
+    user.organisatieId ? getMyReview(pakketId, user.organisatieId) : Promise.resolve(null),
+  ]);
+
+  return (
+    <div className="space-y-8">
+      {/* Stats + Radar chart */}
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <ReviewStats
+            avg={stats.avg}
+            count={stats.count}
+            avgGebruiksgemak={stats.avgGebruiksgemak}
+            avgOndersteuning={stats.avgOndersteuning}
+            avgPrijsKwaliteit={stats.avgPrijsKwaliteit}
+            avgStandaardenSupport={stats.avgStandaardenSupport}
+            distribution={stats.distribution}
+          />
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            Overzicht deelscores
+          </h4>
+          <RadarChart
+            gebruiksgemak={stats.avgGebruiksgemak}
+            ondersteuning={stats.avgOndersteuning}
+            prijsKwaliteit={stats.avgPrijsKwaliteit}
+            standaardenSupport={stats.avgStandaardenSupport}
+          />
+        </div>
+      </div>
+
+      {/* Review list */}
+      <div>
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 border-t pt-4 dark:border-gray-700">
+          Alle reviews ({stats.count})
+        </h4>
+        <ReviewList
+          reviews={reviews.map((r) => ({
+            ...r,
+            createdAt: r.createdAt.toISOString(),
+          }))}
+          pakketId={pakketId}
+          userOrganisatieId={user.organisatieId}
+          isLoggedIn={true}
+          myReview={myReview}
+        />
       </div>
     </div>
   );

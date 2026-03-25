@@ -4,6 +4,8 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getPakketversies, getPakketversieCount } from "@/service/pakketversie";
 import { getAlleLeveranciers, getAlleReferentiecomponenten } from "@/service/pakket";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 interface Props {
   searchParams: Promise<{
     zoek?: string;

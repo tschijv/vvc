@@ -4,6 +4,8 @@ import { prisma } from "@/data/prisma";
 import { getSessionUser } from "@/process/auth-helpers";
 import { redirect } from "next/navigation";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 interface Props {
   searchParams: Promise<{
     pagina?: string;

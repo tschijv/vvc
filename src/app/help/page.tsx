@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 export const metadata: Metadata = {
   title: "Help — Voorzieningencatalogus",
   description: "Gebruikershandleiding voor de VNG Voorzieningencatalogus",

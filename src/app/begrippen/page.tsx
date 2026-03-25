@@ -3,6 +3,8 @@ import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { Metadata } from "next";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 export const metadata: Metadata = {
   title: "Begrippen - Voorzieningencatalogus",
   description: "Begrippenlijst (glossary) van de Voorzieningencatalogus, conform NL-SBB",

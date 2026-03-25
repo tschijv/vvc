@@ -17,6 +17,7 @@ model Referentiecomponent {
   pakketten             PakketReferentiecomponent[]
   createdAt             DateTime                     @default(now())
   updatedAt             DateTime                     @updatedAt
+  @@index([naam])
 }
 
 model Standaard {
@@ -28,6 +29,7 @@ model Standaard {
   testrapporten         Testrapport[]
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
+  @@index([naam])
 }
 
 model Standaardversie {
@@ -51,6 +53,7 @@ model Applicatiefunctie {
   pakketten             PakketApplicatiefunctie[]
   createdAt             DateTime                   @default(now())
   updatedAt             DateTime                   @updatedAt
+  @@index([naam])
 }
 
 // ─── GEMMA Views ───────────────────────────────────────────────────────────
@@ -108,6 +111,8 @@ model User {
   passwordResetTokens PasswordResetToken[]
   notificaties        Notificatie[]
   favorieten          Favoriet[]
+  reviews             PakketReview[]
+  @@index([email])
 }
 
 model PasswordResetToken {
@@ -143,6 +148,8 @@ model Leverancier {
   users                 User[]
   createdAt             DateTime              @default(now())
   updatedAt             DateTime              @updatedAt
+  @@index([slug])
+  @@index([naam])
 }
 
 model Addendum {
@@ -187,10 +194,13 @@ model Pakket {
   technologieen         PakketTechnologie[]
   dienstverleners       DienstverlenerPakket[]
   cloudproviders        CloudproviderPakket[]
+  reviews               PakketReview[]
   createdAt             DateTime                     @default(now())
   updatedAt             DateTime                     @updatedAt
 
   @@index([leverancierId])
+  @@index([slug])
+  @@index([naam])
 }
 
 model PakketContact {
@@ -308,10 +318,13 @@ model Organisatie {
   koppelingen           Koppeling[]
   users                 User[]
   dienstverleners       DienstverlenerOrganisatie[]
+  reviews               PakketReview[]
   createdAt             DateTime                  @default(now())
   updatedAt             DateTime                  @updatedAt
 
   @@map("Gemeente")
+  @@index([cbsCode])
+  @@index([naam])
 }
 
 model OrganisatiePakket {
@@ -506,6 +519,9 @@ model Dienstverlener {
   updatedAt       DateTime @updatedAt
   pakketten       DienstverlenerPakket[]
   organisaties    DienstverlenerOrganisatie[]
+  @@index([type])
+  @@index([slug])
+  @@index([naam])
 }
 
 model DienstverlenerPakket {
@@ -542,6 +558,9 @@ model Cloudprovider {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   pakketten           CloudproviderPakket[]
+  @@index([type])
+  @@index([slug])
+  @@index([naam])
 }
 
 model CloudproviderPakket {
@@ -550,4 +569,29 @@ model CloudproviderPakket {
   pakket          Pakket @relation(fields: [pakketId], references: [id])
   pakketId        String
   @@id([cloudproviderId, pakketId])
+}
+
+// ─── Pakketreviews ──────────────────────────────────────────────────────────
+
+model PakketReview {
+  id                 String      @id @default(cuid())
+  pakket             Pakket      @relation(fields: [pakketId], references: [id], onDelete: Cascade)
+  pakketId           String
+  organisatie        Organisatie @relation(fields: [organisatieId], references: [id])
+  organisatieId      String      @map("gemeenteId")
+  user               User        @relation(fields: [userId], references: [id])
+  userId             String
+  score              Int         // 1-5 overall
+  gebruiksgemak      Int?        // 1-5
+  ondersteuning      Int?        // 1-5
+  prijsKwaliteit     Int?        // 1-5
+  standaardenSupport Int?        // 1-5
+  toelichting        String?
+  anoniem            Boolean     @default(false)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@unique([pakketId, organisatieId])
+  @@index([pakketId])
+  @@map("PakketReview")
 }

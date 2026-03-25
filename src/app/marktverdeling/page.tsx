@@ -2,6 +2,8 @@ import { prisma } from "@/data/prisma";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import MarktverdelingChart from "./MarktverdelingChart";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 export const metadata = { title: "Marktverdeling" };
 
 type LeverancierData = {

@@ -2,6 +2,8 @@ import { getApplicatiefuncties, getApplicatiefunctieCount } from "@/service/appl
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 
+export const revalidate = 3600; // ISR: regenerate every hour
+
 interface Props {
   searchParams: Promise<{ zoek?: string; pagina?: string }>;
 }

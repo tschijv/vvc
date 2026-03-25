@@ -240,6 +240,24 @@ export const sections: PveSection[] = [
       { id: "GR18", naam: "Feature-based directories", prio: "wens", status: "partial", toelichting: "Route-based (Next.js conventie). Feature-specifieke componenten co-located bij pagina's. Barrel exports aanwezig." },
     ],
   },
+  {
+    title: "Performance & Schaalbaarheid",
+    subtitle: "Gereedheid voor 350 gemeenten, honderden leveranciers",
+    rows: [
+      { id: "P1", naam: "Connection pooling", prio: "eis", status: "yes", toelichting: "Neon pooler endpoint (-pooler in hostname). PgBouncer proxy vermijdt connectie-overhead." },
+      { id: "P2", naam: "ISR (Incremental Static Regeneration)", prio: "eis", status: "yes", toelichting: "17 publieke pagina's met revalidate=3600. Pagina's worden gecached en elk uur vernieuwd." },
+      { id: "P3", naam: "Database indexes op zoekkolommen", prio: "eis", status: "yes", toelichting: "39 indexes totaal: FK-lookups + naam/slug/type/cbsCode/email/status kolommen." },
+      { id: "P4", naam: "Select clauses in services", prio: "eis", status: "yes", toelichting: "Gemeente, leverancier, favorieten services halen alleen benodigde velden op." },
+      { id: "P5", naam: "Lazy-loading zware componenten", prio: "wens", status: "yes", toelichting: "KaartViewer (-170KB) en RichTextEditor (-150KB) via next/dynamic." },
+      { id: "P6", naam: "Promise.all parallellisatie", prio: "wens", status: "yes", toelichting: "Gemeente-detailpagina: 6 queries parallel i.p.v. sequentieel." },
+      { id: "P7", naam: "Redis voor rate limiting + cache", prio: "wens", status: "no", toelichting: "Rate limiting en begrippen-cache zijn in-memory. Bij meerdere instances niet gedeeld. Redis nodig voor productie." },
+      { id: "P8", naam: "Background jobs (AI, sync)", prio: "wens", status: "no", toelichting: "AI-adviseur en GEMMA sync blokkeren de server. Queue-systeem nodig (BullMQ/Inngest)." },
+      { id: "P9", naam: "API response caching", prio: "wens", status: "no", toelichting: "Geen stale-while-revalidate op API responses. Zou 90% DB reads besparen." },
+      { id: "P10", naam: "Load testing", prio: "eis", status: "no", toelichting: "Niet uitgevoerd. Onbekend hoeveel concurrent users het systeem aankan." },
+      { id: "P11", naam: "Read replicas", prio: "wens", status: "no", toelichting: "Lees- en schrijfverkeer op dezelfde database. Read replicas schalen leesverkeer." },
+      { id: "P12", naam: "CDN caching publieke assets", prio: "wens", status: "yes", toelichting: "Vercel CDN cachet statische assets automatisch. ISR cachet pagina's." },
+    ],
+  },
 ];
 
 /* ── Stats computation ── */
