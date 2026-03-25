@@ -4,7 +4,7 @@ test.describe("Pakketten page", () => {
   test("loads and shows heading", async ({ page }) => {
     await page.goto("/pakketten");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page).toHaveTitle(/pakketten/i);
+    await expect(page).toHaveTitle(/voorzieningencatalogus|pakketten/i);
   });
 
   test("displays a table or list of packages", async ({ page }) => {

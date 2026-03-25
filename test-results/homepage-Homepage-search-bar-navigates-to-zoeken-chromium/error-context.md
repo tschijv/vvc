@@ -1,0 +1,244 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Ga naar inhoud" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "VNG Voorzieningencatalogus" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: VNG Voorzieningencatalogus
+      - generic [ref=e7]: websites VNG Realisatie ▾
+  - navigation "Hoofdnavigatie" [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11] [cursor=pointer]:
+        - text: Hoe werkt de catalogus
+        - generic [ref=e12]: ▾
+      - generic [ref=e14] [cursor=pointer]:
+        - text: Wat is er te vinden
+        - generic [ref=e15]: ▾
+      - generic [ref=e17] [cursor=pointer]:
+        - text: Wie doet er mee
+        - generic [ref=e18]: ▾
+      - generic [ref=e20] [cursor=pointer]:
+        - text: Praktijkvoorbeelden
+        - generic [ref=e21]: ▾
+      - link "Gebruikersonderzoeken" [ref=e22] [cursor=pointer]:
+        - /url: /info/gebruikersonderzoeken
+      - generic [ref=e23]:
+        - link "Handleiding openen" [ref=e24] [cursor=pointer]:
+          - /url: /help
+          - text: "?"
+        - button "Donker thema" [ref=e25]:
+          - img [ref=e26]
+        - generic [ref=e28]: ...
+  - main [ref=e29]:
+    - generic [ref=e30]:
+      - heading "VNG Voorzieningencatalogus" [level=1] [ref=e31]
+      - generic [ref=e33]:
+        - link "Mijn Voorzieningencatalogus" [ref=e34] [cursor=pointer]:
+          - /url: /dashboard
+          - img [ref=e35]
+          - generic [ref=e39]: Mijn Voorzieningencatalogus
+        - link "Inkoop ondersteuning" [ref=e40] [cursor=pointer]:
+          - /url: /inkoop
+          - img [ref=e41]
+          - generic [ref=e43]: Inkoop ondersteuning
+        - link "Compliancy monitor" [ref=e44] [cursor=pointer]:
+          - /url: /compliancy
+          - img [ref=e45]
+          - generic [ref=e48]: Compliancy monitor
+        - link "Pakketten" [ref=e49] [cursor=pointer]:
+          - /url: /pakketten
+          - img [ref=e50]
+          - generic [ref=e54]: Pakketten
+        - link "Pakket versies" [ref=e55] [cursor=pointer]:
+          - /url: /pakketversies
+          - img [ref=e56]:
+            - generic [ref=e61]: V
+          - generic [ref=e62]: Pakket versies
+        - link "Leveranciers" [ref=e63] [cursor=pointer]:
+          - /url: /leveranciers
+          - img [ref=e64]
+          - generic [ref=e69]: Leveranciers
+        - link "Addenda" [ref=e70] [cursor=pointer]:
+          - /url: /addenda
+          - img [ref=e71]
+          - generic [ref=e74]: Addenda
+        - link "Gemeenten" [ref=e75] [cursor=pointer]:
+          - /url: /gemeenten
+          - img [ref=e76]
+          - generic [ref=e80]: Gemeenten
+        - link "Standaarden" [ref=e81] [cursor=pointer]:
+          - /url: /standaarden
+          - img [ref=e82]
+          - generic [ref=e85]: Standaarden
+        - link "Referentie componenten" [ref=e86] [cursor=pointer]:
+          - /url: /referentiecomponenten
+          - img [ref=e87]
+          - generic [ref=e92]: Referentie componenten
+        - link "Applicatie functies" [ref=e93] [cursor=pointer]:
+          - /url: /applicatiefuncties
+          - img [ref=e94]
+          - generic [ref=e97]: Applicatie functies
+        - link "Zoeken" [ref=e98] [cursor=pointer]:
+          - /url: /zoeken
+          - img [ref=e99]
+          - generic [ref=e102]: Zoeken
+        - link "Dienstverleners" [ref=e103] [cursor=pointer]:
+          - /url: /dienstverleners
+          - img [ref=e104]
+          - generic [ref=e109]: Dienstverleners
+        - link "Cloud- providers" [ref=e110] [cursor=pointer]:
+          - /url: /cloudproviders
+          - img [ref=e111]
+          - generic [ref=e114]: Cloud- providers
+      - generic [ref=e116]:
+        - textbox "Zoek in pakketten, leveranciers, gemeenten..." [ref=e117]
+        - img [ref=e118]
+      - generic [ref=e121]:
+        - generic [ref=e122]:
+          - heading "Nieuws" [level=2] [ref=e124]
+          - generic [ref=e126]:
+            - paragraph [ref=e127]:
+              - link "Aanmelden voor de voorzieningencatalogus nieuwsbrief." [ref=e128] [cursor=pointer]:
+                - /url: https://formulieren.vngrealisatie.nl/nieuwsbrief-anders
+            - paragraph [ref=e129]:
+              - strong [ref=e130]: Beheertips voor gemeenten en leveranciers!
+            - paragraph [ref=e131]:
+              - strong [ref=e132]: Tips voor gemeenten en samenwerkingen
+            - list [ref=e133]:
+              - listitem [ref=e134]:
+                - paragraph [ref=e135]: Zoek eerst of een pakket door een leverancier geregistreerd is of niet, voordat je het pakket zelf registreert.
+              - listitem [ref=e136]:
+                - paragraph [ref=e137]: Indien een pakket of versie er niet in staat meldt dit dan aan de leverancier.
+              - listitem [ref=e138]:
+                - paragraph [ref=e139]: Controleer of alle gebruikers nog werkzaam zijn bij de gemeente of samenwerking.
+            - paragraph [ref=e140]:
+              - strong [ref=e141]: "Tips voor Leveranciers:"
+            - list [ref=e142]:
+              - listitem [ref=e143]:
+                - paragraph [ref=e144]: Controleer de URL's bij het pakket.
+              - listitem [ref=e145]:
+                - paragraph [ref=e146]: Vul de referentiecomponenten in voor uw pakketversies.
+            - paragraph
+        - generic [ref=e147]:
+          - heading "Doel van de voorzieningencatalogus" [level=2] [ref=e149]
+          - generic [ref=e151]:
+            - paragraph [ref=e152]:
+              - emphasis [ref=e153]: Gemeenten kennis en informatie uit laten wisselen en de gebruikte software te laten vergelijken met andere gemeenten. Daarnaast geeft de softwarecatalogus inzicht in het huidige en toekomstige softwareaanbod van de aangemelde ICT-leveranciers.
+            - paragraph [ref=e154]: "Gemeenten gebruiken de GEMMA Softwarecatalogus bij ICT-vervangings- of investeringsvraagstukken:"
+            - list [ref=e155]:
+              - listitem [ref=e156]: Marktoriëntatie voor nieuwe of vervangende software;
+              - listitem [ref=e157]: Vergelijken met andere gemeenten;
+              - listitem [ref=e158]: Contact leggen met gemeenten met vergelijkbaar of interessant productportfolio;
+              - listitem [ref=e159]: Inzicht in het huidig en toekomstig softwareaanbod.
+        - generic [ref=e160]:
+          - heading "Voortgang gemeenten" [level=2] [ref=e162]
+          - generic [ref=e163]:
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - img [ref=e166]
+                - img [ref=e168]
+                - img [ref=e170]
+                - img [ref=e172]
+                - img [ref=e174]
+              - generic [ref=e176]: "82"
+            - generic [ref=e177]:
+              - generic [ref=e178]:
+                - img [ref=e179]
+                - img [ref=e181]
+                - img [ref=e183]
+                - img [ref=e185]
+                - img [ref=e187]
+              - generic [ref=e189]: "10"
+            - generic [ref=e190]:
+              - generic [ref=e191]:
+                - img [ref=e192]
+                - img [ref=e194]
+                - img [ref=e196]
+                - img [ref=e198]
+                - img [ref=e200]
+              - generic [ref=e202]: "112"
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - img [ref=e205]
+                - img [ref=e207]
+                - img [ref=e209]
+                - img [ref=e211]
+                - img [ref=e213]
+              - generic [ref=e215]: "126"
+            - generic [ref=e216]:
+              - generic [ref=e217]:
+                - img [ref=e218]
+                - img [ref=e220]
+                - img [ref=e222]
+                - img [ref=e224]
+                - img [ref=e226]
+              - generic [ref=e228]: "1"
+            - generic [ref=e229]:
+              - generic [ref=e230]:
+                - img [ref=e231]
+                - img [ref=e233]
+                - img [ref=e235]
+                - img [ref=e237]
+                - img [ref=e239]
+              - generic [ref=e241]: "11"
+          - link "Uitleg over de voortgang categorieën" [ref=e242] [cursor=pointer]:
+            - /url: /gemeenten
+          - generic [ref=e243]:
+            - generic [ref=e244]:
+              - text: "Aantal ingelogde gemeenten in 2026:"
+              - strong [ref=e245]: "69"
+            - generic [ref=e246]:
+              - text: "Aantal ingelogde gemeenten in 2025:"
+              - strong [ref=e247]: "342"
+            - generic [ref=e248]:
+              - text: "Aantal ingelogde gemeenten in 2024:"
+              - strong [ref=e249]: "332"
+            - generic [ref=e250]:
+              - text: "Aantal ingelogde gemeenten in 2023:"
+              - strong [ref=e251]: "318"
+          - link "Volledige rapportage →" [ref=e252] [cursor=pointer]:
+            - /url: /gemeenten
+  - contentinfo "Footer" [ref=e253]:
+    - generic [ref=e254]:
+      - generic [ref=e255]:
+        - link "Onderwerpen VNG" [ref=e256] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacyverklaring" [ref=e257] [cursor=pointer]:
+          - /url: "#"
+        - link "Over VNG Realisatie" [ref=e258] [cursor=pointer]:
+          - /url: "#"
+        - link "Vacatures" [ref=e259] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e260]:
+        - link "Agenda VNG" [ref=e261] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuws" [ref=e262] [cursor=pointer]:
+          - /url: "#"
+        - link "Contact" [ref=e263] [cursor=pointer]:
+          - /url: "#"
+        - link "Meld aan VNG Realisatie" [ref=e264] [cursor=pointer]:
+          - /url: "#"
+        - link "Help" [ref=e265] [cursor=pointer]:
+          - /url: /help
+      - generic [ref=e266]:
+        - link "Twitter" [ref=e267] [cursor=pointer]:
+          - /url: "#"
+        - link "Linkedin" [ref=e268] [cursor=pointer]:
+          - /url: "#"
+        - link "Youtube" [ref=e269] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuwsbrief GEMMA" [ref=e270] [cursor=pointer]:
+          - /url: "#"
+        - link "RSS Feed" [ref=e271] [cursor=pointer]:
+          - /url: /api/feed
+          - img [ref=e272]
+          - text: RSS Feed
+    - generic [ref=e275]: Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
+  - button "Open Next.js Dev Tools" [ref=e281] [cursor=pointer]:
+    - img [ref=e282]
+  - alert [ref=e285]
+```

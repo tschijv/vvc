@@ -1,0 +1,103 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Ga naar inhoud" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "VNG Voorzieningencatalogus" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: VNG Voorzieningencatalogus
+      - generic [ref=e7]: websites VNG Realisatie ▾
+  - navigation "Hoofdnavigatie" [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11] [cursor=pointer]:
+        - text: Hoe werkt de catalogus
+        - generic [ref=e12]: ▾
+      - generic [ref=e14] [cursor=pointer]:
+        - text: Wat is er te vinden
+        - generic [ref=e15]: ▾
+      - generic [ref=e17] [cursor=pointer]:
+        - text: Wie doet er mee
+        - generic [ref=e18]: ▾
+      - generic [ref=e20] [cursor=pointer]:
+        - text: Praktijkvoorbeelden
+        - generic [ref=e21]: ▾
+      - link "Gebruikersonderzoeken" [ref=e22] [cursor=pointer]:
+        - /url: /info/gebruikersonderzoeken
+      - generic [ref=e23]:
+        - link "Handleiding openen" [ref=e24] [cursor=pointer]:
+          - /url: /help
+          - text: "?"
+        - button "Donker thema" [ref=e25]:
+          - img [ref=e26]
+        - link "Inloggen" [ref=e28] [cursor=pointer]:
+          - /url: /auth/login
+  - main [ref=e29]:
+    - generic [ref=e31]:
+      - heading "Inloggen" [level=1] [ref=e32]
+      - paragraph [ref=e33]: Log in om het applicatieportfolio van gemeenten te bekijken.
+      - generic [ref=e34]: Onjuist e-mailadres of wachtwoord.
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - generic [ref=e37]: E-mailadres
+          - textbox "E-mailadres" [ref=e38]:
+            - /placeholder: uw@email.nl
+            - text: invalid@example.com
+        - generic [ref=e39]:
+          - generic [ref=e40]: Wachtwoord
+          - textbox "Wachtwoord" [ref=e41]: wrongpassword
+        - button "Inloggen" [ref=e42]
+        - paragraph [ref=e43]:
+          - link "Wachtwoord vergeten?" [ref=e44] [cursor=pointer]:
+            - /url: /auth/wachtwoord-vergeten
+      - paragraph [ref=e45]:
+        - text: Nog geen account?
+        - link "Registreer uw organisatie" [ref=e46] [cursor=pointer]:
+          - /url: /auth/registreren
+      - generic [ref=e47]:
+        - paragraph [ref=e48]: "Test-accounts:"
+        - paragraph [ref=e49]: "Admin: admin@swc.nl / admin2026"
+        - paragraph [ref=e50]: "Gemeente: gemeente1@swc.nl / test2026"
+        - paragraph [ref=e51]: "Leverancier: leverancier1@swc.nl / test2026"
+  - contentinfo "Footer" [ref=e52]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - link "Onderwerpen VNG" [ref=e55] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacyverklaring" [ref=e56] [cursor=pointer]:
+          - /url: "#"
+        - link "Over VNG Realisatie" [ref=e57] [cursor=pointer]:
+          - /url: "#"
+        - link "Vacatures" [ref=e58] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e59]:
+        - link "Agenda VNG" [ref=e60] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuws" [ref=e61] [cursor=pointer]:
+          - /url: "#"
+        - link "Contact" [ref=e62] [cursor=pointer]:
+          - /url: "#"
+        - link "Meld aan VNG Realisatie" [ref=e63] [cursor=pointer]:
+          - /url: "#"
+        - link "Help" [ref=e64] [cursor=pointer]:
+          - /url: /help
+      - generic [ref=e65]:
+        - link "Twitter" [ref=e66] [cursor=pointer]:
+          - /url: "#"
+        - link "Linkedin" [ref=e67] [cursor=pointer]:
+          - /url: "#"
+        - link "Youtube" [ref=e68] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuwsbrief GEMMA" [ref=e69] [cursor=pointer]:
+          - /url: "#"
+        - link "RSS Feed" [ref=e70] [cursor=pointer]:
+          - /url: /api/feed
+          - img [ref=e71]
+          - text: RSS Feed
+    - generic [ref=e74]: Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
+  - button "Open Next.js Dev Tools" [ref=e80] [cursor=pointer]:
+    - img [ref=e81]
+  - alert [ref=e84]
+```

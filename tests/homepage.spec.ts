@@ -28,7 +28,7 @@ test.describe("Homepage", () => {
   test("search bar navigates to /zoeken", async ({ page }) => {
     await page.goto("/");
     // Look for a search input or link to search
-    const searchLink = page.getByRole("link", { name: /zoeken/i });
+    const searchLink = page.getByRole("link", { name: "Zoeken", exact: true });
     if (await searchLink.isVisible()) {
       await searchLink.click();
       await expect(page).toHaveURL(/\/zoeken/);

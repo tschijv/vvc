@@ -1,0 +1,842 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Ga naar inhoud" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "VNG Voorzieningencatalogus" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: VNG Voorzieningencatalogus
+      - generic [ref=e7]: websites VNG Realisatie ▾
+  - navigation "Hoofdnavigatie" [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11] [cursor=pointer]:
+        - text: Hoe werkt de catalogus
+        - generic [ref=e12]: ▾
+      - generic [ref=e14] [cursor=pointer]:
+        - text: Wat is er te vinden
+        - generic [ref=e15]: ▾
+      - generic [ref=e17] [cursor=pointer]:
+        - text: Wie doet er mee
+        - generic [ref=e18]: ▾
+      - generic [ref=e20] [cursor=pointer]:
+        - text: Praktijkvoorbeelden
+        - generic [ref=e21]: ▾
+      - link "Gebruikersonderzoeken" [ref=e22] [cursor=pointer]:
+        - /url: /info/gebruikersonderzoeken
+      - generic [ref=e23]:
+        - link "Handleiding openen" [ref=e24] [cursor=pointer]:
+          - /url: /help
+          - text: "?"
+        - button "Donker thema" [ref=e25]:
+          - img [ref=e26]
+        - link "Inloggen" [ref=e28] [cursor=pointer]:
+          - /url: /auth/login
+  - main [ref=e29]:
+    - navigation "Breadcrumb" [ref=e30]:
+      - list [ref=e31]:
+        - listitem [ref=e32]:
+          - link "Home" [ref=e33] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e34]:
+          - generic [ref=e35]: ›
+          - generic [ref=e36]: Pakketten
+    - generic [ref=e37]:
+      - complementary [ref=e38]:
+        - search [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: Zoeken
+            - textbox "Pakket of leverancier..." [ref=e42]
+          - generic [ref=e43]:
+            - paragraph [ref=e44]: Leverancier
+            - combobox [ref=e45]:
+              - option "Alle leveranciers" [selected]
+              - option "360GEO"
+              - option "AFAS Software"
+              - option "ARAS Security"
+              - option "Acato"
+              - option "AllSolutions"
+              - option "Amyyon"
+              - option "Andes"
+              - option "Antea Group"
+              - option "Appsemble"
+              - option "Aqqo (voorheen Accommodatiehuur)"
+              - option "ArchiXL"
+              - option "Archie Europe"
+              - option "Argaleo"
+              - option "Arkance Systems"
+              - option "Atabix"
+              - option "Auxilium"
+              - option "Axxemble"
+              - option "B-ware Business Software"
+              - option "B3Partners"
+              - option "BCPI.eu"
+              - option "BCT"
+              - option "BLITTS BV"
+              - option "BMconsultants"
+              - option "Baasgeo"
+              - option "BakerWare"
+              - option "Bakker & Spees"
+              - option "Bentis B.V."
+              - option "Betty Blocks"
+              - option "Blinqt"
+              - option "Blue Field Agency"
+              - option "Brick-ICT"
+              - option "Brink Software"
+              - option "BySpy"
+              - option "C-quential Roosterplaning"
+              - option "C3Group"
+              - option "CARE Internet Services BV"
+              - option "CBA - ManageEngine / Zoho"
+              - option "CIMSOLUTIONS"
+              - option "Cadac Group"
+              - option "Capgemini"
+              - option "Cell[0]"
+              - option "Celon Solutions BV"
+              - option "CenterOne Group"
+              - option "Centric"
+              - option "Centrum voor publieke innovatie"
+              - option "Civity"
+              - option "Cobee"
+              - option "Cocoon - Media Management Software"
+              - option "Cocoon Subsidiesoftware"
+              - option "Common Ground Pakketten"
+              - option "CompetenSYS"
+              - option "Conclusion"
+              - option "Condor"
+              - option "Conduction"
+              - option "Content Guru"
+              - option "Contezza"
+              - option "CoolProfs"
+              - option "Cordiplan"
+              - option "Cruxer"
+              - option "DA Systems"
+              - option "DE REE archiefsystemen"
+              - option "DEVENTit"
+              - option "DG Groep"
+              - option "DIP, Digital Insights Platform"
+              - option "Dariuz BV"
+              - option "Data Kitchen B.V."
+              - option "DataB. Mailservice"
+              - option "DataMask"
+              - option "Dataether"
+              - option "Dawaco"
+              - option "De Peutermonitor"
+              - option "Deapr"
+              - option "Decos Information Solutions"
+              - option "Dekkers IT Solutions & Consultancy"
+              - option "Delta10"
+              - option "Desyde"
+              - option "DiVault"
+              - option "Digidentity"
+              - option "Docspro B.V."
+              - option "Dragon1"
+              - option "Eljakim IT"
+              - option "Elkander"
+              - option "Embrace"
+              - option "Emergo Systems"
+              - option "Emprover"
+              - option "Enable U"
+              - option "Energiemissie B.V."
+              - option "Engage Process"
+              - option "EntrD"
+              - option "Ervaringwijzer"
+              - option "Esri"
+              - option "Eviden"
+              - option "Facility Kwadraat"
+              - option "Factuurportal B.V."
+              - option "Fenêtre Online Solutions"
+              - option "Finalist"
+              - option "Finetic"
+              - option "Fortes Solutions"
+              - option "Forus Operations B.V."
+              - option "Fugro NL Land B.V."
+              - option "Fully In Control"
+              - option "Future Insight Group"
+              - option "GISArts BV"
+              - option "GISkit"
+              - option "Gemboxx"
+              - option "Gemeente Rotterdam"
+              - option "GemeenteOplossingen"
+              - option "Genetics"
+              - option "GeoNovation B.V."
+              - option "GeoTax"
+              - option "Gfacility"
+              - option "GlobeScope"
+              - option "GoBright"
+              - option "Gouw Informatie Technologie"
+              - option "Green Valley Belgium"
+              - option "Greenpoint Advies"
+              - option "Groenestein Beheersoftware"
+              - option "HTA Software"
+              - option "Harbers Solutions BV"
+              - option "HawarIT"
+              - option "Horlings & Eerbeek Automatisering B.V."
+              - option "IBM"
+              - option "IDgis"
+              - option "IJsSoft"
+              - option "IMAGEM"
+              - option "INKIS"
+              - option "IRM360 B.V."
+              - option "ISPnext"
+              - option "Ignite Group"
+              - option "Infoland"
+              - option "Innovadis"
+              - option "IntellinQ"
+              - option "IntraData"
+              - option "Intracto"
+              - option "Isuna"
+              - option "Itrajectum"
+              - option "Ivengi.com"
+              - option "JAM-IT"
+              - option "JCC Software"
+              - option "Jeugdweb.nl"
+              - option "Jobport"
+              - option "KCM Group"
+              - option "KLANTINFOCUS B.V."
+              - option "KPN Lokale Overheid"
+              - option "Key2Control"
+              - option "KlicConverter"
+              - option "KoppelHet"
+              - option "Kred'it"
+              - option "Kurtosis"
+              - option "LDC Business"
+              - option "Level Level"
+              - option "Licht Management Systeem"
+              - option "Lifecycle Technology"
+              - option "Lightbase"
+              - option "Lobster"
+              - option "Logis.P"
+              - option "Lucom Benelux BV"
+              - option "Lumen Business Solutions B.V."
+              - option "Lyfter"
+              - option "MEXTRA"
+              - option "MUG Ingenieursbureau"
+              - option "MY-LEX"
+              - option "MapGear"
+              - option "Matchcare"
+              - option "Mavim"
+              - option "Maxdoro"
+              - option "Maykin"
+              - option "Mensken"
+              - option "Metafoor Vastgoed en Software"
+              - option "Metaobjects"
+              - option "Metaware"
+              - option "MeterInsight Energiemanagement"
+              - option "Mett"
+              - option "Migrato"
+              - option "MindYourPass"
+              - option "MoGuide"
+              - option "Monsido website monitoring"
+              - option "Montr"
+              - option "Mozard"
+              - option "Mproof"
+              - option "MyCumulus"
+              - option "MyExports"
+              - option "MyFMS Flow Management System"
+              - option "Myneva"
+              - option "NARIS"
+              - option "NTI CAD & Company"
+              - option "NTREE Solutions"
+              - option "Nazca Solutions"
+              - option "Nelen & Schuurmans"
+              - option "Neoforce"
+              - option "NieuwlandGeo"
+              - option "Nobralux"
+              - option "Normity"
+              - option "NotuBiz Nederland"
+              - option "Nou&Off"
+              - option "OBI4wan"
+              - option "OCTOBOX"
+              - option "OIS Softwaremakers"
+              - option "OKcomply"
+              - option "OPEN.satisfaction"
+              - option "Office Automate"
+              - option "Omgevingsviewer.nl"
+              - option "OnView"
+              - option "One Fox"
+              - option "Onited"
+              - option "Op Orde"
+              - option "Open Source pakketten"
+              - option "Open-T"
+              - option "OpenText"
+              - option "Ortec Finance"
+              - option "Osano"
+              - option "Outbirds"
+              - option "P8 Software"
+              - option "PAQT.com"
+              - option "PIM.info B.V."
+              - option "PMO Institute"
+              - option "Pagefreezer"
+              - option "Pandora Intelligence"
+              - option "Pantyr"
+              - option "Partners4IT"
+              - option "PerfectView"
+              - option "Permento BV"
+              - option "PinkRoccade Local Government"
+              - option "Piwik PRO"
+              - option "Planviewer"
+              - option "Pleio - online samenwerken"
+              - option "Plek"
+              - option "Polpo politieke monitoring"
+              - option "Postex Nederland BV"
+              - option "Prezent Internet"
+              - option "Procura"
+              - option "Progresity"
+              - option "ProjectComfort"
+              - option "ProjectReports"
+              - option "Promista"
+              - option "Prosoftware"
+              - option "Protinus IT"
+              - option "Proud Nerds"
+              - option "Purfaction"
+              - option "Qmatic Holland B.V."
+              - option "Qualigraf"
+              - option "Qualogy Solutions"
+              - option "REM Automatisering bv"
+              - option "Ranshuijsen BV"
+              - option "Realworld Software Products BV"
+              - option "Redkiwi"
+              - option "Reflex Online"
+              - option "Riodesk"
+              - option "SAP Nederland B.V."
+              - option "SEP"
+              - option "SIMAAN - Aanbestedingstool"
+              - option "Sdu"
+              - option "Seneca B.V."
+              - option "Sensus process management"
+              - option "Shift2"
+              - option "Shintō Labs"
+              - option "Sigmax"
+              - option "Simac Triangle BV"
+              - option "Smart CJM"
+              - option "SmartAIM"
+              - option "SmartDocuments Nederland B.V."
+              - option "Sociale kaart Nederland"
+              - option "Sogelink, voorheen Geodan"
+              - option "Solid Digital"
+              - option "Split~Vision"
+              - option "Stadsbeheer b.v."
+              - option "StellaSpark"
+              - option "Stimulansz"
+              - option "Stipter"
+              - option "Stratech"
+              - option "Studytube"
+              - option "Supportbook Testmanagementtool"
+              - option "Sweco Nederland B.V."
+              - option "Synaxion"
+              - option "TECHNIA B.V."
+              - option "TIMEBLOCKR"
+              - option "TM7"
+              - option "TOPdesk"
+              - option "TSA Verkiezingen"
+              - option "Tachyon Security"
+              - option "Techview assist bv"
+              - option "Templafy"
+              - option "Terbit Information"
+              - option "Testcentrum Groei B.V."
+              - option "Textmetrics"
+              - option "The People Group"
+              - option "Tiltshift - uitvoerend leiderschap in digitale transformatie"
+              - option "Tingit"
+              - option "Tolkie"
+              - option "Tools4ever"
+              - option "Topicus"
+              - option "Transfer Solutions"
+              - option "TrueLime"
+              - option "TrustBound (Thirdwave PCS)"
+              - option "Twyns, Digitaal toezicht en handhaving"
+              - option "Tygron"
+              - option "UNIT4"
+              - option "Unisys"
+              - option "VDMi"
+              - option "VDSS stopt gijzelsoftware/ransomware"
+              - option "VNG Realisatie Demo"
+              - option "ValidSign"
+              - option "Valueresult"
+              - option "Verder Outsourcing"
+              - option "Vicrea"
+              - option "Visma Circle"
+              - option "Visma Raet"
+              - option "Vitec Memorix"
+              - option "WEM No-Code"
+              - option "WIND Internet BV"
+              - option "WPMagazines"
+              - option "WeAreFrank!"
+              - option "WeWatch Buurtpreventie"
+              - option "Werktools | andSafety"
+              - option "Wolters Kluwer Schulinck"
+              - option "WoningNet"
+              - option "Wortell"
+              - option "Wowww"
+              - option "Xlab Cloud Services B.V."
+              - option "Yarado"
+              - option "Yard Digital Agency"
+              - option "Yellowtail"
+              - option "Yenlo Cloud Services"
+              - option "ZXY Cloud"
+              - option "Zeticon"
+              - option "ZorgNed Automatisering"
+              - option "Zorgverkeer"
+              - option "Zynyo"
+              - option "eGem"
+              - option "eSpecialisten"
+              - option "eformity"
+              - option "iASSET"
+              - option "iBabs"
+              - option "ilionx"
+              - option "iprox."
+              - option "regeldienst.nl"
+              - option "roxit"
+              - option "the Right Direction BV"
+              - option "triptic - Iris Intranet"
+              - option "xential"
+              - option "xxllnc"
+          - generic [ref=e46]:
+            - paragraph [ref=e47]: Referentiecomponent
+            - combobox [ref=e48]:
+              - option "Alle componenten" [selected]
+              - option "AI-component"
+              - option "Aanwezigheid- en toegangscontrolecomponent"
+              - option "Accommodatiebeheercomponent"
+              - option "Afsprakenbeheercomponent"
+              - option "Afvalbeheercomponent"
+              - option "Afvalinzamelingcomponent"
+              - option "Agressieregistratie-component"
+              - option "Anti-DDOS-component"
+              - option "Anti-Malware-component"
+              - option "Anti-spamcomponent"
+              - option "Archeologiecomponent"
+              - option "Archiefbeheercomponent"
+              - option "Archiefportaalcomponent"
+              - option "Archiefregistratiecomponent"
+              - option "Architectuur- en ontwerpcomponent"
+              - option "Architectuurcomponent"
+              - option "BAG-beheercomponent"
+              - option "BGT-beheercomponent"
+              - option "BI-component"
+              - option "BOR-component"
+              - option "BPM-engine-component"
+              - option "BRO-beheercomponent"
+              - option "Baliecomponent"
+              - option "Bedrijfscontinuïteitsbeheercomponent"
+              - option "Bedrijfsproces beheercomponent (BPM)"
+              - option "Bedrijven- en instellingen-registratiecomponent"
+              - option "Belastingencomponent"
+              - option "Berichtregistratiecomponent"
+              - option "Besluitenregistratiecomponent"
+              - option "Besluitregistratiecomponent"
+              - option "Bestekkencomponent"
+              - option "Bestuur- en Raadsinformatiecomponent"
+              - option "Bestuurlijk activiteiten bewakingcomponent"
+              - option "Beveiliging- en privacycomponent"
+              - option "Bezwaar- en beroepcomponent"
+              - option "Bodembeheercomponent"
+              - option "Budgetadvies- en schuldhulpverleningcomponent"
+              - option "Burgerzakencomponent"
+              - option "Buurtmarktplaatscomponent"
+              - option "CRIB-component"
+              - option "Callcentercomponent"
+              - option "Cameratoezichtcomponent"
+              - option "Cocreatiecomponent"
+              - option "Contractbeheercomponent"
+              - option "Crisismanagementcomponent"
+              - option "Data-analyse criminaliteit component"
+              - option "Data-back-up-en-herstel-component"
+              - option "Data-laad-en-transformatiecomponent"
+              - option "Data-warehousecomponent"
+              - option "Digitaal ontwerpencomponent"
+              - option "Digitale-handtekeningcomponent"
+              - option "Documentbeheercomponent"
+              - option "Documentcreatiecomponent"
+              - option "Documentregistratiecomponent"
+              - option "E-formulieren publicatie-en-beheercomponent"
+              - option "Erfpachtrechtcomponent"
+              - option "Facilitair reserveer- en uitleencomponent"
+              - option "Financieel component"
+              - option "Firewall component"
+              - option "Forensisch-onderzoekscomponent"
+              - option "GBA-administratiecomponent"
+              - option "Gebouwinstallatiecomponent"
+              - option "Gebruikersbeheercomponent"
+              - option "Gegevensdistributiecomponent"
+              - option "Gegevensmagazijncomponent"
+              - option "Gemeentelijke eigendommencomponent"
+              - option "Gemeentelijke servicebuscomponent"
+              - option "Generiek zaakafhandelcomponent"
+              - option "Geo-gegevens analysecomponent"
+              - option "Geo-gegevens beheercomponent"
+              - option "Geo-gegevens inwincomponent"
+              - option "Gevonden en verloren voorwerpencomponent"
+              - option "Gravenbeheercomponent"
+              - option "Havencomponent"
+              - option "Helpdeskcomponent"
+              - option "IDS-IPS-beheercomponent"
+              - option "IT-objectencomponent"
+              - option "Ideeëncomponent"
+              - option "Inkomenscomponent"
+              - option "Inkoopcomponent"
+              - option "Inningencomponent"
+              - option "Inspectiecomponent"
+              - option "Integratiecomponent"
+              - option "Interactieve dienstverleningscomponent"
+              - option "Intranetcomponent"
+              - option "JUBES-component (voorheen CORV)"
+              - option "Jeugdzorgcomponent"
+              - option "KLIC-component"
+              - option "Kantoorautomatiseringcomponent"
+              - option "Kascomponent"
+              - option "Kennisbeheercomponent"
+              - option "Ketenpartner-portaalcomponent"
+              - option "Keuringcomponent"
+              - option "Klachten- en meldingencomponent"
+              - option "Klantcontactregistratiecomponent"
+              - option "Klantfeedbackcomponent"
+              - option "Klantgeleidingcomponent"
+              - option "Klantnotificatiecomponent"
+              - option "Klantregistratiecomponent"
+              - option "Klanttevredenheidcomponent"
+              - option "Kredietverstrekkingcomponent"
+              - option "Leerlingenbeheercomponent"
+              - option "Leerlingenvervoercomponent"
+              - option "Managementinformatiecomponent"
+              - option "Medewerker-registratiecomponent"
+              - option "Media-behandelingcomponent"
+              - option "Mediamonitor- en webcarecomponent"
+              - option "Meldingen openbare ruimtecomponent"
+              - option "Mijngemeentecomponent"
+              - option "Mobiel-toezicht-en-handhavingcomponent"
+              - option "Mobile-device-managementcomponent"
+              - option "Modelbeheercomponent"
+              - option "Monumentencomponent"
+              - option "Narrowcasting component"
+              - option "Netwerkbeheercomponent"
+              - option "Notificatierouteringcomponent"
+              - option "Omgevingsbeleidcomponent"
+              - option "Omgevingsdocumentviewercomponent"
+              - option "Onlinebetalingcomponent"
+              - option "Open-data-portaalcomponent"
+              - option "Outputmanagementcomponent"
+              - option "Parkeerbeheercomponent"
+              - option "Personeelsinformatiecomponent"
+              - option "Planning en control component"
+              - option "Politieke data-analyse component"
+              - option "Preventie-dataverliescomponent"
+              - option "Producten-en-dienstencataloguscomponent"
+              - option "Projectmanagementcomponent"
+              - option "Regiecomponent"
+              - option "Relatiebeheercomponent (CRM)"
+              - option "Reïntegratie- en werkzoekendencomponent"
+              - option "Risicobeheercomponent"
+              - option "Roosterbeheercomponent"
+              - option "SIEM-beheercomponent"
+              - option "Salarisadministratie en -verwerkingcomponent"
+              - option "Samenwerkingscomponent"
+              - option "Scanning-en-imagingcomponent"
+              - option "Schadeafhandelcomponent"
+              - option "Schuldenadministratiecomponent"
+              - option "Servicebuscomponent"
+              - option "Serviceregistercomponent"
+              - option "Sociale mediacomponent"
+              - option "Sociale werkvoorzieningcomponent"
+              - option "Software-licentiebeheercomponent"
+              - option "Software-ontwikkelcomponent"
+              - option "Software-releasecomponent"
+              - option "Software-testcomponent"
+              - option "Subsidiecomponent"
+              - option "Taakregistratiecomponent"
+              - option "Technische logging component"
+              - option "Terreinexploitatiecomponent"
+              - option "Terugmeldingen-registratiecomponent"
+              - option "Tijdregistratiecomponent"
+              - option "Toepasbare regelscomponent"
+              - option "Toezicht- en handhavingcomponent sociaal domein"
+              - option "VOA-component"
+              - option "VPN-beheercomponent"
+              - option "Vacaturematchingcomponent"
+              - option "Vastgoedexploitatiecomponent"
+              - option "Veiligheidsmanagementcomponent"
+              - option "Vergunning- Toezicht- Handhavingcomponent"
+              - option "Vergunning- Toezicht- en Handhavingcomponent fysieke leefomgeving"
+              - option "Verkeer- en vervoerinformatiecomponent"
+              - option "Verkeersregelinstallatiecomponent"
+              - option "Verkiezingencomponent"
+              - option "Verwerkingenloggingcomponent"
+              - option "Verwerkingenregistercomponent"
+              - option "Verzamelcomponent"
+              - option "Voorraadbeheercomponent"
+              - option "Vulnerability-beheercomponent"
+              - option "WMO-component"
+              - option "WOZ-beheercomponent"
+              - option "WOZ-taxatiecomponent"
+              - option "WOZ-voormeldingcomponent"
+              - option "WRO-component"
+              - option "Wachtwoordbeheercomponent"
+              - option "Webcontentpublicatie- en beheercomponent"
+              - option "Zaakregistratiecomponent"
+              - option "Zaaktypecataloguscomponent"
+              - option "Zelfdiagnosecomponent"
+              - option "Zelfredzaamheidontwikkelcomponent"
+              - option "Zoekmachinecomponent"
+          - button "Filter toepassen" [ref=e49]
+      - main [ref=e50]:
+        - generic [ref=e51]:
+          - heading "Pakketten" [level=1] [ref=e52]
+          - link "Export to CSV" [ref=e53] [cursor=pointer]:
+            - /url: /api/pakketten/export?zoek=&leverancier=&referentiecomponent=
+        - paragraph [ref=e54]: 1103 resultaten gevonden.
+        - table [ref=e56]:
+          - rowgroup [ref=e57]:
+            - row "Naam Leverancier Beschrijving" [ref=e58]:
+              - columnheader "Naam" [ref=e59]:
+                - link "Naam" [ref=e60] [cursor=pointer]:
+                  - /url: /pakketten?pagina=1
+              - columnheader "Leverancier" [ref=e61]
+              - columnheader "Beschrijving" [ref=e62]
+          - rowgroup [ref=e63]:
+            - row "3D - Digital Twin Future Insight Group Future Insight ondersteunt bij het organiseren van uw 3D Digital Twin . Dit doen wij op basis van open standaarden en v…" [ref=e64]:
+              - cell "3D - Digital Twin" [ref=e65]:
+                - link "3D - Digital Twin" [ref=e66] [cursor=pointer]:
+                  - /url: /pakketten/3d-digital-twin
+              - cell "Future Insight Group" [ref=e67]:
+                - link "Future Insight Group" [ref=e68] [cursor=pointer]:
+                  - /url: /leveranciers/future-insight-group
+              - cell "Future Insight ondersteunt bij het organiseren van uw 3D Digital Twin . Dit doen wij op basis van open standaarden en v…" [ref=e69]
+            - row "3Di Nelen & Schuurmans 3Di is state-of-the-art hydrodynamic simulation software for pluvial, fluvial and coastal floods. 3Di is applied in both…" [ref=e70]:
+              - cell "3Di" [ref=e71]:
+                - link "3Di" [ref=e72] [cursor=pointer]:
+                  - /url: /pakketten/3di
+              - cell "Nelen & Schuurmans" [ref=e73]:
+                - link "Nelen & Schuurmans" [ref=e74] [cursor=pointer]:
+                  - /url: /leveranciers/nelen-schuurmans
+              - cell "3Di is state-of-the-art hydrodynamic simulation software for pluvial, fluvial and coastal floods. 3Di is applied in both…" [ref=e75]
+            - row "4Woz xxllnc Webbased waarderingsapplicatie." [ref=e76]:
+              - cell "4Woz" [ref=e77]:
+                - link "4Woz" [ref=e78] [cursor=pointer]:
+                  - /url: /pakketten/4woz
+              - cell "xxllnc" [ref=e79]:
+                - link "xxllnc" [ref=e80] [cursor=pointer]:
+                  - /url: /leveranciers/xxllnc
+              - cell "Webbased waarderingsapplicatie." [ref=e81]
+            - row "7-Zip Open Source pakketten 7-Zip is een computerprogramma om bestanden te archiveren en comprimeren. 7-Zip wordt geschreven in C++ voor Windows. De…" [ref=e82]:
+              - cell "7-Zip" [ref=e83]:
+                - link "7-Zip" [ref=e84] [cursor=pointer]:
+                  - /url: /pakketten/7-zip
+              - cell "Open Source pakketten" [ref=e85]:
+                - link "Open Source pakketten" [ref=e86] [cursor=pointer]:
+                  - /url: /leveranciers/open-source-pakketten
+              - cell "7-Zip is een computerprogramma om bestanden te archiveren en comprimeren. 7-Zip wordt geschreven in C++ voor Windows. De…" [ref=e87]
+            - row "AAG (Assurantie Administratie voor Gemeenten) Bentis B.V. AAG is het pakket voor Verzekerings- en Schademanagement voor Nederlandse gemeenten." [ref=e88]:
+              - cell "AAG (Assurantie Administratie voor Gemeenten)" [ref=e89]:
+                - link "AAG (Assurantie Administratie voor Gemeenten)" [ref=e90] [cursor=pointer]:
+                  - /url: /pakketten/aag-assurantie-administratie-voor-gemeenten
+              - cell "Bentis B.V." [ref=e91]:
+                - link "Bentis B.V." [ref=e92] [cursor=pointer]:
+                  - /url: /leveranciers/bentis-bv
+              - cell "AAG is het pakket voor Verzekerings- en Schademanagement voor Nederlandse gemeenten." [ref=e93]
+            - row "AIM Decos Information Solutions Activiteitenbesluit Internet Module is een regelhulp gerealiseerd in opdracht van Ministerie van Infrastructuur en Water…" [ref=e94]:
+              - cell "AIM" [ref=e95]:
+                - link "AIM" [ref=e96] [cursor=pointer]:
+                  - /url: /pakketten/aim
+              - cell "Decos Information Solutions" [ref=e97]:
+                - link "Decos Information Solutions" [ref=e98] [cursor=pointer]:
+                  - /url: /leveranciers/decos-information-solutions
+              - cell "Activiteitenbesluit Internet Module is een regelhulp gerealiseerd in opdracht van Ministerie van Infrastructuur en Water…" [ref=e99]
+            - row "AVM 2020 Online HTA Software Compleet overzicht van alle verhuurlocaties en afspraken. Het managen van verhuurcontracten is een proces dat voortduren…" [ref=e100]:
+              - cell "AVM 2020 Online" [ref=e101]:
+                - link "AVM 2020 Online" [ref=e102] [cursor=pointer]:
+                  - /url: /pakketten/avm-2020-online
+              - cell "HTA Software" [ref=e103]:
+                - link "HTA Software" [ref=e104] [cursor=pointer]:
+                  - /url: /leveranciers/hta-software
+              - cell "Compleet overzicht van alle verhuurlocaties en afspraken. Het managen van verhuurcontracten is een proces dat voortduren…" [ref=e105]
+            - row "AVOI Manager NTREE Solutions AVOI Manager is een web-toepassing die gebruikt wordt voor het aanvragen en verlenen van graafvergunningen voor nutsbedr…" [ref=e106]:
+              - cell "AVOI Manager" [ref=e107]:
+                - link "AVOI Manager" [ref=e108] [cursor=pointer]:
+                  - /url: /pakketten/avoi-manager
+              - cell "NTREE Solutions" [ref=e109]:
+                - link "NTREE Solutions" [ref=e110] [cursor=pointer]:
+                  - /url: /leveranciers/ntree-solutions
+              - cell "AVOI Manager is een web-toepassing die gebruikt wordt voor het aanvragen en verlenen van graafvergunningen voor nutsbedr…" [ref=e111]
+            - row "Aanbestedingenportaal Zorgverkeer Het uitvoeren van aanbestedingen in het Sociaal domein is in de laatste jaren veranderd. Mede door het ontstaan van de S…" [ref=e112]:
+              - cell "Aanbestedingenportaal" [ref=e113]:
+                - link "Aanbestedingenportaal" [ref=e114] [cursor=pointer]:
+                  - /url: /pakketten/aanbestedingenportaal
+              - cell "Zorgverkeer" [ref=e115]:
+                - link "Zorgverkeer" [ref=e116] [cursor=pointer]:
+                  - /url: /leveranciers/zorgverkeer
+              - cell "Het uitvoeren van aanbestedingen in het Sociaal domein is in de laatste jaren veranderd. Mede door het ontstaan van de S…" [ref=e117]
+            - row "Aanbodportaal Zorgverkeer In verschillende gemeenten wordt het aanbodportaal gebruikt om aanbod en wachttijden inzichtelijk te maken voor verwijze…" [ref=e118]:
+              - cell "Aanbodportaal" [ref=e119]:
+                - link "Aanbodportaal" [ref=e120] [cursor=pointer]:
+                  - /url: /pakketten/aanbodportaal
+              - cell "Zorgverkeer" [ref=e121]:
+                - link "Zorgverkeer" [ref=e122] [cursor=pointer]:
+                  - /url: /leveranciers/zorgverkeer
+              - cell "In verschillende gemeenten wordt het aanbodportaal gebruikt om aanbod en wachttijden inzichtelijk te maken voor verwijze…" [ref=e123]
+            - row "Aeolus Back Debiteuren Horlings & Eerbeek Automatisering B.V. Module voor Terugvorderingen, Vehaal en/ of Beslag." [ref=e124]:
+              - cell "Aeolus Back Debiteuren" [ref=e125]:
+                - link "Aeolus Back Debiteuren" [ref=e126] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-debiteuren
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e127]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e128] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Module voor Terugvorderingen, Vehaal en/ of Beslag." [ref=e129]
+            - row "Aeolus Back Hoogwaardig handhaven Horlings & Eerbeek Automatisering B.V. Applicatie voor fraude Ambtenaren" [ref=e130]:
+              - cell "Aeolus Back Hoogwaardig handhaven" [ref=e131]:
+                - link "Aeolus Back Hoogwaardig handhaven" [ref=e132] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-hoogwaardig-handhaven
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e133]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e134] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Applicatie voor fraude Ambtenaren" [ref=e135]
+            - row "Aeolus Back Jeugd Horlings & Eerbeek Automatisering B.V. Back office applicatie voor de verwerking van alle Jeugd Hulp. Deze applicatie beschikt over functionaliteiten zoals rap…" [ref=e136]:
+              - cell "Aeolus Back Jeugd" [ref=e137]:
+                - link "Aeolus Back Jeugd" [ref=e138] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-jeugd
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e139]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e140] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Back office applicatie voor de verwerking van alle Jeugd Hulp. Deze applicatie beschikt over functionaliteiten zoals rap…" [ref=e141]
+            - row "Aeolus Back Leerlingenvervoer Horlings & Eerbeek Automatisering B.V. Applicatie voor de verwerking van aanvragen leerlingenvervoer" [ref=e142]:
+              - cell "Aeolus Back Leerlingenvervoer" [ref=e143]:
+                - link "Aeolus Back Leerlingenvervoer" [ref=e144] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-leerlingenvervoer
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e145]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e146] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Applicatie voor de verwerking van aanvragen leerlingenvervoer" [ref=e147]
+            - row "Aeolus Back Rapportage (Rechtmatigheid / Participatiewet) Horlings & Eerbeek Automatisering B.V. Verwerken van aanvragen Participatiewet, bijzondere bijstand, Langdurigheidstoeslag, IOAW, IOAZ, BBZ, minima etc." [ref=e148]:
+              - cell "Aeolus Back Rapportage (Rechtmatigheid / Participatiewet)" [ref=e149]:
+                - link "Aeolus Back Rapportage (Rechtmatigheid / Participatiewet)" [ref=e150] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-rapportage-rechtmatigheid-participatiewet
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e151]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e152] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Verwerken van aanvragen Participatiewet, bijzondere bijstand, Langdurigheidstoeslag, IOAW, IOAZ, BBZ, minima etc." [ref=e153]
+            - row "Aeolus Back Schuldhulpverlening Horlings & Eerbeek Automatisering B.V. Applicatie voor Schuldhulpverlening" [ref=e154]:
+              - cell "Aeolus Back Schuldhulpverlening" [ref=e155]:
+                - link "Aeolus Back Schuldhulpverlening" [ref=e156] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-schuldhulpverlening
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e157]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e158] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Applicatie voor Schuldhulpverlening" [ref=e159]
+            - row "Aeolus Back Sma Horlings & Eerbeek Automatisering B.V. Applicatie voor medisch adviseurs (Wmo). Aanvragen medisch advies voor Wmo, Participatiewet, Leerlingenvervoer, Uregenti…" [ref=e160]:
+              - cell "Aeolus Back Sma" [ref=e161]:
+                - link "Aeolus Back Sma" [ref=e162] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-sma
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e163]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e164] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Applicatie voor medisch adviseurs (Wmo). Aanvragen medisch advies voor Wmo, Participatiewet, Leerlingenvervoer, Uregenti…" [ref=e165]
+            - row "Aeolus Back Trajecten Horlings & Eerbeek Automatisering B.V. Cliënt Volg systeem t.b.v. de re-intgratie van burgers." [ref=e166]:
+              - cell "Aeolus Back Trajecten" [ref=e167]:
+                - link "Aeolus Back Trajecten" [ref=e168] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-trajecten
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e169]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e170] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Cliënt Volg systeem t.b.v. de re-intgratie van burgers." [ref=e171]
+            - row "Aeolus Back Zorg Horlings & Eerbeek Automatisering B.V. Back office applicatie voor de verwerking van alle Zorg-aanvragen (Wmo, inkomensondersteunende maatregelen). Deze applic…" [ref=e172]:
+              - cell "Aeolus Back Zorg" [ref=e173]:
+                - link "Aeolus Back Zorg" [ref=e174] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-back-zorg
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e175]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e176] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - cell "Back office applicatie voor de verwerking van alle Zorg-aanvragen (Wmo, inkomensondersteunende maatregelen). Deze applic…" [ref=e177]
+            - 'row "Aeolus Front Horlings & Eerbeek Automatisering B.V. Webbased regiesysteem met hierin de volgende modules: - Regievoeren - 1 gezin 1 plan - regietraject - het (keukentafel)…" [ref=e178]':
+              - cell "Aeolus Front" [ref=e179]:
+                - link "Aeolus Front" [ref=e180] [cursor=pointer]:
+                  - /url: /pakketten/aeolus-front
+              - cell "Horlings & Eerbeek Automatisering B.V." [ref=e181]:
+                - link "Horlings & Eerbeek Automatisering B.V." [ref=e182] [cursor=pointer]:
+                  - /url: /leveranciers/horlings-eerbeek-automatisering-bv
+              - 'cell "Webbased regiesysteem met hierin de volgende modules: - Regievoeren - 1 gezin 1 plan - regietraject - het (keukentafel)…" [ref=e183]'
+            - row "Alfamail VISI TECHNIA B.V. Alfamail VISI is een gebruiksvriendelijke webapplicatie voor het vastleggen en beheren van uw formele projectcommunicati…" [ref=e184]:
+              - cell "Alfamail VISI" [ref=e185]:
+                - link "Alfamail VISI" [ref=e186] [cursor=pointer]:
+                  - /url: /pakketten/alfamail-visi
+              - cell "TECHNIA B.V." [ref=e187]:
+                - link "TECHNIA B.V." [ref=e188] [cursor=pointer]:
+                  - /url: /leveranciers/technia-bv
+              - cell "Alfamail VISI is een gebruiksvriendelijke webapplicatie voor het vastleggen en beheren van uw formele projectcommunicati…" [ref=e189]
+            - row "Alice enterprise search Open-T Alice is een geïntegreerd zoek- en content integratie systeem dat informatie uit al uw informatiebronnen verzamelt, anal…" [ref=e190]:
+              - cell "Alice enterprise search" [ref=e191]:
+                - link "Alice enterprise search" [ref=e192] [cursor=pointer]:
+                  - /url: /pakketten/alice-enterprise-search
+              - cell "Open-T" [ref=e193]:
+                - link "Open-T" [ref=e194] [cursor=pointer]:
+                  - /url: /leveranciers/open-t
+              - cell "Alice is een geïntegreerd zoek- en content integratie systeem dat informatie uit al uw informatiebronnen verzamelt, anal…" [ref=e195]
+            - row "Allegro Kred'it Allegro een modulair opgebouwde set van programma’s specifiek ontwikkeld voor schuldhulpverleners. We hebben in de loop …" [ref=e196]:
+              - cell "Allegro" [ref=e197]:
+                - link "Allegro" [ref=e198] [cursor=pointer]:
+                  - /url: /pakketten/allegro
+              - cell "Kred'it" [ref=e199]:
+                - link "Kred'it" [ref=e200] [cursor=pointer]:
+                  - /url: /leveranciers/kredit
+              - cell "Allegro een modulair opgebouwde set van programma’s specifiek ontwikkeld voor schuldhulpverleners. We hebben in de loop …" [ref=e201]
+            - row "Amyyon CRM Amyyon Amyyon CRM is een pakket welke bij uitstek geschikt is voor bijvoorbeeld de afdeling Economische zaken, waarbij het het …" [ref=e202]:
+              - cell "Amyyon CRM" [ref=e203]:
+                - link "Amyyon CRM" [ref=e204] [cursor=pointer]:
+                  - /url: /pakketten/amyyon-crm
+              - cell "Amyyon" [ref=e205]:
+                - link "Amyyon" [ref=e206] [cursor=pointer]:
+                  - /url: /leveranciers/amyyon
+              - cell "Amyyon CRM is een pakket welke bij uitstek geschikt is voor bijvoorbeeld de afdeling Economische zaken, waarbij het het …" [ref=e207]
+            - row "Analyse/Data Intelligence/Predictive Analitics Data Kitchen B.V. De gemeente beschikt over heel veel data die nog niet optimaal worden benut. Data Kitchen zet deze data om in pasklare b…" [ref=e208]:
+              - cell "Analyse/Data Intelligence/Predictive Analitics" [ref=e209]:
+                - link "Analyse/Data Intelligence/Predictive Analitics" [ref=e210] [cursor=pointer]:
+                  - /url: /pakketten/analysedata-intelligencepredictive-analitics
+              - cell "Data Kitchen B.V." [ref=e211]:
+                - link "Data Kitchen B.V." [ref=e212] [cursor=pointer]:
+                  - /url: /leveranciers/data-kitchen-bv
+              - cell "De gemeente beschikt over heel veel data die nog niet optimaal worden benut. Data Kitchen zet deze data om in pasklare b…" [ref=e213]
+        - generic [ref=e214]:
+          - generic [ref=e215]: Pagina 1 van 45
+          - link "Volgende →" [ref=e216] [cursor=pointer]:
+            - /url: /pakketten?pagina=2
+  - contentinfo "Footer" [ref=e217]:
+    - generic [ref=e218]:
+      - generic [ref=e219]:
+        - link "Onderwerpen VNG" [ref=e220] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacyverklaring" [ref=e221] [cursor=pointer]:
+          - /url: "#"
+        - link "Over VNG Realisatie" [ref=e222] [cursor=pointer]:
+          - /url: "#"
+        - link "Vacatures" [ref=e223] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e224]:
+        - link "Agenda VNG" [ref=e225] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuws" [ref=e226] [cursor=pointer]:
+          - /url: "#"
+        - link "Contact" [ref=e227] [cursor=pointer]:
+          - /url: "#"
+        - link "Meld aan VNG Realisatie" [ref=e228] [cursor=pointer]:
+          - /url: "#"
+        - link "Help" [ref=e229] [cursor=pointer]:
+          - /url: /help
+      - generic [ref=e230]:
+        - link "Twitter" [ref=e231] [cursor=pointer]:
+          - /url: "#"
+        - link "Linkedin" [ref=e232] [cursor=pointer]:
+          - /url: "#"
+        - link "Youtube" [ref=e233] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuwsbrief GEMMA" [ref=e234] [cursor=pointer]:
+          - /url: "#"
+        - link "RSS Feed" [ref=e235] [cursor=pointer]:
+          - /url: /api/feed
+          - img [ref=e236]
+          - text: RSS Feed
+    - generic [ref=e239]: Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
+  - button "Open Next.js Dev Tools" [ref=e245] [cursor=pointer]:
+    - img [ref=e246]
+  - alert [ref=e249]
+```
