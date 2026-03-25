@@ -21,14 +21,14 @@ async function getMarktverdelingData(): Promise<LeverancierData[]> {
       pakketten: {
         select: {
           id: true,
+          referentiecomponenten: {
+            select: { referentiecomponentId: true },
+          },
           versies: {
             select: {
               id: true,
               gemeentePakketten: {
                 select: { gemeenteId: true },
-              },
-              referentiecomponenten: {
-                select: { referentiecomponentId: true },
               },
             },
           },
@@ -45,12 +45,12 @@ async function getMarktverdelingData(): Promise<LeverancierData[]> {
 
       for (const pakket of lev.pakketten) {
         uniquePakketten.add(pakket.id);
+        for (const rc of pakket.referentiecomponenten) {
+          uniqueRefcomps.add(rc.referentiecomponentId);
+        }
         for (const versie of pakket.versies) {
           for (const gp of versie.gemeentePakketten) {
             uniqueGemeenten.add(gp.gemeenteId);
-          }
-          for (const rc of versie.referentiecomponenten) {
-            uniqueRefcomps.add(rc.referentiecomponentId);
           }
         }
       }

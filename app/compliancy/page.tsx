@@ -16,21 +16,22 @@ export default async function CompliancyMonitorPage() {
     },
     include: {
       standaard: true,
-      pakketversies: {
+      pakketten: {
         include: {
-          pakketversie: {
+          pakket: {
             include: {
-              pakket: {
-                include: { leverancier: true },
+              leverancier: true,
+              versies: {
+                orderBy: { startDistributie: "desc" },
+                take: 1,
+                select: { id: true, naam: true },
               },
             },
           },
         },
         orderBy: {
-          pakketversie: {
-            pakket: {
-              leverancier: { naam: "asc" },
-            },
+          pakket: {
+            leverancier: { naam: "asc" },
           },
         },
       },
@@ -97,7 +98,7 @@ export default async function CompliancyMonitorPage() {
                     )}
                   </div>
 
-                  {sv.pakketversies.length === 0 ? (
+                  {sv.pakketten.length === 0 ? (
                     <p className="px-5 py-3 text-sm text-gray-400">
                       Geen pakketversies geregistreerd voor deze standaard.
                     </p>
@@ -117,30 +118,31 @@ export default async function CompliancyMonitorPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {sv.pakketversies.map((pvs) => {
-                          const pv = pvs.pakketversie;
-                          const isCompliant = pvs.compliancy === true;
-                          const isNotCompliant = pvs.compliancy === false;
+                        {sv.pakketten.map((ps) => {
+                          const p = ps.pakket;
+                          const latestV = p.versies[0];
+                          const isCompliant = ps.compliancy === true;
+                          const isNotCompliant = ps.compliancy === false;
 
                           return (
                             <tr
-                              key={pv.id}
+                              key={p.id}
                               className="border-b border-gray-100 hover:bg-gray-50"
                             >
                               <td className="px-5 py-2">
                                 <Link
-                                  href={`/leveranciers/${pv.pakket.leverancier.slug}`}
+                                  href={`/leveranciers/${p.leverancier.slug}`}
                                   className="text-[#1a6ca8] hover:underline"
                                 >
-                                  {pv.pakket.leverancier.naam}
+                                  {p.leverancier.naam}
                                 </Link>
                               </td>
                               <td className="px-5 py-2">
                                 <Link
-                                  href={`/pakketten/${pv.pakket.slug}`}
+                                  href={`/pakketten/${p.slug}`}
                                   className="text-[#1a6ca8] hover:underline"
                                 >
-                                  {pv.pakket.naam} - {pv.naam}
+                                  {p.naam}{latestV ? ` - ${latestV.naam}` : ""}
                                 </Link>
                               </td>
                               <td className="px-5 py-2">
@@ -188,10 +190,10 @@ export default async function CompliancyMonitorPage() {
                   )}
 
                   {/* Samenvatting */}
-                  {sv.pakketversies.length > 0 && (
+                  {sv.pakketten.length > 0 && (
                     <div className="px-5 py-2 bg-gray-50 border-t border-gray-200 text-xs text-gray-500">
-                      {sv.pakketversies.filter((p) => p.compliancy === true).length} van{" "}
-                      {sv.pakketversies.length} compliant
+                      {sv.pakketten.filter((p) => p.compliancy === true).length} van{" "}
+                      {sv.pakketten.length} compliant
                     </div>
                   )}
                 </div>

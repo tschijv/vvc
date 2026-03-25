@@ -17,18 +17,18 @@ export async function loadPakketRows(
 
   let filtered = gps;
   if (filters?.compliancy === "niet") {
-    filtered = filtered.filter((gp) => !gp.pakketversie.standaarden.some((s) => s.compliancy));
+    filtered = filtered.filter((gp) => !gp.pakketversie.pakket.standaarden.some((s) => s.compliancy));
   } else if (filters?.compliancy === "wel") {
-    filtered = filtered.filter((gp) => gp.pakketversie.standaarden.some((s) => s.compliancy));
+    filtered = filtered.filter((gp) => gp.pakketversie.pakket.standaarden.some((s) => s.compliancy));
   }
   if (filters?.standaard) {
     filtered = filtered.filter((gp) =>
-      gp.pakketversie.standaarden.some((s) => `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}` === filters.standaard)
+      gp.pakketversie.pakket.standaarden.some((s) => `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}` === filters.standaard)
     );
   }
   if (filters?.testrapport) {
     filtered = filtered.filter((gp) =>
-      gp.pakketversie.standaarden.some((s) => s.compliancy && `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}` === filters.testrapport)
+      gp.pakketversie.pakket.standaarden.some((s) => s.compliancy && `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}` === filters.testrapport)
     );
   }
 
@@ -40,10 +40,10 @@ export async function loadPakketRows(
     versie: gp.pakketversie.naam,
     status: gp.status,
     datumIngangStatus: gp.datumIngangStatus,
-    gebruiktVoor: gp.pakketversie.referentiecomponenten.map((r) => r.referentiecomponent.naam),
-    hasCompliancy: gp.pakketversie.standaarden.some((s) => s.compliancy === true),
-    standaardNamen: Array.from(new Set<string>(gp.pakketversie.standaarden.map((s: { standaardversie: { standaard: { naam: string } } }) => s.standaardversie.standaard.naam))),
-    testrapportStandaarden: Array.from(new Set<string>(gp.pakketversie.standaarden.filter((s: { compliancy: boolean | null }) => s.compliancy).map((s: { standaardversie: { standaard: { naam: string } } }) => s.standaardversie.standaard.naam))),
+    gebruiktVoor: gp.pakketversie.pakket.referentiecomponenten.map((r) => r.referentiecomponent.naam),
+    hasCompliancy: gp.pakketversie.pakket.standaarden.some((s) => s.compliancy === true),
+    standaardNamen: Array.from(new Set<string>(gp.pakketversie.pakket.standaarden.map((s: { standaardversie: { standaard: { naam: string } } }) => s.standaardversie.standaard.naam))),
+    testrapportStandaarden: Array.from(new Set<string>(gp.pakketversie.pakket.standaarden.filter((s: { compliancy: boolean | null }) => s.compliancy).map((s: { standaardversie: { standaard: { naam: string } } }) => s.standaardversie.standaard.naam))),
     technologie: gp.technologie,
     verantwoordelijke: gp.verantwoordelijke,
     licentievorm: gp.licentievorm,

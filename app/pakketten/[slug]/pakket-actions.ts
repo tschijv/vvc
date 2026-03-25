@@ -232,18 +232,25 @@ export async function getAllReferentiecomponenten() {
 }
 
 /**
- * Fetch current referentiecomponenten for a pakketversie.
+ * Fetch current referentiecomponenten for a pakket.
  */
 export async function getPakketversieRefcomps(pakketversieId: string) {
-  const links = await prisma.pakketversieReferentiecomponent.findMany({
-    where: { pakketversieId, type: "leverancier" },
+  // Look up the pakketId from the versie, then get pakket-level refcomps
+  const versie = await prisma.pakketversie.findUnique({
+    where: { id: pakketversieId },
+    select: { pakketId: true },
+  });
+  if (!versie) return [];
+  const links = await prisma.pakketReferentiecomponent.findMany({
+    where: { pakketId: versie.pakketId, type: "leverancier" },
     select: { referentiecomponentId: true },
   });
   return links.map((l) => l.referentiecomponentId);
 }
 
 /**
- * Update referentiecomponenten for a pakketversie (replace all of type "leverancier").
+ * Update referentiecomponenten for a pakket (replace all of type "leverancier").
+ * Still accepts pakketversieId for backwards compatibility with the modal.
  */
 export async function updatePakketversieRefcomps(
   pakketversieId: string,
@@ -253,7 +260,7 @@ export async function updatePakketversieRefcomps(
 
   const versie = await prisma.pakketversie.findUnique({
     where: { id: pakketversieId },
-    select: { pakket: { select: { leverancierId: true } } },
+    select: { pakketId: true, pakket: { select: { leverancierId: true } } },
   });
   if (!versie) return { error: "Pakketversie niet gevonden." };
 
@@ -262,16 +269,16 @@ export async function updatePakketversieRefcomps(
   }
 
   try {
-    // Delete existing leverancier-type links
-    await prisma.pakketversieReferentiecomponent.deleteMany({
-      where: { pakketversieId, type: "leverancier" },
+    // Delete existing leverancier-type links at pakket level
+    await prisma.pakketReferentiecomponent.deleteMany({
+      where: { pakketId: versie.pakketId, type: "leverancier" },
     });
 
     // Create new links
     if (referentiecomponentIds.length > 0) {
-      await prisma.pakketversieReferentiecomponent.createMany({
+      await prisma.pakketReferentiecomponent.createMany({
         data: referentiecomponentIds.map((rcId) => ({
-          pakketversieId,
+          pakketId: versie.pakketId,
           referentiecomponentId: rcId,
           type: "leverancier",
         })),
@@ -282,8 +289,8 @@ export async function updatePakketversieRefcomps(
       userId: user!.id,
       userEmail: user!.email,
       actie: "update",
-      entiteit: "PakketversieReferentiecomponent",
-      entiteitId: pakketversieId,
+      entiteit: "PakketReferentiecomponent",
+      entiteitId: versie.pakketId,
       details: `Referentiecomponenten bijgewerkt: ${referentiecomponentIds.length} geselecteerd`,
     });
 
@@ -366,18 +373,23 @@ export async function getAllStandaardversies() {
 }
 
 /**
- * Fetch current standaardversies for a pakketversie.
+ * Fetch current standaardversies for a pakket (via pakketversieId for compat).
  */
 export async function getPakketversieStandaarden(pakketversieId: string) {
-  const links = await prisma.pakketversieStandaard.findMany({
-    where: { pakketversieId },
+  const versie = await prisma.pakketversie.findUnique({
+    where: { id: pakketversieId },
+    select: { pakketId: true },
+  });
+  if (!versie) return [];
+  const links = await prisma.pakketStandaard.findMany({
+    where: { pakketId: versie.pakketId },
     select: { standaardversieId: true, compliancy: true },
   });
   return links.map((l) => ({ standaardversieId: l.standaardversieId, compliancy: l.compliancy }));
 }
 
 /**
- * Update standaarden for a pakketversie (replace all).
+ * Update standaarden for a pakket (replace all). Accepts pakketversieId for compat.
  */
 export async function updatePakketversieStandaarden(
   pakketversieId: string,
@@ -387,7 +399,7 @@ export async function updatePakketversieStandaarden(
 
   const versie = await prisma.pakketversie.findUnique({
     where: { id: pakketversieId },
-    select: { pakket: { select: { leverancierId: true } } },
+    select: { pakketId: true, pakket: { select: { leverancierId: true } } },
   });
   if (!versie) return { error: "Pakketversie niet gevonden." };
   if (!canEditLeverancierPakket(user, versie.pakket.leverancierId)) {
@@ -395,11 +407,11 @@ export async function updatePakketversieStandaarden(
   }
 
   try {
-    await prisma.pakketversieStandaard.deleteMany({ where: { pakketversieId } });
+    await prisma.pakketStandaard.deleteMany({ where: { pakketId: versie.pakketId } });
     if (standaarden.length > 0) {
-      await prisma.pakketversieStandaard.createMany({
+      await prisma.pakketStandaard.createMany({
         data: standaarden.map((s) => ({
-          pakketversieId,
+          pakketId: versie.pakketId,
           standaardversieId: s.standaardversieId,
           compliancy: s.compliancy,
         })),
@@ -408,7 +420,7 @@ export async function updatePakketversieStandaarden(
 
     await logAudit({
       userId: user!.id, userEmail: user!.email,
-      actie: "update", entiteit: "PakketversieStandaard", entiteitId: pakketversieId,
+      actie: "update", entiteit: "PakketStandaard", entiteitId: versie.pakketId,
       details: `Standaarden bijgewerkt: ${standaarden.length} geselecteerd`,
     });
     return { success: true };
@@ -429,18 +441,23 @@ export async function getAllApplicatiefuncties() {
 }
 
 /**
- * Fetch current applicatiefuncties for a pakketversie.
+ * Fetch current applicatiefuncties for a pakket (via pakketversieId for compat).
  */
 export async function getPakketversieAppFuncties(pakketversieId: string) {
-  const links = await prisma.pakketversieApplicatiefunctie.findMany({
-    where: { pakketversieId },
+  const versie = await prisma.pakketversie.findUnique({
+    where: { id: pakketversieId },
+    select: { pakketId: true },
+  });
+  if (!versie) return [];
+  const links = await prisma.pakketApplicatiefunctie.findMany({
+    where: { pakketId: versie.pakketId },
     select: { applicatiefunctieId: true },
   });
   return links.map((l) => l.applicatiefunctieId);
 }
 
 /**
- * Update applicatiefuncties for a pakketversie (replace all).
+ * Update applicatiefuncties for a pakket (replace all). Accepts pakketversieId for compat.
  */
 export async function updatePakketversieAppFuncties(
   pakketversieId: string,
@@ -450,7 +467,7 @@ export async function updatePakketversieAppFuncties(
 
   const versie = await prisma.pakketversie.findUnique({
     where: { id: pakketversieId },
-    select: { pakket: { select: { leverancierId: true } } },
+    select: { pakketId: true, pakket: { select: { leverancierId: true } } },
   });
   if (!versie) return { error: "Pakketversie niet gevonden." };
   if (!canEditLeverancierPakket(user, versie.pakket.leverancierId)) {
@@ -458,11 +475,11 @@ export async function updatePakketversieAppFuncties(
   }
 
   try {
-    await prisma.pakketversieApplicatiefunctie.deleteMany({ where: { pakketversieId } });
+    await prisma.pakketApplicatiefunctie.deleteMany({ where: { pakketId: versie.pakketId } });
     if (applicatiefunctieIds.length > 0) {
-      await prisma.pakketversieApplicatiefunctie.createMany({
+      await prisma.pakketApplicatiefunctie.createMany({
         data: applicatiefunctieIds.map((afId) => ({
-          pakketversieId,
+          pakketId: versie.pakketId,
           applicatiefunctieId: afId,
         })),
       });
@@ -470,7 +487,7 @@ export async function updatePakketversieAppFuncties(
 
     await logAudit({
       userId: user!.id, userEmail: user!.email,
-      actie: "update", entiteit: "PakketversieApplicatiefunctie", entiteitId: pakketversieId,
+      actie: "update", entiteit: "PakketApplicatiefunctie", entiteitId: versie.pakketId,
       details: `Applicatiefuncties bijgewerkt: ${applicatiefunctieIds.length} geselecteerd`,
     });
     return { success: true };
@@ -481,18 +498,23 @@ export async function updatePakketversieAppFuncties(
 }
 
 /**
- * Fetch current technologieën for a pakketversie.
+ * Fetch current technologieen for a pakket (via pakketversieId for compat).
  */
 export async function getPakketversieTechnologieen(pakketversieId: string) {
-  const links = await prisma.pakketversieTechnologie.findMany({
-    where: { pakketversieId },
+  const versie = await prisma.pakketversie.findUnique({
+    where: { id: pakketversieId },
+    select: { pakketId: true },
+  });
+  if (!versie) return [];
+  const links = await prisma.pakketTechnologie.findMany({
+    where: { pakketId: versie.pakketId },
     select: { technologie: true },
   });
   return links.map((l) => l.technologie);
 }
 
 /**
- * Update technologieën for a pakketversie (replace all).
+ * Update technologieen for a pakket (replace all). Accepts pakketversieId for compat.
  */
 export async function updatePakketversieTechnologieen(
   pakketversieId: string,
@@ -502,7 +524,7 @@ export async function updatePakketversieTechnologieen(
 
   const versie = await prisma.pakketversie.findUnique({
     where: { id: pakketversieId },
-    select: { pakket: { select: { leverancierId: true } } },
+    select: { pakketId: true, pakket: { select: { leverancierId: true } } },
   });
   if (!versie) return { error: "Pakketversie niet gevonden." };
   if (!canEditLeverancierPakket(user, versie.pakket.leverancierId)) {
@@ -510,11 +532,11 @@ export async function updatePakketversieTechnologieen(
   }
 
   try {
-    await prisma.pakketversieTechnologie.deleteMany({ where: { pakketversieId } });
+    await prisma.pakketTechnologie.deleteMany({ where: { pakketId: versie.pakketId } });
     if (technologieen.length > 0) {
-      await prisma.pakketversieTechnologie.createMany({
+      await prisma.pakketTechnologie.createMany({
         data: technologieen.filter((t) => t.trim()).map((t) => ({
-          pakketversieId,
+          pakketId: versie.pakketId,
           technologie: t.trim(),
         })),
       });
@@ -522,7 +544,7 @@ export async function updatePakketversieTechnologieen(
 
     await logAudit({
       userId: user!.id, userEmail: user!.email,
-      actie: "update", entiteit: "PakketversieTechnologie", entiteitId: pakketversieId,
+      actie: "update", entiteit: "PakketTechnologie", entiteitId: versie.pakketId,
       details: `Technologieën bijgewerkt: ${technologieen.length}`,
     });
     return { success: true };

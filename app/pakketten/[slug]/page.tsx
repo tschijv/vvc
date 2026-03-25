@@ -112,18 +112,11 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
       .sort((a, b) => b.datum.getTime() - a.datum.getTime());
   }
 
-  // Aggregate referentiecomponenten per naam (across all versions)
-  const refCompMap = new Map<string, { naam: string; aantalGemeenten: number }>();
-  for (const versie of pakket.versies) {
-    for (const prc of versie.referentiecomponenten) {
-      const naam = prc.referentiecomponent.naam;
-      const existing = refCompMap.get(naam);
-      if (!existing || prc.aantalGemeenten > existing.aantalGemeenten) {
-        refCompMap.set(naam, { naam, aantalGemeenten: prc.aantalGemeenten });
-      }
-    }
-  }
-  const refComps = Array.from(refCompMap.values());
+  // Referentiecomponenten are now directly on pakket
+  const refComps = pakket.referentiecomponenten.map((prc) => ({
+    naam: prc.referentiecomponent.naam,
+    aantalGemeenten: prc.aantalGemeenten,
+  }));
 
   return (
     <div>
@@ -328,7 +321,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
       {latestVersie && (
         <div>
           <div className="text-sm font-semibold text-blue-700 border-b mb-4 pb-1">
-            Details pakketversie: {pakket.naam} {latestVersie.naam} — Status:{" "}
+            Details pakket: {pakket.naam} — Laatste versie: {latestVersie.naam} — Status:{" "}
             <span className={`px-2 py-0.5 rounded text-xs ${STATUS_COLORS[latestVersie.status] || ""}`}>
               {latestVersie.status}
             </span>
@@ -361,7 +354,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
                 </tr>
               </thead>
               <tbody>
-                {latestVersie.standaarden.map((ps) => (
+                {pakket.standaarden.map((ps) => (
                   <tr key={ps.standaardversieId} className="border-b border-gray-100">
                     <td className="py-1.5 pr-4">{ps.standaardversie.standaard.naam}</td>
                     <td className="py-1.5 pr-4 text-gray-600">{ps.standaardversie.naam}</td>
@@ -374,7 +367,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
                     </td>
                   </tr>
                 ))}
-                {latestVersie.standaarden.length === 0 && (
+                {pakket.standaarden.length === 0 && (
                   <tr>
                     <td colSpan={3} className="py-3 text-gray-500 italic">
                       Geen standaarden geregistreerd
@@ -394,13 +387,13 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
                 </tr>
               </thead>
               <tbody>
-                {latestVersie.applicatiefuncties.map((af) => (
+                {pakket.applicatiefuncties.map((af) => (
                   <tr key={af.applicatiefunctieId} className="border-b border-gray-100">
                     <td className="py-1.5 pr-4">{af.applicatiefunctie.naam}</td>
                     <td className="py-1.5">{af.ondersteund ? "✓" : "✗"}</td>
                   </tr>
                 ))}
-                {latestVersie.applicatiefuncties.length === 0 && (
+                {pakket.applicatiefuncties.length === 0 && (
                   <tr>
                     <td colSpan={2} className="py-3 text-gray-500 italic">
                       Geen applicatiefuncties geregistreerd
@@ -413,9 +406,9 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
 
           {tab === "technologie" && (
             <div className="text-sm">
-              {latestVersie.technologieen.length > 0 ? (
+              {pakket.technologieen.length > 0 ? (
                 <ul className="space-y-1">
-                  {latestVersie.technologieen.map((t) => (
+                  {pakket.technologieen.map((t) => (
                     <li key={t.technologie} className="flex items-center gap-2">
                       <span className="w-2 h-2 rounded-full bg-blue-500 inline-block" />
                       {t.technologie}

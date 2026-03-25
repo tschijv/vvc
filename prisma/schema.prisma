@@ -9,14 +9,14 @@ datasource db {
 // ─── Referentiemodel ────────────────────────────────────────────────────────
 
 model Referentiecomponent {
-  id                    String                            @id @default(uuid())
+  id                    String                       @id @default(uuid())
   naam                  String
   guid                  String?
   beschrijving          String?
   status                String?
-  pakketversies         PakketversieReferentiecomponent[]
-  createdAt             DateTime                          @default(now())
-  updatedAt             DateTime                          @updatedAt
+  pakketten             PakketReferentiecomponent[]
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
 }
 
 model Standaard {
@@ -38,19 +38,19 @@ model Standaardversie {
   compliancyMonitor     Boolean                 @default(false)
   standaard             Standaard               @relation(fields: [standaardId], references: [id])
   standaardId           String
-  pakketversies         PakketversieStandaard[]
+  pakketten             PakketStandaard[]
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
 }
 
 model Applicatiefunctie {
-  id                    String                          @id @default(uuid())
-  naam                  String                          @unique
+  id                    String                     @id @default(uuid())
+  naam                  String                     @unique
   guid                  String?
   beschrijving          String?
-  pakketversies         PakketversieApplicatiefunctie[]
-  createdAt             DateTime                        @default(now())
-  updatedAt             DateTime                        @updatedAt
+  pakketten             PakketApplicatiefunctie[]
+  createdAt             DateTime                   @default(now())
+  updatedAt             DateTime                   @updatedAt
 }
 
 // ─── GEMMA Views ───────────────────────────────────────────────────────────
@@ -170,19 +170,23 @@ model LeverancierAddendum {
 // ─── Pakketten ───────────────────────────────────────────────────────────────
 
 model Pakket {
-  id                    String         @id @default(uuid())
+  id                    String                       @id @default(uuid())
   naam                  String
-  slug                  String         @unique
+  slug                  String                       @unique
   beschrijving          String?
   urlProductpagina      String?
-  aantalGemeenten       Int            @default(0)
+  aantalGemeenten       Int                          @default(0)
   mutatiedatum          DateTime?
-  leverancier           Leverancier    @relation(fields: [leverancierId], references: [id])
+  leverancier           Leverancier                  @relation(fields: [leverancierId], references: [id])
   leverancierId         String
   versies               Pakketversie[]
   contactpersonen       PakketContact[]
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  referentiecomponenten PakketReferentiecomponent[]
+  standaarden           PakketStandaard[]
+  applicatiefuncties    PakketApplicatiefunctie[]
+  technologieen         PakketTechnologie[]
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
 
   @@index([leverancierId])
 }
@@ -199,28 +203,24 @@ model PakketContact {
 }
 
 model Pakketversie {
-  id                    String                            @id @default(uuid())
+  id                    String         @id @default(uuid())
   naam                  String
   status                String
   beschrijving          String?
   startOntwikkeling     DateTime?
   startTest             DateTime?
   startDistributie      DateTime?
-  aantalGemeenten       Int                               @default(0)
+  aantalGemeenten       Int            @default(0)
   mutatiedatum          DateTime?
-  pakket                Pakket                            @relation(fields: [pakketId], references: [id])
+  pakket                Pakket         @relation(fields: [pakketId], references: [id])
   pakketId              String
-  referentiecomponenten PakketversieReferentiecomponent[]
-  standaarden           PakketversieStandaard[]
-  applicatiefuncties    PakketversieApplicatiefunctie[]
   gemeentePakketten     GemeentePakket[]
-  technologieen         PakketversieTechnologie[]
-  koppelingenAlsBron    Koppeling[]                       @relation("koppelingBron")
-  koppelingenAlsDoel    Koppeling[]                       @relation("koppelingDoel")
-  koppelingenAlsIntermediair Koppeling[]                  @relation("koppelingIntermediair")
+  koppelingenAlsBron    Koppeling[]    @relation("koppelingBron")
+  koppelingenAlsDoel    Koppeling[]    @relation("koppelingDoel")
+  koppelingenAlsIntermediair Koppeling[] @relation("koppelingIntermediair")
   testrapporten         Testrapport[]
-  createdAt             DateTime                          @default(now())
-  updatedAt             DateTime                          @updatedAt
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
 
   @@index([pakketId])
 }
@@ -245,48 +245,48 @@ model Testrapport {
 
 // ─── Koppeltabellen ──────────────────────────────────────────────────────────
 
-model PakketversieReferentiecomponent {
-  pakketversie          Pakketversie        @relation(fields: [pakketversieId], references: [id])
-  pakketversieId        String
+model PakketReferentiecomponent {
+  pakket                Pakket              @relation(fields: [pakketId], references: [id])
+  pakketId              String
   referentiecomponent   Referentiecomponent @relation(fields: [referentiecomponentId], references: [id])
   referentiecomponentId String
   type                  String              // leverancier | gemeente
   aantalGemeenten       Int                 @default(0)
 
-  @@id([pakketversieId, referentiecomponentId, type])
+  @@id([pakketId, referentiecomponentId, type])
   @@index([referentiecomponentId])
 }
 
-model PakketversieStandaard {
-  pakketversie          Pakketversie    @relation(fields: [pakketversieId], references: [id])
-  pakketversieId        String
+model PakketStandaard {
+  pakket                Pakket          @relation(fields: [pakketId], references: [id])
+  pakketId              String
   standaardversie       Standaardversie @relation(fields: [standaardversieId], references: [id])
   standaardversieId     String
   compliancy            Boolean?
   testrappportUrl       String?
   compliancyIndicated   Boolean?
 
-  @@id([pakketversieId, standaardversieId])
+  @@id([pakketId, standaardversieId])
   @@index([standaardversieId])
   @@index([compliancy])
 }
 
-model PakketversieApplicatiefunctie {
-  pakketversie          Pakketversie      @relation(fields: [pakketversieId], references: [id])
-  pakketversieId        String
+model PakketApplicatiefunctie {
+  pakket                Pakket            @relation(fields: [pakketId], references: [id])
+  pakketId              String
   applicatiefunctie     Applicatiefunctie @relation(fields: [applicatiefunctieId], references: [id])
   applicatiefunctieId   String
   ondersteund           Boolean           @default(true)
 
-  @@id([pakketversieId, applicatiefunctieId])
+  @@id([pakketId, applicatiefunctieId])
 }
 
-model PakketversieTechnologie {
-  pakketversie          Pakketversie @relation(fields: [pakketversieId], references: [id])
-  pakketversieId        String
+model PakketTechnologie {
+  pakket                Pakket @relation(fields: [pakketId], references: [id])
+  pakketId              String
   technologie           String
 
-  @@id([pakketversieId, technologie])
+  @@id([pakketId, technologie])
 }
 
 // ─── Gemeenten ───────────────────────────────────────────────────────────────

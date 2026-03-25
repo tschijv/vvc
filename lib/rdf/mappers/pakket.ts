@@ -13,6 +13,8 @@ interface PakketInput {
   slug: string;
   beschrijving?: string | null;
   leverancier?: { slug: string } | null;
+  referentiecomponenten?: { referentiecomponentId: string }[];
+  standaarden?: { standaardversie?: { id: string; standaardId: string } | null }[];
   versies?: PakketversieInput[];
 }
 
@@ -21,8 +23,6 @@ interface PakketversieInput {
   naam?: string | null;
   status?: string | null;
   pakket?: { slug: string };
-  referentiecomponenten?: { referentiecomponentId: string }[];
-  standaarden?: { standaardversie?: { id: string; standaardId: string } | null }[];
 }
 
 export function pakketToTriples(pakket: PakketInput): Quad[] {
@@ -38,6 +38,22 @@ export function pakketToTriples(pakket: PakketInput): Quad[] {
 
   if (pakket.leverancier) {
     quads.push(quad(subject, SCHEMA.provider, leverancierUri(pakket.leverancier.slug)));
+  }
+
+  if (pakket.referentiecomponenten) {
+    for (const rc of pakket.referentiecomponenten) {
+      quads.push(quad(subject, VVC.implementeert, referentiecomponentUri(rc.referentiecomponentId)));
+    }
+  }
+
+  if (pakket.standaarden) {
+    for (const s of pakket.standaarden) {
+      if (s.standaardversie) {
+        quads.push(
+          quad(subject, DCT.conformsTo, standaardversieUri(s.standaardversie.standaardId, s.standaardversie.id))
+        );
+      }
+    }
   }
 
   if (pakket.versies) {
@@ -69,22 +85,6 @@ export function pakketversieToTriples(
 
   if (versie.status) {
     quads.push(quad(subject, VVC.status, literal(versie.status)));
-  }
-
-  if (versie.referentiecomponenten) {
-    for (const rc of versie.referentiecomponenten) {
-      quads.push(quad(subject, VVC.implementeert, referentiecomponentUri(rc.referentiecomponentId)));
-    }
-  }
-
-  if (versie.standaarden) {
-    for (const s of versie.standaarden) {
-      if (s.standaardversie) {
-        quads.push(
-          quad(subject, DCT.conformsTo, standaardversieUri(s.standaardversie.standaardId, s.standaardversie.id))
-        );
-      }
-    }
   }
 
   return quads;

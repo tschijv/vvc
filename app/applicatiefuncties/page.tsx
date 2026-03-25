@@ -89,12 +89,12 @@ export default async function ApplicatiefunctiesPage({ searchParams }: Props) {
                     : "—"}
                 </td>
                 <td className="py-2 px-4 text-right">
-                  {f._count.pakketversies > 0 ? (
+                  {f._count.pakketten > 0 ? (
                     <Link
                       href={`/pakketten?applicatiefunctie=${encodeURIComponent(f.naam)}`}
                       className="text-[#1a6ca8] hover:underline"
                     >
-                      {f._count.pakketversies}
+                      {f._count.pakketten}
                     </Link>
                   ) : (
                     <span className="text-gray-400">0</span>

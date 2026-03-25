@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       naam: rc.naam,
       guid: rc.guid,
       beschrijving: rc.beschrijving,
-      aantalPakketversies: rc._count.pakketversies,
+      aantalPakketversies: rc._count.pakketten,
     }));
 
     return NextResponse.json(

@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Haal pakketversies op die de geselecteerde referentiecomponenten implementeren
-  const pakketversies = await prisma.pakketversie.findMany({
+  // Haal pakketten op die de geselecteerde referentiecomponenten implementeren
+  const pakketten = await prisma.pakket.findMany({
     where: {
       referentiecomponenten: {
         some: {
@@ -31,9 +31,7 @@ export async function GET(request: NextRequest) {
       },
     },
     include: {
-      pakket: {
-        include: { leverancier: true },
-      },
+      leverancier: true,
       referentiecomponenten: {
         where: {
           referentiecomponentId: { in: refcompIds },
@@ -47,22 +45,27 @@ export async function GET(request: NextRequest) {
           },
         },
       },
+      versies: {
+        orderBy: { startDistributie: "desc" },
+        take: 1,
+        select: { naam: true, status: true },
+      },
     },
-    orderBy: { pakket: { leverancier: { naam: "asc" } } },
+    orderBy: { leverancier: { naam: "asc" } },
   });
 
   // Transformeer naar een handig response formaat
-  const aanbod = pakketversies.map((pv) => ({
-    leverancier: pv.pakket.leverancier.naam,
-    leverancierSlug: pv.pakket.leverancier.slug,
-    pakket: pv.pakket.naam,
-    pakketSlug: pv.pakket.slug,
-    versie: pv.naam,
-    status: pv.status,
-    referentiecomponenten: pv.referentiecomponenten.map((rc) => ({
+  const aanbod = pakketten.map((p) => ({
+    leverancier: p.leverancier.naam,
+    leverancierSlug: p.leverancier.slug,
+    pakket: p.naam,
+    pakketSlug: p.slug,
+    versie: p.versies[0]?.naam || "",
+    status: p.versies[0]?.status || "Onbekend",
+    referentiecomponenten: p.referentiecomponenten.map((rc) => ({
       naam: rc.referentiecomponent.naam,
     })),
-    standaarden: pv.standaarden.map((s) => ({
+    standaarden: p.standaarden.map((s) => ({
       naam: s.standaardversie.standaard.naam,
       versie: s.standaardversie.naam,
       compliancy: s.compliancy,
@@ -74,8 +77,8 @@ export async function GET(request: NextRequest) {
     string,
     { naam: string; versies: Set<string> }
   >();
-  for (const pv of pakketversies) {
-    for (const s of pv.standaarden) {
+  for (const p of pakketten) {
+    for (const s of p.standaarden) {
       const key = s.standaardversie.standaard.naam;
       if (!standaardenMap.has(key)) {
         standaardenMap.set(key, { naam: key, versies: new Set() });

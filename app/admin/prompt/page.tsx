@@ -93,10 +93,10 @@ Bouw een Voorzieningencatalogus voor de Nederlandse gemeentelijke sector. Dit is
 
 ### Koppeltabellen met attributen
 18. GemeentePakket — welk pakket een gemeente gebruikt
-19. PakketversieReferentiecomponent — implementatie referentiecomponenten
-20. PakketversieStandaard — compliancy aan standaardversies
-21. PakketversieApplicatiefunctie — ondersteunde functies
-22. PakketversieTechnologie — technologieën per versie
+19. PakketReferentiecomponent — implementatie referentiecomponenten
+20. PakketStandaard — compliancy aan standaardversies
+21. PakketApplicatiefunctie — ondersteunde functies
+22. PakketTechnologie — technologieën per pakket
 
 ### Gebruikers & Content
 23. User — met rollen (10 rollen), gekoppeld aan gemeente/leverancier

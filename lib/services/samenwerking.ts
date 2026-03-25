@@ -55,12 +55,16 @@ export async function getSamenwerkingPakketten(
     include: {
       pakketversie: {
         include: {
-          pakket: { include: { leverancier: true } },
-          referentiecomponenten: {
-            include: { referentiecomponent: true },
-          },
-          standaarden: {
-            include: { standaardversie: { include: { standaard: true } } },
+          pakket: {
+            include: {
+              leverancier: true,
+              referentiecomponenten: {
+                include: { referentiecomponent: true },
+              },
+              standaarden: {
+                include: { standaardversie: { include: { standaard: true } } },
+              },
+            },
           },
         },
       },
@@ -75,10 +79,10 @@ export async function getSamenwerkingPakketten(
     versie: gp.pakketversie.naam,
     status: gp.status,
     datumIngangStatus: gp.datumIngangStatus,
-    gebruiktVoor: gp.pakketversie.referentiecomponenten.map(
+    gebruiktVoor: gp.pakketversie.pakket.referentiecomponenten.map(
       (r) => r.referentiecomponent.naam
     ),
-    hasCompliancy: gp.pakketversie.standaarden.some(
+    hasCompliancy: gp.pakketversie.pakket.standaarden.some(
       (s) => s.compliancy === true
     ),
     gemeenteNaam: gemeenteMap.get(gp.gemeenteId) || "Onbekend",
@@ -189,14 +193,18 @@ export async function getSamenwerkingDashboardStats(
       where: { gemeenteId: { in: gemeenteIds } },
       include: {
         pakketversie: {
-          include: { standaarden: true },
+          include: {
+            pakket: {
+              include: { standaarden: true },
+            },
+          },
         },
       },
     }),
   ]);
 
   const compliantCount = gps.filter((gp) =>
-    gp.pakketversie.standaarden.some((s) => s.compliancy === true)
+    gp.pakketversie.pakket.standaarden.some((s) => s.compliancy === true)
   ).length;
 
   const eindeOndersteuningCount = gps.filter(

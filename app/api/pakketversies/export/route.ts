@@ -40,8 +40,10 @@ export async function GET(request: NextRequest) {
     }),
     ...(statusFilter && { status: statusFilter }),
     ...(referentiecomponentId && {
-      referentiecomponenten: {
-        some: { referentiecomponentId },
+      pakket: {
+        referentiecomponenten: {
+          some: { referentiecomponentId },
+        },
       },
     }),
   };
@@ -53,10 +55,10 @@ export async function GET(request: NextRequest) {
         select: {
           naam: true,
           leverancier: { select: { naam: true } },
+          referentiecomponenten: {
+            include: { referentiecomponent: { select: { naam: true } } },
+          },
         },
-      },
-      referentiecomponenten: {
-        include: { referentiecomponent: { select: { naam: true } } },
       },
     },
     orderBy: { naam: "asc" },
@@ -66,7 +68,7 @@ export async function GET(request: NextRequest) {
   const rows = pakketversies.map((pv) => {
     const refComps = [
       ...new Set(
-        pv.referentiecomponenten.map((rc) => rc.referentiecomponent.naam)
+        pv.pakket.referentiecomponenten.map((rc) => rc.referentiecomponent.naam)
       ),
     ].join("; ");
 

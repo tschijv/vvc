@@ -81,10 +81,10 @@ const domeinen = [
 
 const koppelklassen = [
   { naam: "GemeentePakket", tussen: "Gemeente ↔ Pakketversie", attrs: "status, datumIngangStatus, technologie, licentievorm, aantalGebruikers" },
-  { naam: "PakketversieReferentiecomponent", tussen: "Pakketversie ↔ Referentiecomponent", attrs: "type, aantalGemeenten" },
-  { naam: "PakketversieStandaard", tussen: "Pakketversie ↔ Standaardversie", attrs: "compliancy, testrapportUrl" },
-  { naam: "PakketversieApplicatiefunctie", tussen: "Pakketversie ↔ Applicatiefunctie", attrs: "ondersteund" },
-  { naam: "PakketversieTechnologie", tussen: "Pakketversie ↔ technologie", attrs: "technologie" },
+  { naam: "PakketReferentiecomponent", tussen: "Pakket ↔ Referentiecomponent", attrs: "type, aantalGemeenten" },
+  { naam: "PakketStandaard", tussen: "Pakket ↔ Standaardversie", attrs: "compliancy, testrapportUrl" },
+  { naam: "PakketApplicatiefunctie", tussen: "Pakket ↔ Applicatiefunctie", attrs: "ondersteund" },
+  { naam: "PakketTechnologie", tussen: "Pakket ↔ technologie", attrs: "technologie" },
   { naam: "LeverancierAddendum", tussen: "Leverancier ↔ Addendum", attrs: "—" },
 ];
 

@@ -79,7 +79,7 @@ export default async function StandaardenPage({ searchParams }: Props) {
           <tbody>
             {standaarden.map((s) => {
               const totaalPakketten = s.versies.reduce(
-                (sum, v) => sum + v._count.pakketversies, 0
+                (sum, v) => sum + v._count.pakketten, 0
               );
               return (
                 <tr key={s.id} className="border-b border-gray-100 hover:bg-gray-50">

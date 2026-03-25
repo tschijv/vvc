@@ -391,7 +391,7 @@ export const openApiSpec = {
       get: {
         tags: ["Referentiecomponenten"],
         summary: "Lijst van referentiecomponenten",
-        description: "Retourneert alle GEMMA referentiecomponenten met het aantal gekoppelde pakketversies.",
+        description: "Retourneert alle GEMMA referentiecomponenten met het aantal gekoppelde pakketten.",
         operationId: "getReferentiecomponenten",
         parameters: [
           {
@@ -447,7 +447,7 @@ export const openApiSpec = {
       get: {
         tags: ["Standaarden"],
         summary: "Lijst van standaarden",
-        description: "Retourneert alle standaarden met hun versies en het aantal gekoppelde pakketversies per versie.",
+        description: "Retourneert alle standaarden met hun versies en het aantal gekoppelde pakketten per versie.",
         operationId: "getStandaarden",
         parameters: [
           {
@@ -714,9 +714,9 @@ export const openApiSpec = {
           naam: { type: "string", example: "Zaakregistratie" },
           guid: { type: "string", example: "abc-123" },
           beschrijving: { type: "string", nullable: true },
-          aantalPakketversies: { type: "integer", example: 8, description: "Aantal pakketversies dat dit component ondersteunt" },
+          aantalPakketten: { type: "integer", example: 8, description: "Aantal pakketten dat dit component ondersteunt" },
         },
-        required: ["id", "naam", "guid", "aantalPakketversies"],
+        required: ["id", "naam", "guid", "aantalPakketten"],
       },
       Begrip: {
         type: "object",
@@ -752,13 +752,13 @@ export const openApiSpec = {
               properties: {
                 id: { type: "string" },
                 naam: { type: "string", example: "3.01" },
-                aantalPakketversies: { type: "integer", example: 12 },
+                aantalPakketten: { type: "integer", example: 12 },
               },
             },
           },
-          totaalPakketversies: { type: "integer", description: "Som van pakketversies over alle versies", example: 20 },
+          totaalPakketten: { type: "integer", description: "Som van pakketten over alle versies", example: 20 },
         },
-        required: ["id", "naam", "guid", "versies", "totaalPakketversies"],
+        required: ["id", "naam", "guid", "versies", "totaalPakketten"],
       },
     },
   },

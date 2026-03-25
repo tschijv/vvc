@@ -260,18 +260,19 @@ export async function processLeverancierUpload(
         where: { leverancierId },
         select: { id: true, versies: { select: { id: true } } },
       });
+      const pakketIds = pakketten.map((p) => p.id);
       const versieIds = pakketten.flatMap((p) => p.versies.map((v) => v.id));
 
-      if (versieIds.length > 0) {
+      if (pakketIds.length > 0) {
         await Promise.all([
-          tx.pakketversieReferentiecomponent.deleteMany({ where: { pakketversieId: { in: versieIds } } }),
-          tx.pakketversieStandaard.deleteMany({ where: { pakketversieId: { in: versieIds } } }),
-          tx.pakketversieApplicatiefunctie.deleteMany({ where: { pakketversieId: { in: versieIds } } }),
-          tx.pakketversieTechnologie.deleteMany({ where: { pakketversieId: { in: versieIds } } }),
-          tx.gemeentePakket.deleteMany({ where: { pakketversieId: { in: versieIds } } }),
+          tx.pakketReferentiecomponent.deleteMany({ where: { pakketId: { in: pakketIds } } }),
+          tx.pakketStandaard.deleteMany({ where: { pakketId: { in: pakketIds } } }),
+          tx.pakketApplicatiefunctie.deleteMany({ where: { pakketId: { in: pakketIds } } }),
+          tx.pakketTechnologie.deleteMany({ where: { pakketId: { in: pakketIds } } }),
+          ...(versieIds.length > 0 ? [tx.gemeentePakket.deleteMany({ where: { pakketversieId: { in: versieIds } } })] : []),
         ]);
         await tx.pakketversie.deleteMany({
-          where: { pakketId: { in: pakketten.map((p) => p.id) } },
+          where: { pakketId: { in: pakketIds } },
         });
       }
       await tx.pakket.deleteMany({ where: { leverancierId } });
@@ -361,59 +362,59 @@ export async function processLeverancierUpload(
         syncRelationErrors(vRow.standaarden, standaardMap, vRow.rowNum, "standaarden", errors);
         syncRelationErrors(vRow.applicatiefuncties, appfunctieMap, vRow.rowNum, "applicatiefuncties", errors);
 
-        // Upsert referentiecomponenten
+        // Upsert referentiecomponenten (now at pakket level)
         if (vRow.referentiecomponenten?.length) {
           for (const rcNaam of vRow.referentiecomponenten) {
             const rcId = refcompMap.get(rcNaam.toLowerCase());
             if (rcId) {
-              await prisma.pakketversieReferentiecomponent.upsert({
+              await prisma.pakketReferentiecomponent.upsert({
                 where: {
-                  pakketversieId_referentiecomponentId_type: {
-                    pakketversieId: versie.id,
+                  pakketId_referentiecomponentId_type: {
+                    pakketId: pakket.id,
                     referentiecomponentId: rcId,
                     type: "leverancier",
                   },
                 },
                 update: {},
-                create: { pakketversieId: versie.id, referentiecomponentId: rcId, type: "leverancier" },
+                create: { pakketId: pakket.id, referentiecomponentId: rcId, type: "leverancier" },
               });
             }
           }
         }
 
-        // Upsert standaarden
+        // Upsert standaarden (now at pakket level)
         if (vRow.standaarden?.length) {
           for (const stNaam of vRow.standaarden) {
             const svId = standaardMap.get(stNaam.toLowerCase());
             if (svId) {
-              await prisma.pakketversieStandaard.upsert({
+              await prisma.pakketStandaard.upsert({
                 where: {
-                  pakketversieId_standaardversieId: {
-                    pakketversieId: versie.id,
+                  pakketId_standaardversieId: {
+                    pakketId: pakket.id,
                     standaardversieId: svId,
                   },
                 },
                 update: {},
-                create: { pakketversieId: versie.id, standaardversieId: svId },
+                create: { pakketId: pakket.id, standaardversieId: svId },
               });
             }
           }
         }
 
-        // Upsert applicatiefuncties
+        // Upsert applicatiefuncties (now at pakket level)
         if (vRow.applicatiefuncties?.length) {
           for (const afNaam of vRow.applicatiefuncties) {
             const afId = appfunctieMap.get(afNaam.toLowerCase());
             if (afId) {
-              await prisma.pakketversieApplicatiefunctie.upsert({
+              await prisma.pakketApplicatiefunctie.upsert({
                 where: {
-                  pakketversieId_applicatiefunctieId: {
-                    pakketversieId: versie.id,
+                  pakketId_applicatiefunctieId: {
+                    pakketId: pakket.id,
                     applicatiefunctieId: afId,
                   },
                 },
                 update: {},
-                create: { pakketversieId: versie.id, applicatiefunctieId: afId },
+                create: { pakketId: pakket.id, applicatiefunctieId: afId },
               });
             }
           }

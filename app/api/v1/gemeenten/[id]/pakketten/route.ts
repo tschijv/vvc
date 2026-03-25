@@ -33,7 +33,7 @@ export async function GET(
       leverancier: {
         naam: gp.pakketversie.pakket.leverancier.naam,
       },
-      referentiecomponenten: gp.pakketversie.referentiecomponenten.map(
+      referentiecomponenten: gp.pakketversie.pakket.referentiecomponenten.map(
         (rc) => ({
           naam: rc.referentiecomponent.naam,
           guid: rc.referentiecomponent.guid,

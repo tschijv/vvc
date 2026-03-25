@@ -25,10 +25,10 @@ export async function GET(request: NextRequest) {
       versies: s.versies.map((v) => ({
         id: v.id,
         naam: v.naam,
-        aantalPakketversies: v._count.pakketversies,
+        aantalPakketversies: v._count.pakketten,
       })),
       totaalPakketversies: s.versies.reduce(
-        (sum, v) => sum + v._count.pakketversies,
+        (sum, v) => sum + v._count.pakketten,
         0
       ),
     }));

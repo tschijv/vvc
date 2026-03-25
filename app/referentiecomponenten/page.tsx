@@ -106,7 +106,7 @@ export default async function ReferentiecomponentenPage({ searchParams }: Props)
                     href={`/pakketten?referentiecomponent=${rc.id}`}
                     className="text-gray-600 hover:text-[#1a6ca8]"
                   >
-                    {rc._count.pakketversies}
+                    {rc._count.pakketten}
                   </Link>
                 </td>
               </tr>

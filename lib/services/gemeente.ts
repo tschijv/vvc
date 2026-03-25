@@ -107,12 +107,16 @@ export async function getGemeentePakketten(gemeenteId: string) {
     include: {
       pakketversie: {
         include: {
-          pakket: { include: { leverancier: true } },
-          referentiecomponenten: {
-            include: { referentiecomponent: true },
-          },
-          standaarden: {
-            include: { standaardversie: { include: { standaard: true } } },
+          pakket: {
+            include: {
+              leverancier: true,
+              referentiecomponenten: {
+                include: { referentiecomponent: true },
+              },
+              standaarden: {
+                include: { standaardversie: { include: { standaard: true } } },
+              },
+            },
           },
         },
       },
@@ -140,15 +144,19 @@ export async function getGemeenteDashboardStats(
     include: {
       pakketversie: {
         include: {
-          standaarden: true,
-          referentiecomponenten: true,
+          pakket: {
+            include: {
+              standaarden: true,
+              referentiecomponenten: true,
+            },
+          },
         },
       },
     },
   });
 
   const compliantCount = gps.filter((gp) =>
-    gp.pakketversie.standaarden.some((s) => s.compliancy === true)
+    gp.pakketversie.pakket.standaarden.some((s) => s.compliancy === true)
   ).length;
 
   const eindeOndersteuningCount = gps.filter(
@@ -164,7 +172,7 @@ export async function getGemeenteDashboardStats(
 
   const refcompIds = new Set<string>();
   gps.forEach((gp) =>
-    gp.pakketversie.referentiecomponenten.forEach((r) =>
+    gp.pakketversie.pakket.referentiecomponenten.forEach((r) =>
       refcompIds.add(r.referentiecomponentId)
     )
   );
@@ -172,7 +180,7 @@ export async function getGemeenteDashboardStats(
 
   const refcompCount: Record<string, number> = {};
   gps.forEach((gp) =>
-    gp.pakketversie.referentiecomponenten.forEach((r) => {
+    gp.pakketversie.pakket.referentiecomponenten.forEach((r) => {
       refcompCount[r.referentiecomponentId] =
         (refcompCount[r.referentiecomponentId] || 0) + 1;
     })
@@ -206,8 +214,12 @@ export async function getStandaardFilters(
     include: {
       pakketversie: {
         include: {
-          standaarden: {
-            include: { standaardversie: { include: { standaard: true } } },
+          pakket: {
+            include: {
+              standaarden: {
+                include: { standaardversie: { include: { standaard: true } } },
+              },
+            },
           },
         },
       },
@@ -216,7 +228,7 @@ export async function getStandaardFilters(
 
   const standaardCounts: Record<string, number> = {};
   gps.forEach((gp) => {
-    gp.pakketversie.standaarden.forEach((s) => {
+    gp.pakketversie.pakket.standaarden.forEach((s) => {
       const naam = `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}`;
       standaardCounts[naam] = (standaardCounts[naam] || 0) + 1;
     });
