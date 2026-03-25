@@ -54,7 +54,9 @@ export async function getSessionUser(): Promise<SessionUser> {
               ? "GEMEENTE"
               : target.rollen.includes("LEVERANCIER")
                 ? "LEVERANCIER"
-                : "ANONIEM";
+                : target.rollen.includes("API_USER")
+                  ? "API_USER"
+                  : "ANONIEM";
 
         return {
           id: target.id,

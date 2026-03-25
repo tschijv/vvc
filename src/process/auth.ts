@@ -75,7 +75,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               ? "GEMEENTE"
               : user.rollen.includes("LEVERANCIER")
                 ? "LEVERANCIER"
-                : "ANONIEM";
+                : user.rollen.includes("API_USER")
+                  ? "API_USER"
+                  : "ANONIEM";
 
         return {
           id: user.id,
