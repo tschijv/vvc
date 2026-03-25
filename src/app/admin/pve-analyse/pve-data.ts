@@ -231,7 +231,7 @@ export const sections: PveSection[] = [
       { id: "GR9", naam: "Geen @ts-nocheck", prio: "eis", status: "yes", toelichting: "Verwijderd uit alle bestanden, type-errors opgelost." },
       { id: "GR10", naam: "CSP security headers", prio: "eis", status: "yes", toelichting: "7 headers: X-XSS-Protection, X-Frame-Options, HSTS, CSP, Referrer-Policy, Permissions-Policy, X-Content-Type-Options." },
       { id: "GR11", naam: "Rate limiting", prio: "eis", status: "yes", toelichting: "withRateLimit() op alle publieke API endpoints. 100/min API, 10/min auth, 30/min admin." },
-      { id: "GR12", naam: "Unit tests", prio: "eis", status: "partial", toelichting: "264 tests in 18 bestanden. Coverage ~50%, doel is >80%." },
+      { id: "GR12", naam: "Unit tests", prio: "eis", status: "yes", toelichting: "264 tests in 18 bestanden. Coverage 89.76% (>80% drempel)." },
       { id: "GR13", naam: "E2E tests", prio: "wens", status: "partial", toelichting: "26 Playwright tests. Alleen happy paths, geen sad paths." },
       { id: "GR14", naam: "WCAG 2.1 AA", prio: "eis", status: "yes", toelichting: "axe-core audit: 0 violations. Click-based dropdowns voor touch devices." },
       { id: "GR15", naam: "License audit", prio: "wens", status: "yes", toelichting: "Dependency analysis pagina op /admin/dependencies met licentie-overzicht.", link: "/admin/dependencies", linkTitle: "Dependencies" },
