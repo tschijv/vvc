@@ -24,7 +24,7 @@ const STATUSSEN = ["In productie", "In productie", "In productie", "Gepland", "U
 
 async function main() {
   // Get some gemeenten that have packages
-  const gemeenten = await prisma.gemeente.findMany({
+  const gemeenten = await prisma.organisatie.findMany({
     where: { pakketten: { some: {} } },
     include: {
       pakketten: {
@@ -82,7 +82,7 @@ async function main() {
         const externPakket = createdExtern[Math.floor(Math.random() * createdExtern.length)];
         await prisma.koppeling.create({
           data: {
-            gemeenteId: gemeente.id,
+            organisatieId: gemeente.id,
             bronPakketversieId: bron.pakketversieId,
             richting,
             doelExternPakketId: externPakket.id,
@@ -97,7 +97,7 @@ async function main() {
         if (doel.pakketversieId !== bron.pakketversieId) {
           await prisma.koppeling.create({
             data: {
-              gemeenteId: gemeente.id,
+              organisatieId: gemeente.id,
               bronPakketversieId: bron.pakketversieId,
               richting,
               doelPakketversieId: doel.pakketversieId,
@@ -124,7 +124,7 @@ async function main() {
 
     await prisma.koppeling.create({
       data: {
-        gemeenteId: gemeente.id,
+        organisatieId: gemeente.id,
         bronExternPakketId: externPakket.id,
         richting: RICHTINGEN[Math.floor(Math.random() * RICHTINGEN.length)],
         doelPakketversieId: doel.pakketversieId,

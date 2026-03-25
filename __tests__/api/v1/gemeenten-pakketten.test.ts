@@ -9,7 +9,7 @@ vi.mock("@/lib/services/gemeente", () => ({
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    gemeente: {
+    organisatie: {
       findUnique: vi.fn(),
     },
   },
@@ -19,7 +19,7 @@ import { getGemeentePakketten } from "@/lib/services/gemeente";
 import { prisma } from "@/lib/prisma";
 
 const mockGetGemeentePakketten = vi.mocked(getGemeentePakketten);
-const mockFindUnique = vi.mocked(prisma.gemeente.findUnique);
+const mockFindUnique = vi.mocked(prisma.organisatie.findUnique);
 
 function createRequest(url: string) {
   return new NextRequest(new URL(url, "http://localhost:3000"));
@@ -34,7 +34,7 @@ describe("GET /api/v1/gemeenten/[id]/pakketten", () => {
     mockFindUnique.mockResolvedValue({
       id: "gem-1",
       naam: "Amsterdam",
-    } as ReturnType<typeof prisma.gemeente.findUnique> extends Promise<infer T> ? T : never);
+    } as ReturnType<typeof prisma.organisatie.findUnique> extends Promise<infer T> ? T : never);
 
     mockGetGemeentePakketten.mockResolvedValue([
       {

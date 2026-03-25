@@ -19,7 +19,7 @@ export default async function KaartPage() {
   // Voor ADMIN: haal alle gemeenten op
   let gemeenten: { id: string; naam: string }[] = [];
   if (user.role === "ADMIN") {
-    gemeenten = await prisma.gemeente.findMany({
+    gemeenten = await prisma.organisatie.findMany({
       select: { id: true, naam: true },
       orderBy: { naam: "asc" },
     });
@@ -27,9 +27,9 @@ export default async function KaartPage() {
 
   // Voor GEMEENTE users: haal hun gemeente op
   let eigenGemeente: { id: string; naam: string } | null = null;
-  if (user.role === "GEMEENTE" && user.gemeenteId) {
-    eigenGemeente = await prisma.gemeente.findUnique({
-      where: { id: user.gemeenteId },
+  if (user.role === "GEMEENTE" && user.organisatieId) {
+    eigenGemeente = await prisma.organisatie.findUnique({
+      where: { id: user.organisatieId },
       select: { id: true, naam: true },
     });
   }

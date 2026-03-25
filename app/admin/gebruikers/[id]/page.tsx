@@ -35,7 +35,7 @@ export default async function GebruikerDetailPage({
                 naam: user.naam,
                 actief: user.actief,
                 rollen: user.rollen,
-                gemeenteId: user.gemeenteId,
+                organisatieId: user.organisatieId,
                 leverancierId: user.leverancierId,
               }
             : null

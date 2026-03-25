@@ -71,14 +71,14 @@ async function main() {
   let created = 0;
   let existed = 0;
   for (const [id, naam] of gemeenten) {
-    const existing = await prisma.gemeente.findUnique({
+    const existing = await prisma.organisatie.findUnique({
       where: { id },
       select: { id: true },
     });
     if (existing) {
       existed++;
     } else {
-      await prisma.gemeente.create({
+      await prisma.organisatie.create({
         data: { id, naam },
       });
       created++;
@@ -88,7 +88,7 @@ async function main() {
   console.log(`\nDone!`);
   console.log(`  Gemeenten created: ${created}`);
   console.log(`  Gemeenten already existed: ${existed}`);
-  console.log(`  Total in database: ${await prisma.gemeente.count()}`);
+  console.log(`  Total in database: ${await prisma.organisatie.count()}`);
 
   await prisma.$disconnect();
 }

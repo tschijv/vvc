@@ -20,7 +20,7 @@ export default async function UploadPage() {
       select: { id: true, naam: true },
       orderBy: { naam: "asc" },
     });
-    gemeenten = await prisma.gemeente.findMany({
+    gemeenten = await prisma.organisatie.findMany({
       select: { id: true, naam: true },
       orderBy: { naam: "asc" },
     });
@@ -40,7 +40,7 @@ export default async function UploadPage() {
       <UploadForm
         userRole={user.role}
         userLeverancierId={user.leverancierId || undefined}
-        userGemeenteId={user.gemeenteId || undefined}
+        userGemeenteId={user.organisatieId || undefined}
         leveranciers={leveranciers}
         gemeenten={gemeenten}
       />

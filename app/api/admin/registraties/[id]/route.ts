@@ -9,7 +9,7 @@ const registratieActieSchema = z.object({
     errorMap: () => ({ message: "Ongeldige actie. Gebruik 'goedkeuren' of 'afwijzen'." }),
   }),
   rollen: z.array(z.string()).optional(),
-  gemeenteId: z.string().nullable().optional(),
+  organisatieId: z.string().nullable().optional(),
   leverancierId: z.string().nullable().optional(),
   reden: z.string().optional(),
 });
@@ -27,7 +27,7 @@ export async function PUT(
 
   const parsed = await parseBody(req, registratieActieSchema);
   if ("error" in parsed) return parsed.error;
-  const { actie, rollen, gemeenteId, leverancierId, reden } = parsed.data;
+  const { actie, rollen, organisatieId, leverancierId, reden } = parsed.data;
 
   try {
     if (actie === "goedkeuren") {
@@ -40,7 +40,7 @@ export async function PUT(
 
       await approveRegistration(id, {
         rollen,
-        gemeenteId: gemeenteId || null,
+        organisatieId: organisatieId || null,
         leverancierId: leverancierId || null,
       });
 

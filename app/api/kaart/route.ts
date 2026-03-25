@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   // For GEMEENTE users, use their own gemeente
   let targetGemeenteId: string | null = gemeenteId;
   if (user.role === "GEMEENTE") {
-    targetGemeenteId = user.gemeenteId ?? null;
+    targetGemeenteId = user.organisatieId ?? null;
   }
 
   if (!targetGemeenteId) {

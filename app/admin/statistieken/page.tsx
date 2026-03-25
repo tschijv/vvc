@@ -27,7 +27,7 @@ export default async function StatistiekenPage() {
     topLeveranciers,
     recenteActiviteit,
   ] = await Promise.all([
-    prisma.gemeente.count(),
+    prisma.organisatie.count(),
     prisma.leverancier.count(),
     prisma.pakket.count(),
     prisma.pakketversie.count(),
@@ -46,7 +46,7 @@ export default async function StatistiekenPage() {
       orderBy: { pakketten: { _count: "desc" } },
       take: 10,
     }),
-    prisma.gemeente.findMany({
+    prisma.organisatie.findMany({
       where: { lastActivity: { not: null } },
       select: { naam: true, id: true, lastActivity: true },
       orderBy: { lastActivity: "desc" },

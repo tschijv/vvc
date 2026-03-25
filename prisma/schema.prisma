@@ -90,8 +90,8 @@ model User {
   passwordHash  String?
   actief        Boolean      @default(true)
   rollen        Role[]       @default([GEVERIFIEERD])
-  gemeenteId    String?
-  gemeente      Gemeente?    @relation(fields: [gemeenteId], references: [id])
+  organisatieId String?      @map("gemeenteId")
+  organisatie   Organisatie? @relation(fields: [organisatieId], references: [id])
   leverancierId String?
   leverancier   Leverancier? @relation(fields: [leverancierId], references: [id])
   laatsteToegangOp DateTime?
@@ -214,7 +214,7 @@ model Pakketversie {
   mutatiedatum          DateTime?
   pakket                Pakket         @relation(fields: [pakketId], references: [id])
   pakketId              String
-  gemeentePakketten     GemeentePakket[]
+  organisatiePakketten  OrganisatiePakket[]
   koppelingenAlsBron    Koppeling[]    @relation("koppelingBron")
   koppelingenAlsDoel    Koppeling[]    @relation("koppelingDoel")
   koppelingenAlsIntermediair Koppeling[] @relation("koppelingIntermediair")
@@ -289,29 +289,31 @@ model PakketTechnologie {
   @@id([pakketId, technologie])
 }
 
-// ─── Gemeenten ───────────────────────────────────────────────────────────────
+// ─── Organisaties (voorheen Gemeenten) ──────────────────────────────────────
 
-model Gemeente {
-  id                    String                 @id @default(uuid())
+model Organisatie {
+  id                    String                    @id @default(uuid())
   naam                  String
   cbsCode               String?
   contactpersoon        String?
   email                 String?
   telefoon              String?
   website               String?
-  progress              Int                    @default(0)
+  progress              Int                       @default(0)
   lastActivity          DateTime?
-  pakketten             GemeentePakket[]
-  samenwerkingen        SamenwerkingGemeente[]
+  pakketten             OrganisatiePakket[]
+  samenwerkingen        SamenwerkingOrganisatie[]
   koppelingen           Koppeling[]
   users                 User[]
-  createdAt             DateTime               @default(now())
-  updatedAt             DateTime               @updatedAt
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
+
+  @@map("Gemeente")
 }
 
-model GemeentePakket {
-  gemeente              Gemeente     @relation(fields: [gemeenteId], references: [id])
-  gemeenteId            String
+model OrganisatiePakket {
+  organisatie           Organisatie  @relation(fields: [organisatieId], references: [id])
+  organisatieId         String       @map("gemeenteId")
   pakketversie          Pakketversie @relation(fields: [pakketversieId], references: [id])
   pakketversieId        String
   status                String?
@@ -323,9 +325,10 @@ model GemeentePakket {
   aantalGebruikers      Int?
   maatwerk              String?
 
-  @@id([gemeenteId, pakketversieId])
-  @@index([gemeenteId])
+  @@id([organisatieId, pakketversieId])
+  @@index([organisatieId])
   @@index([pakketversieId])
+  @@map("GemeentePakket")
 }
 
 // ─── Samenwerkingen ──────────────────────────────────────────────────────────
@@ -336,25 +339,26 @@ model Samenwerking {
   type                  String?
   contactpersoon        String?
   email                 String?
-  gemeenten             SamenwerkingGemeente[]
+  organisaties          SamenwerkingOrganisatie[]
   createdAt             DateTime               @default(now())
 }
 
-model SamenwerkingGemeente {
+model SamenwerkingOrganisatie {
   samenwerking          Samenwerking @relation(fields: [samenwerkingId], references: [id])
   samenwerkingId        String
-  gemeente              Gemeente     @relation(fields: [gemeenteId], references: [id])
-  gemeenteId            String
+  organisatie           Organisatie  @relation(fields: [organisatieId], references: [id])
+  organisatieId         String       @map("gemeenteId")
 
-  @@id([samenwerkingId, gemeenteId])
+  @@id([samenwerkingId, organisatieId])
+  @@map("SamenwerkingGemeente")
 }
 
 // ─── Koppelingen ─────────────────────────────────────────────────────────────
 
 model Koppeling {
   id                        String        @id @default(uuid())
-  gemeente                  Gemeente      @relation(fields: [gemeenteId], references: [id])
-  gemeenteId                String
+  organisatie               Organisatie   @relation(fields: [organisatieId], references: [id])
+  organisatieId             String        @map("gemeenteId")
   bronPakketversie          Pakketversie? @relation("koppelingBron", fields: [bronPakketversieId], references: [id])
   bronPakketversieId        String?
   bronExternPakket          ExternPakket? @relation("koppelingBronExtern", fields: [bronExternPakketId], references: [id])
@@ -375,7 +379,7 @@ model Koppeling {
   createdAt                 DateTime      @default(now())
   updatedAt                 DateTime      @updatedAt
 
-  @@index([gemeenteId])
+  @@index([organisatieId])
   @@index([status])
 }
 

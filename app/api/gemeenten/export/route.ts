@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     };
   }
 
-  const gemeenten = await prisma.gemeente.findMany({
+  const gemeenten = await prisma.organisatie.findMany({
     where,
     include: {
       _count: { select: { pakketten: true } },

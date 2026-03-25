@@ -6,16 +6,16 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log("Gemeenten:", await prisma.gemeente.count());
+  console.log("Gemeenten:", await prisma.organisatie.count());
   console.log("Pakketten:", await prisma.pakket.count());
   console.log("Pakketversies:", await prisma.pakketversie.count());
-  console.log("GemeentePakket:", await prisma.gemeentePakket.count());
+  console.log("GemeentePakket:", await prisma.organisatiePakket.count());
   console.log("Koppelingen:", await prisma.koppeling.count());
   console.log("Samenwerkingen:", await prisma.samenwerking.count());
   console.log("Leveranciers:", await prisma.leverancier.count());
 
   // Find gemeenten with both pakketten and koppelingen
-  const gemeentenMetBeide = await prisma.gemeente.findMany({
+  const gemeentenMetBeide = await prisma.organisatie.findMany({
     where: {
       AND: [
         { pakketten: { some: {} } },

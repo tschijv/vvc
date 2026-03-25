@@ -30,7 +30,7 @@ export default async function FavorietenPage() {
       ? prisma.pakket.findMany({ where: { id: { in: pakketIds } }, select: { id: true, naam: true, slug: true } })
       : [],
     gemeenteIds.length > 0
-      ? prisma.gemeente.findMany({ where: { id: { in: gemeenteIds } }, select: { id: true, naam: true } })
+      ? prisma.organisatie.findMany({ where: { id: { in: gemeenteIds } }, select: { id: true, naam: true } })
       : [],
     leverancierIds.length > 0
       ? prisma.leverancier.findMany({ where: { id: { in: leverancierIds } }, select: { id: true, naam: true, slug: true } })

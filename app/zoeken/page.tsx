@@ -192,7 +192,7 @@ async function fallbackSearch(q: string, typesToSearch: ElementType[]): Promise<
       ? prisma.leverancier.findMany({ where: { naam: { contains: q, mode: "insensitive" } }, take: 10, orderBy: { naam: "asc" } })
       : [],
     typesToSearch.includes("gemeente")
-      ? prisma.gemeente.findMany({ where: { naam: { contains: q, mode: "insensitive" } }, take: 10, orderBy: { naam: "asc" } })
+      ? prisma.organisatie.findMany({ where: { naam: { contains: q, mode: "insensitive" } }, take: 10, orderBy: { naam: "asc" } })
       : [],
     typesToSearch.includes("standaard")
       ? prisma.standaard.findMany({ where: { naam: { contains: q, mode: "insensitive" } }, take: 10, orderBy: { naam: "asc" } })

@@ -58,9 +58,9 @@ async function main() {
 
   let gemeenteCreated = 0;
   for (const [id, naam] of gemeenteSet) {
-    const existing = await prisma.gemeente.findUnique({ where: { id } });
+    const existing = await prisma.organisatie.findUnique({ where: { id } });
     if (!existing) {
-      await prisma.gemeente.create({
+      await prisma.organisatie.create({
         data: { id, naam },
       });
       gemeenteCreated++;
@@ -181,7 +181,7 @@ async function main() {
     try {
       await prisma.koppeling.create({
         data: {
-          gemeenteId,
+          organisatieId: gemeenteId,
           bronPakketversieId,
           bronExternPakketId,
           doelPakketversieId,

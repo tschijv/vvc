@@ -8,7 +8,7 @@ import { prisma } from "@/lib/prisma";
  */
 export async function GET() {
   try {
-    const gemeenten = await prisma.gemeente.findMany({
+    const gemeenten = await prisma.organisatie.findMany({
       select: {
         id: true,
         naam: true,

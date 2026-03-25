@@ -18,17 +18,17 @@ export async function genereerKaartSvg(
     throw new KaartError("View niet gevonden", 404);
   }
 
-  // 2. Haal gemeente op
-  const gemeente = await prisma.gemeente.findUnique({
+  // 2. Haal organisatie op
+  const gemeente = await prisma.organisatie.findUnique({
     where: { id: gemeenteId },
   });
   if (!gemeente) {
     throw new KaartError("Gemeente niet gevonden", 404);
   }
 
-  // 3. Haal gemeente-pakketten op met alle benodigde relaties
-  const gemeentePakketten = await prisma.gemeentePakket.findMany({
-    where: { gemeenteId },
+  // 3. Haal organisatie-pakketten op met alle benodigde relaties
+  const gemeentePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId: gemeenteId },
     include: {
       pakketversie: {
         include: {

@@ -181,12 +181,12 @@ export default function ProfielForm({ user, favorietenCount, ongelezen, recenteA
           </div>
 
           {/* Gekoppelde organisatie */}
-          {(user.gemeente || user.leverancier) && (
+          {(user.organisatie || user.leverancier) && (
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Gekoppelde organisatie:</span>
-              {user.gemeente && (
-                <Link href={`/gemeenten/${user.gemeenteId}`} className="text-sm text-blue-700 dark:text-blue-400 hover:underline">
-                  {user.gemeente.naam}
+              {user.organisatie && (
+                <Link href={`/gemeenten/${user.organisatieId}`} className="text-sm text-blue-700 dark:text-blue-400 hover:underline">
+                  {user.organisatie.naam}
                 </Link>
               )}
               {user.leverancier && (

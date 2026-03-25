@@ -191,7 +191,7 @@ export async function deletePakketversie(
   }
 
   // Check for GemeentePakket references
-  const refCount = await prisma.gemeentePakket.count({
+  const refCount = await prisma.organisatiePakket.count({
     where: { pakketversieId },
   });
   if (refCount > 0) {

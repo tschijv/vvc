@@ -26,7 +26,7 @@ interface GemeentePakketRow {
 export async function generatePakketoverzichtCsv(
   gemeenteId: string
 ): Promise<{ csv: string; gemeenteNaam: string }> {
-  const gemeente = await prisma.gemeente.findUnique({
+  const gemeente = await prisma.organisatie.findUnique({
     where: { id: gemeenteId },
   });
   if (!gemeente) throw new Error("Gemeente niet gevonden");
@@ -78,14 +78,14 @@ export async function generatePakketoverzichtCsv(
 export async function generateIbdFotoCsv(
   gemeenteId: string
 ): Promise<{ csv: string; gemeenteNaam: string }> {
-  const gemeente = await prisma.gemeente.findUnique({
+  const gemeente = await prisma.organisatie.findUnique({
     where: { id: gemeenteId },
   });
   if (!gemeente) throw new Error("Gemeente niet gevonden");
 
   // Haal unieke pakketten op (niet per versie)
-  const gemeentePakketten = await prisma.gemeentePakket.findMany({
-    where: { gemeenteId },
+  const gemeentePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId: gemeenteId },
     include: {
       pakketversie: {
         include: {
@@ -145,14 +145,14 @@ export async function generateAmeffExport(
   });
   if (!view) throw new Error("View niet gevonden");
 
-  const gemeente = await prisma.gemeente.findUnique({
+  const gemeente = await prisma.organisatie.findUnique({
     where: { id: gemeenteId },
   });
   if (!gemeente) throw new Error("Gemeente niet gevonden");
 
   // Haal gemeente-pakketten op met alle benodigde relaties
-  const gemeentePakketten = await prisma.gemeentePakket.findMany({
-    where: { gemeenteId },
+  const gemeentePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId: gemeenteId },
     include: {
       pakketversie: {
         include: {
@@ -474,7 +474,7 @@ function buildSwcqueryPayload(
 // ─── AMEFF type voor Prisma resultaat ───────────────────────────────────────────
 
 type GemeentePakketWithRelations = {
-  gemeenteId: string;
+  organisatieId: string;
   pakketversieId: string;
   status: string | null;
   datumIngangStatus: Date | null;
@@ -501,8 +501,8 @@ async function getExportRows(
   gemeenteId: string,
   gemeenteNaam: string
 ): Promise<GemeentePakketRow[]> {
-  const gemeentePakketten = await prisma.gemeentePakket.findMany({
-    where: { gemeenteId },
+  const gemeentePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId: gemeenteId },
     include: {
       pakketversie: {
         include: {

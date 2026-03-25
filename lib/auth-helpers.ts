@@ -9,7 +9,7 @@ export type SessionUser = {
   email: string;
   naam: string;
   role: string;
-  gemeenteId?: string | null;
+  organisatieId?: string | null;
   leverancierId?: string | null;
   isBeheerder?: boolean;
   isImpersonating?: boolean;
@@ -40,7 +40,7 @@ export async function getSessionUser(): Promise<SessionUser> {
           email: true,
           naam: true,
           rollen: true,
-          gemeenteId: true,
+          organisatieId: true,
           leverancierId: true,
         },
       });
@@ -61,7 +61,7 @@ export async function getSessionUser(): Promise<SessionUser> {
           email: target.email,
           naam: target.naam,
           role: primaryRole,
-          gemeenteId: target.gemeenteId,
+          organisatieId: target.organisatieId,
           leverancierId: target.leverancierId,
           isBeheerder: target.rollen.includes("GEMEENTE_BEHEERDER") || target.rollen.includes("ADMIN") || target.rollen.includes("KING_BEHEERDER"),
           isImpersonating: true,
@@ -117,10 +117,10 @@ export function canEditPagina(user: SessionUser): boolean {
  * - Admin: altijd
  * - Gemeente beheerder: alleen eigen gemeente
  */
-export function canEditGemeentePortfolio(user: SessionUser, gemeenteId: string): boolean {
+export function canEditGemeentePortfolio(user: SessionUser, organisatieId: string): boolean {
   if (!user) return false;
   if (user.role === "ADMIN") return true;
-  if (user.role === "GEMEENTE" && user.isBeheerder && user.gemeenteId === gemeenteId) return true;
+  if (user.role === "GEMEENTE" && user.isBeheerder && user.organisatieId === organisatieId) return true;
   return false;
 }
 

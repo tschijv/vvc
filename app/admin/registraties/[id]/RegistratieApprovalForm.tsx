@@ -43,7 +43,7 @@ export default function RegistratieApprovalForm({
           rollen: isLeverancier ? ["LEVERANCIER"] : ["GEMEENTE_BEHEERDER"],
           ...(isLeverancier
             ? { leverancierId: orgId }
-            : { gemeenteId: orgId }),
+            : { organisatieId: orgId }),
         }),
       });
 

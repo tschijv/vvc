@@ -368,7 +368,7 @@ async function importGemeenten() {
     const naam = row["Gemeente naam"]?.trim();
     if (!id || !naam) continue;
 
-    await prisma.gemeente.upsert({
+    await prisma.organisatie.upsert({
       where: { id },
       update: {},
       create: {
@@ -427,7 +427,7 @@ async function importApplicatiePortfolio() {
     (await prisma.pakketversie.findMany({ select: { id: true } })).map((v) => v.id)
   );
   const bestaandeGemeenten = new Set(
-    (await prisma.gemeente.findMany({ select: { id: true } })).map((g) => g.id)
+    (await prisma.organisatie.findMany({ select: { id: true } })).map((g) => g.id)
   );
 
   let portfolioCount = 0;
@@ -445,7 +445,7 @@ async function importApplicatiePortfolio() {
       const naam = row["Gemeente naam"]?.trim();
       if (naam) {
         try {
-          await prisma.gemeente.create({
+          await prisma.organisatie.create({
             data: {
               id: gemeenteId,
               naam,
@@ -466,11 +466,11 @@ async function importApplicatiePortfolio() {
     const pakketversieId = row["Pakketversie ID"]?.trim();
     if (pakketversieId && bestaandeVersies.has(pakketversieId)) {
       try {
-        await prisma.gemeentePakket.upsert({
-          where: { gemeenteId_pakketversieId: { gemeenteId, pakketversieId } },
+        await prisma.organisatiePakket.upsert({
+          where: { organisatieId_pakketversieId: { organisatieId: gemeenteId, pakketversieId } },
           update: {},
           create: {
-            gemeenteId,
+            organisatieId: gemeenteId,
             pakketversieId,
             status: row["Gebruik Status"] || null,
             datumIngangStatus: parseDate(row["Gebruik Datum ingang status"]) || null,
@@ -499,10 +499,10 @@ async function importApplicatiePortfolio() {
             naam: row["Samenwerking"]?.trim() || samenwerkingId,
           },
         });
-        await prisma.samenwerkingGemeente.upsert({
-          where: { samenwerkingId_gemeenteId: { samenwerkingId, gemeenteId } },
+        await prisma.samenwerkingOrganisatie.upsert({
+          where: { samenwerkingId_organisatieId: { samenwerkingId, organisatieId: gemeenteId } },
           update: {},
-          create: { samenwerkingId, gemeenteId },
+          create: { samenwerkingId, organisatieId: gemeenteId },
         });
         samenwerkingCount++;
       } catch {

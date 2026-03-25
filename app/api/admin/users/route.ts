@@ -9,7 +9,7 @@ const createUserSchema = z.object({
   naam: naamSchema,
   wachtwoord: z.string().optional(),
   rollen: z.array(z.string()).optional(),
-  gemeenteId: z.string().nullable().optional(),
+  organisatieId: z.string().nullable().optional(),
   leverancierId: z.string().nullable().optional(),
 });
 
@@ -35,14 +35,14 @@ export async function POST(request: NextRequest) {
   try {
     const parsed = await parseBody(request, createUserSchema);
     if ("error" in parsed) return parsed.error;
-    const { email, naam, wachtwoord, rollen, gemeenteId, leverancierId } = parsed.data;
+    const { email, naam, wachtwoord, rollen, organisatieId, leverancierId } = parsed.data;
 
     const user = await createUser({
       email,
       naam,
       wachtwoord,
       rollen: rollen || ["GEVERIFIEERD"],
-      gemeenteId,
+      organisatieId,
       leverancierId,
     });
 

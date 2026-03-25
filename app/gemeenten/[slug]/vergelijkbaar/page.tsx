@@ -13,7 +13,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const gemeente = await prisma.gemeente.findUnique({ where: { id: slug }, select: { naam: true } });
+  const gemeente = await prisma.organisatie.findUnique({ where: { id: slug }, select: { naam: true } });
   if (!gemeente) return {};
   return {
     title: `Vergelijkbare gemeenten met ${gemeente.naam}`,
@@ -29,7 +29,7 @@ export default async function VergelijkbaarPage({ params }: Props) {
     redirect("/auth/login");
   }
 
-  const gemeente = await prisma.gemeente.findUnique({ where: { id: slug }, select: { id: true, naam: true } });
+  const gemeente = await prisma.organisatie.findUnique({ where: { id: slug }, select: { id: true, naam: true } });
   if (!gemeente) notFound();
 
   const { gemeenten: similarGemeenten, totalCount } = await getSimilarGemeenten(slug, 500);

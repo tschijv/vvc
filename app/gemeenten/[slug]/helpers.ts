@@ -58,12 +58,12 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
   // 2. gemeentePakketten (for nieuweVersies)
   // 3. bgKoppelingen (for buitengemeentelijkeKoppelingen)
   const [gemeentePakketIds, gemeentePakketten, bgKoppelingen] = await Promise.all([
-    prisma.gemeentePakket.findMany({
-      where: { gemeenteId },
+    prisma.organisatiePakket.findMany({
+      where: { organisatieId: gemeenteId },
       select: { pakketversie: { select: { pakketId: true } } },
     }),
-    prisma.gemeentePakket.findMany({
-      where: { gemeenteId },
+    prisma.organisatiePakket.findMany({
+      where: { organisatieId: gemeenteId },
       select: {
         pakketversie: {
           select: {
@@ -84,7 +84,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
       },
     }),
     prisma.koppeling.findMany({
-      where: { gemeenteId, buitengemeentelijk: true },
+      where: { organisatieId: gemeenteId, buitengemeentelijk: true },
       select: {
         standaard: true, transportprotocol: true, createdAt: true,
         doelExternPakket: { select: { naam: true } },

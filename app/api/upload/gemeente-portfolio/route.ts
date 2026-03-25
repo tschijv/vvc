@@ -22,13 +22,13 @@ export async function POST(request: NextRequest) {
     // Determine gemeenteId
     let gemeenteId: string;
     if (user.role === "GEMEENTE") {
-      if (!user.gemeenteId) {
+      if (!user.organisatieId) {
         return NextResponse.json(
           { error: "Uw account is niet gekoppeld aan een gemeente." },
           { status: 403 }
         );
       }
-      gemeenteId = user.gemeenteId;
+      gemeenteId = user.organisatieId;
     } else {
       if (!orgId) {
         return NextResponse.json(

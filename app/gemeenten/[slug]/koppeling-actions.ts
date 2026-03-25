@@ -60,7 +60,7 @@ export async function addKoppeling(
 
     await prisma.koppeling.create({
       data: {
-        gemeenteId,
+        organisatieId: gemeenteId,
         bronPakketversieId: data.bronPakketversieId || null,
         bronExternPakketId: bronExternPakketId || null,
         richting: data.richting || "beide",
@@ -103,14 +103,14 @@ export async function updateKoppeling(
     // Look up the koppeling to get gemeenteId for auth check
     const koppeling = await prisma.koppeling.findUnique({
       where: { id: koppelingId },
-      select: { gemeenteId: true },
+      select: { organisatieId: true },
     });
 
     if (!koppeling) {
       return { error: "Koppeling niet gevonden." };
     }
 
-    if (!canEditGemeentePortfolio(user, koppeling.gemeenteId)) {
+    if (!canEditGemeentePortfolio(user, koppeling.organisatieId)) {
       return { error: "Geen toegang om koppelingen te bewerken." };
     }
 
@@ -168,14 +168,14 @@ export async function deleteKoppeling(
   try {
     const koppeling = await prisma.koppeling.findUnique({
       where: { id: koppelingId },
-      select: { gemeenteId: true },
+      select: { organisatieId: true },
     });
 
     if (!koppeling) {
       return { error: "Koppeling niet gevonden." };
     }
 
-    if (!canEditGemeentePortfolio(user, koppeling.gemeenteId)) {
+    if (!canEditGemeentePortfolio(user, koppeling.organisatieId)) {
       return { error: "Geen toegang om koppelingen te verwijderen." };
     }
 
@@ -209,8 +209,8 @@ export async function searchGemeentePakketversies(
   if (!user) return [];
 
   try {
-    const gemeentePakketten = await prisma.gemeentePakket.findMany({
-      where: { gemeenteId },
+    const gemeentePakketten = await prisma.organisatiePakket.findMany({
+      where: { organisatieId: gemeenteId },
       include: {
         pakketversie: {
           include: {

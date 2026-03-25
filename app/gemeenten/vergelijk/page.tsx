@@ -33,7 +33,7 @@ export default async function VergelijkPage({ searchParams }: Props) {
   const showPortfolio = canViewGemeentePortfolio(user);
 
   // Get all gemeenten for the selectors
-  const alleGemeenten = await prisma.gemeente.findMany({
+  const alleGemeenten = await prisma.organisatie.findMany({
     select: { id: true, naam: true },
     orderBy: { naam: "asc" },
   });

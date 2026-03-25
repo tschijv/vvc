@@ -68,7 +68,7 @@ async function main() {
   console.log(dryRun ? "🔍 DRY RUN — geen wijzigingen\n" : "🔧 LIVE RUN\n");
 
   // Get all gemeenten
-  const allGemeenten = await prisma.gemeente.findMany({
+  const allGemeenten = await prisma.organisatie.findMany({
     select: {
       id: true,
       naam: true,
@@ -119,18 +119,18 @@ async function main() {
           `UPDATE "GemeentePakket" SET "gemeenteId" = $1 WHERE "gemeenteId" = $2 AND "pakketversieId" NOT IN (SELECT "pakketversieId" FROM "GemeentePakket" WHERE "gemeenteId" = $1)`,
           targetId, orphan.id,
         );
-        await prisma.gemeentePakket.deleteMany({ where: { gemeenteId: orphan.id } });
+        await prisma.organisatiePakket.deleteMany({ where: { organisatieId: orphan.id } });
 
         // Migrate Users
         await prisma.user.updateMany({
-          where: { gemeenteId: orphan.id },
-          data: { gemeenteId: targetId },
+          where: { organisatieId: orphan.id },
+          data: { organisatieId: targetId },
         });
 
         // Migrate Koppelingen
         await prisma.koppeling.updateMany({
-          where: { gemeenteId: orphan.id },
-          data: { gemeenteId: targetId },
+          where: { organisatieId: orphan.id },
+          data: { organisatieId: targetId },
         });
 
         // Migrate SamenwerkingGemeente
@@ -138,7 +138,7 @@ async function main() {
           `UPDATE "SamenwerkingGemeente" SET "gemeenteId" = $1 WHERE "gemeenteId" = $2 AND "samenwerkingId" NOT IN (SELECT "samenwerkingId" FROM "SamenwerkingGemeente" WHERE "gemeenteId" = $1)`,
           targetId, orphan.id,
         );
-        await prisma.samenwerkingGemeente.deleteMany({ where: { gemeenteId: orphan.id } });
+        await prisma.samenwerkingOrganisatie.deleteMany({ where: { organisatieId: orphan.id } });
 
         // Migrate Notificaties
         try {
@@ -149,7 +149,7 @@ async function main() {
         } catch { /* no gemeenteId on Notificatie */ }
 
         // Delete orphan
-        await prisma.gemeente.delete({ where: { id: orphan.id } });
+        await prisma.organisatie.delete({ where: { id: orphan.id } });
       }
 
       migrated++;
@@ -160,27 +160,27 @@ async function main() {
 
         if (!dryRun) {
           // Delete pakket links first, then gemeente
-          await prisma.gemeentePakket.deleteMany({ where: { gemeenteId: orphan.id } });
-          await prisma.koppeling.deleteMany({ where: { gemeenteId: orphan.id } });
-          await prisma.samenwerkingGemeente.deleteMany({ where: { gemeenteId: orphan.id } });
+          await prisma.organisatiePakket.deleteMany({ where: { organisatieId: orphan.id } });
+          await prisma.koppeling.deleteMany({ where: { organisatieId: orphan.id } });
+          await prisma.samenwerkingOrganisatie.deleteMany({ where: { organisatieId: orphan.id } });
           await prisma.user.updateMany({
-            where: { gemeenteId: orphan.id },
-            data: { gemeenteId: null },
+            where: { organisatieId: orphan.id },
+            data: { organisatieId: null },
           });
-          await prisma.gemeente.delete({ where: { id: orphan.id } });
+          await prisma.organisatie.delete({ where: { id: orphan.id } });
         }
 
         skippedWithData++;
       } else {
         console.log(`  🗑️  ${orphan.naam} (${orphan.cbsCode}) — geen data, verwijderen`);
         if (!dryRun) {
-          await prisma.koppeling.deleteMany({ where: { gemeenteId: orphan.id } });
-          await prisma.samenwerkingGemeente.deleteMany({ where: { gemeenteId: orphan.id } });
+          await prisma.koppeling.deleteMany({ where: { organisatieId: orphan.id } });
+          await prisma.samenwerkingOrganisatie.deleteMany({ where: { organisatieId: orphan.id } });
           await prisma.user.updateMany({
-            where: { gemeenteId: orphan.id },
-            data: { gemeenteId: null },
+            where: { organisatieId: orphan.id },
+            data: { organisatieId: null },
           });
-          await prisma.gemeente.delete({ where: { id: orphan.id } });
+          await prisma.organisatie.delete({ where: { id: orphan.id } });
         }
       }
       deleted++;
@@ -193,7 +193,7 @@ async function main() {
   console.log(`  Gemigreerd: ${migrated}`);
   console.log(`  Verwijderd: ${deleted} (waarvan ${skippedWithData} met data)`);
 
-  const remaining = await prisma.gemeente.count();
+  const remaining = await prisma.organisatie.count();
   console.log(`  Gemeenten over: ${remaining}`);
 }
 

@@ -7,7 +7,7 @@ import { logAudit } from "./services/audit";
 declare module "next-auth" {
   interface User {
     role: string;
-    gemeenteId?: string | null;
+    organisatieId?: string | null;
     leverancierId?: string | null;
     isBeheerder?: boolean;
   }
@@ -18,7 +18,7 @@ declare module "next-auth" {
       name: string;
       naam: string;
       role: string;
-      gemeenteId?: string | null;
+      organisatieId?: string | null;
       leverancierId?: string | null;
       isBeheerder?: boolean;
     };
@@ -82,7 +82,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           name: user.naam,
           role: primaryRole,
-          gemeenteId: user.gemeenteId,
+          organisatieId: user.organisatieId,
           leverancierId: user.leverancierId,
           isBeheerder: user.rollen.includes("GEMEENTE_BEHEERDER") || user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER"),
         };
@@ -96,7 +96,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as { role: string }).role;
-        token.gemeenteId = (user as { gemeenteId?: string | null }).gemeenteId;
+        token.organisatieId = (user as { organisatieId?: string | null }).organisatieId;
         token.leverancierId = (user as { leverancierId?: string | null }).leverancierId;
         token.isBeheerder = (user as { isBeheerder?: boolean }).isBeheerder;
       }
@@ -106,7 +106,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (session.user) {
         session.user.id = token.sub as string;
         session.user.role = token.role as string;
-        session.user.gemeenteId = token.gemeenteId as string | null;
+        session.user.organisatieId = token.organisatieId as string | null;
         session.user.leverancierId = token.leverancierId as string | null;
         session.user.naam = session.user.name as string;
         session.user.isBeheerder = token.isBeheerder as boolean | undefined;

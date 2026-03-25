@@ -34,7 +34,7 @@ export async function getAIAdvies(gemeenteId: string, vraag: string) {
 
   // Haal alle context op
   const [gemeente, pakketten, stats, koppelingen] = await Promise.all([
-    prisma.gemeente.findUnique({
+    prisma.organisatie.findUnique({
       where: { id: gemeenteId },
       select: { naam: true, cbsCode: true, progress: true },
     }),

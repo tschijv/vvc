@@ -17,7 +17,7 @@ export async function updateGemeenteContact(
   if (!user) throw new Error("Niet ingelogd");
 
   // Look up gemeente slug for auth check
-  const gemeente = await prisma.gemeente.findUnique({
+  const gemeente = await prisma.organisatie.findUnique({
     where: { id: gemeenteId },
     select: { slug: true },
   });
@@ -27,7 +27,7 @@ export async function updateGemeenteContact(
     throw new Error("Geen rechten om deze gemeente te bewerken");
   }
 
-  await prisma.gemeente.update({
+  await prisma.organisatie.update({
     where: { id: gemeenteId },
     data: {
       contactpersoon: data.contactpersoon.trim() || null,

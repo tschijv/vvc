@@ -30,7 +30,7 @@ async function main() {
   console.log(`Found ${rows.length} samenwerkingen in CSV.`);
 
   // Get all existing gemeenten for matching
-  const gemeenten = await prisma.gemeente.findMany({
+  const gemeenten = await prisma.organisatie.findMany({
     select: { id: true, naam: true },
   });
   const gemeenteById = new Map(gemeenten.map((g) => [g.id, g]));
@@ -83,7 +83,7 @@ async function main() {
       .filter((s) => s.length > 0);
 
     // Delete existing links and re-create
-    await prisma.samenwerkingGemeente.deleteMany({
+    await prisma.samenwerkingOrganisatie.deleteMany({
       where: { samenwerkingId: id },
     });
 
@@ -99,10 +99,10 @@ async function main() {
 
       if (gemeente) {
         try {
-          await prisma.samenwerkingGemeente.create({
+          await prisma.samenwerkingOrganisatie.create({
             data: {
               samenwerkingId: id,
-              gemeenteId: gemeente.id,
+              organisatieId: gemeente.id,
             },
           });
           linkedGemeenten++;

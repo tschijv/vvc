@@ -17,7 +17,7 @@ export type UserListItem = {
 };
 
 export type UserDetail = UserListItem & {
-  gemeenteId: string | null;
+  organisatieId: string | null;
   leverancierId: string | null;
 };
 
@@ -49,7 +49,7 @@ export async function getUsers(options?: {
   const users = await prisma.user.findMany({
     where,
     include: {
-      gemeente: { select: { naam: true } },
+      organisatie: { select: { naam: true } },
       leverancier: { select: { naam: true } },
     },
     orderBy: { createdAt: "desc" },
@@ -63,7 +63,7 @@ export async function getUsers(options?: {
     naam: u.naam,
     actief: u.actief,
     rollen: u.rollen,
-    gemeenteNaam: u.gemeente?.naam || null,
+    gemeenteNaam: u.organisatie?.naam || null,
     leverancierNaam: u.leverancier?.naam || null,
     laatsteToegangOp: u.laatsteToegangOp,
     createdAt: u.createdAt,
@@ -100,7 +100,7 @@ export async function getUserById(id: string): Promise<UserDetail | null> {
   const u = await prisma.user.findUnique({
     where: { id },
     include: {
-      gemeente: { select: { naam: true } },
+      organisatie: { select: { naam: true } },
       leverancier: { select: { naam: true } },
     },
   });
@@ -113,8 +113,8 @@ export async function getUserById(id: string): Promise<UserDetail | null> {
     naam: u.naam,
     actief: u.actief,
     rollen: u.rollen,
-    gemeenteId: u.gemeenteId,
-    gemeenteNaam: u.gemeente?.naam || null,
+    organisatieId: u.organisatieId,
+    gemeenteNaam: u.organisatie?.naam || null,
     leverancierId: u.leverancierId,
     leverancierNaam: u.leverancier?.naam || null,
     laatsteToegangOp: u.laatsteToegangOp,
@@ -129,7 +129,7 @@ export async function createUser(data: {
   naam: string;
   wachtwoord?: string;
   rollen: Role[];
-  gemeenteId?: string | null;
+  organisatieId?: string | null;
   leverancierId?: string | null;
 }) {
   const passwordHash = data.wachtwoord
@@ -142,7 +142,7 @@ export async function createUser(data: {
       naam: data.naam,
       passwordHash,
       rollen: data.rollen,
-      gemeenteId: data.gemeenteId || null,
+      organisatieId: data.organisatieId || null,
       leverancierId: data.leverancierId || null,
     },
   });
@@ -156,7 +156,7 @@ export async function updateUser(
     wachtwoord?: string;
     actief?: boolean;
     rollen?: Role[];
-    gemeenteId?: string | null;
+    organisatieId?: string | null;
     leverancierId?: string | null;
   }
 ) {
@@ -266,7 +266,7 @@ export async function approveRegistration(
   id: string,
   data: {
     rollen: Role[];
-    gemeenteId?: string | null;
+    organisatieId?: string | null;
     leverancierId?: string | null;
   }
 ) {
@@ -275,7 +275,7 @@ export async function approveRegistration(
     data: {
       actief: true,
       rollen: data.rollen,
-      gemeenteId: data.gemeenteId || null,
+      organisatieId: data.organisatieId || null,
       leverancierId: data.leverancierId || null,
     },
   });

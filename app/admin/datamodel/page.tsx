@@ -29,12 +29,12 @@ const domeinen = [
     ],
   },
   {
-    naam: "Gemeentedomein",
+    naam: "Organisatiedomein",
     kleur: "bg-green-50 border-green-200",
     objecttypen: [
-      { naam: "Gemeente", attrs: "naam, cbsCode, contactpersoon, email, website, voortgang" },
+      { naam: "Organisatie", attrs: "naam, cbsCode, contactpersoon, email, website, voortgang", stereotype: "@@map(\"Gemeente\")" },
       { naam: "Samenwerking", attrs: "naam, type, contactpersoon, email" },
-      { naam: "SamenwerkingGemeente", attrs: "samenwerkingId, gemeenteId", stereotype: "Koppelklasse" },
+      { naam: "SamenwerkingOrganisatie", attrs: "samenwerkingId, organisatieId", stereotype: "Koppelklasse, @@map(\"SamenwerkingGemeente\")" },
     ],
   },
   {
@@ -80,7 +80,7 @@ const domeinen = [
 ];
 
 const koppelklassen = [
-  { naam: "GemeentePakket", tussen: "Gemeente ↔ Pakketversie", attrs: "status, datumIngangStatus, technologie, licentievorm, aantalGebruikers" },
+  { naam: "OrganisatiePakket", tussen: "Organisatie ↔ Pakketversie", attrs: "status, datumIngangStatus, technologie, licentievorm, aantalGebruikers" },
   { naam: "PakketReferentiecomponent", tussen: "Pakket ↔ Referentiecomponent", attrs: "type, aantalGemeenten" },
   { naam: "PakketStandaard", tussen: "Pakket ↔ Standaardversie", attrs: "compliancy, testrapportUrl" },
   { naam: "PakketApplicatiefunctie", tussen: "Pakket ↔ Applicatiefunctie", attrs: "ondersteund" },

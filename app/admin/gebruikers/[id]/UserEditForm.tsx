@@ -10,7 +10,7 @@ type UserData = {
   naam: string;
   actief: boolean;
   rollen: Role[];
-  gemeenteId: string | null;
+  organisatieId: string | null;
   leverancierId: string | null;
 };
 
@@ -38,7 +38,7 @@ export default function UserEditForm({
   const [rollen, setRollen] = useState<string[]>(
     user?.rollen || ["GEVERIFIEERD"]
   );
-  const [gemeenteId, setGemeenteId] = useState(user?.gemeenteId || "");
+  const [gemeenteId, setGemeenteId] = useState(user?.organisatieId || "");
   const [leverancierId, setLeverancierId] = useState(user?.leverancierId || "");
   const [wachtwoord, setWachtwoord] = useState("");
   const [wachtwoordBevestiging, setWachtwoordBevestiging] = useState("");
@@ -74,7 +74,7 @@ export default function UserEditForm({
         email,
         actief,
         rollen,
-        gemeenteId: gemeenteId || null,
+        organisatieId: gemeenteId || null,
         leverancierId: leverancierId || null,
       };
       if (wachtwoord) {

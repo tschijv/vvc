@@ -6,15 +6,15 @@ export async function getSamenwerkingById(id: string) {
   return prisma.samenwerking.findUnique({
     where: { id },
     include: {
-      gemeenten: {
+      organisaties: {
         include: {
-          gemeente: {
+          organisatie: {
             include: {
               _count: { select: { pakketten: true, koppelingen: true } },
             },
           },
         },
-        orderBy: { gemeente: { naam: "asc" } },
+        orderBy: { organisatie: { naam: "asc" } },
       },
     },
   });
@@ -37,21 +37,21 @@ export type SamenwerkingPakketRow = {
 export async function getSamenwerkingPakketten(
   samenwerkingId: string
 ): Promise<SamenwerkingPakketRow[]> {
-  // Get all gemeente IDs in this samenwerking
-  const links = await prisma.samenwerkingGemeente.findMany({
+  // Get all organisatie IDs in this samenwerking
+  const links = await prisma.samenwerkingOrganisatie.findMany({
     where: { samenwerkingId },
-    select: { gemeenteId: true, gemeente: { select: { naam: true } } },
+    select: { organisatieId: true, organisatie: { select: { naam: true } } },
   });
 
-  const gemeenteMap = new Map(
-    links.map((l) => [l.gemeenteId, l.gemeente.naam])
+  const organisatieMap = new Map(
+    links.map((l) => [l.organisatieId, l.organisatie.naam])
   );
-  const gemeenteIds = links.map((l) => l.gemeenteId);
+  const organisatieIds = links.map((l) => l.organisatieId);
 
-  if (gemeenteIds.length === 0) return [];
+  if (organisatieIds.length === 0) return [];
 
-  const gps = await prisma.gemeentePakket.findMany({
-    where: { gemeenteId: { in: gemeenteIds } },
+  const gps = await prisma.organisatiePakket.findMany({
+    where: { organisatieId: { in: organisatieIds } },
     include: {
       pakketversie: {
         include: {
@@ -85,11 +85,11 @@ export async function getSamenwerkingPakketten(
     hasCompliancy: gp.pakketversie.pakket.standaarden.some(
       (s) => s.compliancy === true
     ),
-    gemeenteNaam: gemeenteMap.get(gp.gemeenteId) || "Onbekend",
+    gemeenteNaam: organisatieMap.get(gp.organisatieId) || "Onbekend",
   }));
 }
 
-// ─── Aggregated koppelingen across all member gemeenten ─────────────────────────
+// ─── Aggregated koppelingen across all member organisaties ──────────────────────
 
 export type SamenwerkingKoppelingRow = {
   bron: string;
@@ -103,20 +103,20 @@ export type SamenwerkingKoppelingRow = {
 export async function getSamenwerkingKoppelingen(
   samenwerkingId: string
 ): Promise<SamenwerkingKoppelingRow[]> {
-  const links = await prisma.samenwerkingGemeente.findMany({
+  const links = await prisma.samenwerkingOrganisatie.findMany({
     where: { samenwerkingId },
-    select: { gemeenteId: true, gemeente: { select: { naam: true } } },
+    select: { organisatieId: true, organisatie: { select: { naam: true } } },
   });
 
-  const gemeenteMap = new Map(
-    links.map((l) => [l.gemeenteId, l.gemeente.naam])
+  const organisatieMap = new Map(
+    links.map((l) => [l.organisatieId, l.organisatie.naam])
   );
-  const gemeenteIds = links.map((l) => l.gemeenteId);
+  const organisatieIds = links.map((l) => l.organisatieId);
 
-  if (gemeenteIds.length === 0) return [];
+  if (organisatieIds.length === 0) return [];
 
   const koppelingen = await prisma.koppeling.findMany({
-    where: { gemeenteId: { in: gemeenteIds } },
+    where: { organisatieId: { in: organisatieIds } },
     include: {
       bronPakketversie: { include: { pakket: true } },
       bronExternPakket: true,
@@ -148,7 +148,7 @@ export async function getSamenwerkingKoppelingen(
       doel: doelLabel,
       status: k.status,
       standaard: k.standaard,
-      gemeenteNaam: gemeenteMap.get(k.gemeenteId) || "Onbekend",
+      gemeenteNaam: organisatieMap.get(k.organisatieId) || "Onbekend",
     };
   });
 }
@@ -166,13 +166,13 @@ export type SamenwerkingDashboardStats = {
 export async function getSamenwerkingDashboardStats(
   samenwerkingId: string
 ): Promise<SamenwerkingDashboardStats> {
-  const links = await prisma.samenwerkingGemeente.findMany({
+  const links = await prisma.samenwerkingOrganisatie.findMany({
     where: { samenwerkingId },
-    select: { gemeenteId: true },
+    select: { organisatieId: true },
   });
-  const gemeenteIds = links.map((l) => l.gemeenteId);
+  const organisatieIds = links.map((l) => l.organisatieId);
 
-  if (gemeenteIds.length === 0) {
+  if (organisatieIds.length === 0) {
     return {
       totaalPakketten: 0,
       totaalKoppelingen: 0,
@@ -183,14 +183,14 @@ export async function getSamenwerkingDashboardStats(
   }
 
   const [pakketCount, koppelingCount, gps] = await Promise.all([
-    prisma.gemeentePakket.count({
-      where: { gemeenteId: { in: gemeenteIds } },
+    prisma.organisatiePakket.count({
+      where: { organisatieId: { in: organisatieIds } },
     }),
     prisma.koppeling.count({
-      where: { gemeenteId: { in: gemeenteIds } },
+      where: { organisatieId: { in: organisatieIds } },
     }),
-    prisma.gemeentePakket.findMany({
-      where: { gemeenteId: { in: gemeenteIds } },
+    prisma.organisatiePakket.findMany({
+      where: { organisatieId: { in: organisatieIds } },
       include: {
         pakketversie: {
           include: {
@@ -218,6 +218,6 @@ export async function getSamenwerkingDashboardStats(
     totaalKoppelingen: koppelingCount,
     compliantCount,
     eindeOndersteuningCount,
-    gemeenteCount: gemeenteIds.length,
+    gemeenteCount: organisatieIds.length,
   };
 }

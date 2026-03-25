@@ -58,8 +58,8 @@ export default async function SamenwerkingDetailPage({
                 </span>
               )}
               <span className="text-sm text-gray-500">
-                {samenwerking.gemeenten.length} gemeente
-                {samenwerking.gemeenten.length !== 1 ? "n" : ""}
+                {samenwerking.organisaties.length} gemeente
+                {samenwerking.organisaties.length !== 1 ? "n" : ""}
               </span>
             </div>
           </div>
@@ -196,24 +196,24 @@ function OverzichtTab({
       {/* Deelnemende gemeenten */}
       <div className="bg-white border border-gray-200 rounded-lg p-5">
         <h2 className="text-lg font-semibold text-[#1a6ca8] mb-3">
-          Deelnemende gemeenten ({samenwerking.gemeenten.length})
+          Deelnemende gemeenten ({samenwerking.organisaties.length})
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {samenwerking.gemeenten.map((sg) => (
+          {samenwerking.organisaties.map((sg) => (
             <Link
-              key={sg.gemeenteId}
+              key={sg.organisatieId}
               href={`/gemeenten/${encodeURIComponent(
-                sg.gemeente.naam
+                sg.organisatie.naam
                   .toLowerCase()
                   .replace(/[^a-z0-9]+/g, "-")
               )}`}
               className="flex items-center justify-between bg-gray-50 hover:bg-blue-50 border border-gray-200 rounded px-3 py-2 text-sm transition"
             >
               <span className="text-[#1a6ca8] font-medium">
-                {sg.gemeente.naam}
+                {sg.organisatie.naam}
               </span>
               <span className="text-xs text-gray-400">
-                {sg.gemeente._count.pakketten} pakketten
+                {sg.organisatie._count.pakketten} pakketten
               </span>
             </Link>
           ))}

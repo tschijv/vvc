@@ -10,7 +10,7 @@ export async function GET(
 
   try {
     // Verify gemeente exists
-    const gemeente = await prisma.gemeente.findUnique({
+    const gemeente = await prisma.organisatie.findUnique({
       where: { id },
       select: { id: true, naam: true },
     });

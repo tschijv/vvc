@@ -534,8 +534,8 @@ export async function processGemeenteUpload(
   let skipped = 0;
 
   if (mode === "replace") {
-    const existing = await prisma.gemeentePakket.count({ where: { gemeenteId } });
-    await prisma.gemeentePakket.deleteMany({ where: { gemeenteId } });
+    const existing = await prisma.organisatiePakket.count({ where: { organisatieId: gemeenteId } });
+    await prisma.organisatiePakket.deleteMany({ where: { organisatieId: gemeenteId } });
     if (existing > 0) {
       logAudit({
         actie: "portfolio_replace",
@@ -550,16 +550,16 @@ export async function processGemeenteUpload(
   for (const row of validRows) {
     try {
       const where = {
-        gemeenteId_pakketversieId: {
-          gemeenteId,
+        organisatieId_pakketversieId: {
+          organisatieId: gemeenteId,
           pakketversieId: row.pakketversieId!,
         },
       };
 
-      const existing = await prisma.gemeentePakket.findUnique({ where });
+      const existing = await prisma.organisatiePakket.findUnique({ where });
 
       if (existing) {
-        await prisma.gemeentePakket.update({
+        await prisma.organisatiePakket.update({
           where,
           data: {
             status: row.status || existing.status,
@@ -569,9 +569,9 @@ export async function processGemeenteUpload(
         });
         updated++;
       } else {
-        await prisma.gemeentePakket.create({
+        await prisma.organisatiePakket.create({
           data: {
-            gemeenteId,
+            organisatieId: gemeenteId,
             pakketversieId: row.pakketversieId!,
             status: row.status || null,
             datumIngangStatus: row.datumIngangStatus,

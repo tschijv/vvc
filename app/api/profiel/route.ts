@@ -28,9 +28,9 @@ export async function GET() {
       rollen: true,
       emailNotificaties: true,
       lastLoginAt: true,
-      gemeenteId: true,
+      organisatieId: true,
       leverancierId: true,
-      gemeente: { select: { id: true, naam: true } },
+      organisatie: { select: { id: true, naam: true } },
       leverancier: { select: { id: true, naam: true, slug: true } },
     },
   });

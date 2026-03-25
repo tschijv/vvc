@@ -57,13 +57,13 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
     prisma.koppeling.findMany({
       where,
       include: {
-        gemeente: true,
+        organisatie: true,
         bronPakketversie: { include: { pakket: true } },
         bronExternPakket: true,
         doelPakketversie: { include: { pakket: true } },
         doelExternPakket: true,
       },
-      orderBy: [{ gemeente: { naam: "asc" } }, { createdAt: "asc" }],
+      orderBy: [{ organisatie: { naam: "asc" } }, { createdAt: "asc" }],
       skip: (pagina - 1) * PER_PAGE,
       take: PER_PAGE,
     }),
@@ -202,8 +202,8 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
                 return (
                   <tr key={k.id} className="border-b border-gray-100 hover:bg-gray-50 align-top">
                     <td className="py-3 pr-4">
-                      <Link href={`/gemeenten/${k.gemeenteId}`} className="text-[#1a6ca8] hover:underline">
-                        {k.gemeente.naam}
+                      <Link href={`/gemeenten/${k.organisatieId}`} className="text-[#1a6ca8] hover:underline">
+                        {k.organisatie.naam}
                       </Link>
                     </td>
                     <td className="py-3 pr-4 text-gray-700">

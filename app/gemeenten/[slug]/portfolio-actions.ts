@@ -68,10 +68,10 @@ export async function addPakketToPortfolio(
 
   try {
     // Check if already exists
-    const existing = await prisma.gemeentePakket.findUnique({
+    const existing = await prisma.organisatiePakket.findUnique({
       where: {
-        gemeenteId_pakketversieId: {
-          gemeenteId,
+        organisatieId_pakketversieId: {
+          organisatieId: gemeenteId,
           pakketversieId: data.pakketversieId,
         },
       },
@@ -81,9 +81,9 @@ export async function addPakketToPortfolio(
       return { error: "Dit pakket staat al in het portfolio." };
     }
 
-    await prisma.gemeentePakket.create({
+    await prisma.organisatiePakket.create({
       data: {
-        gemeenteId,
+        organisatieId: gemeenteId,
         pakketversieId: data.pakketversieId,
         status: data.status || null,
         technologie: data.technologie || null,
@@ -132,9 +132,9 @@ export async function updateGemeentePakket(
   }
 
   try {
-    await prisma.gemeentePakket.update({
+    await prisma.organisatiePakket.update({
       where: {
-        gemeenteId_pakketversieId: { gemeenteId, pakketversieId },
+        organisatieId_pakketversieId: { organisatieId: gemeenteId, pakketversieId },
       },
       data: {
         status: data.status ?? undefined,
@@ -176,9 +176,9 @@ export async function removeGemeentePakket(
   }
 
   try {
-    await prisma.gemeentePakket.delete({
+    await prisma.organisatiePakket.delete({
       where: {
-        gemeenteId_pakketversieId: { gemeenteId, pakketversieId },
+        organisatieId_pakketversieId: { organisatieId: gemeenteId, pakketversieId },
       },
     });
 

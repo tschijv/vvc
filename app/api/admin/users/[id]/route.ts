@@ -9,7 +9,7 @@ const updateUserSchema = z.object({
   wachtwoord: z.string().optional(),
   actief: z.boolean().optional(),
   rollen: z.array(z.string()).optional(),
-  gemeenteId: z.string().nullable().optional(),
+  organisatieId: z.string().nullable().optional(),
   leverancierId: z.string().nullable().optional(),
 });
 
@@ -36,7 +36,7 @@ export async function PUT(
   try {
     const parsed = await parseBody(request, updateUserSchema);
     if ("error" in parsed) return parsed.error;
-    const { naam, email, wachtwoord, actief, rollen, gemeenteId, leverancierId } = parsed.data;
+    const { naam, email, wachtwoord, actief, rollen, organisatieId, leverancierId } = parsed.data;
 
     const user = await updateUser(id, {
       ...(naam !== undefined && { naam }),
@@ -44,7 +44,7 @@ export async function PUT(
       ...(wachtwoord && { wachtwoord }),
       ...(actief !== undefined && { actief }),
       ...(rollen !== undefined && { rollen }),
-      ...(gemeenteId !== undefined && { gemeenteId }),
+      ...(organisatieId !== undefined && { organisatieId }),
       ...(leverancierId !== undefined && { leverancierId }),
     });
 

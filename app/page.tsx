@@ -10,12 +10,12 @@ const getHomepageStats = unstable_cache(
       prisma.pakket.count(),
       prisma.pakketversie.count(),
       prisma.leverancier.count(),
-      prisma.gemeente.count(),
+      prisma.organisatie.count(),
       prisma.standaard.count(),
       prisma.referentiecomponent.count(),
       prisma.leverancierAddendum.count(),
       prisma.applicatiefunctie.count(),
-      prisma.gemeente.findMany({ select: { progress: true } }),
+      prisma.organisatie.findMany({ select: { progress: true } }),
     ]);
     return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang };
   },

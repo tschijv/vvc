@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
   try {
     // Find gemeente
-    const gemeente = await prisma.gemeente.findFirst({
+    const gemeente = await prisma.organisatie.findFirst({
       where: { naam: { contains: gemeenteNaam.replace("'", ""), mode: "insensitive" } },
       select: { id: true, naam: true, _count: { select: { pakketten: true, koppelingen: true } } },
     });
@@ -53,8 +53,8 @@ export async function POST(request: Request) {
     });
 
     // Check existing gemeente-pakket links to avoid duplicates
-    const existing = await prisma.gemeentePakket.findMany({
-      where: { gemeenteId: gemeente.id },
+    const existing = await prisma.organisatiePakket.findMany({
+      where: { organisatieId: gemeente.id },
       select: { pakketversieId: true },
     });
     const existingIds = new Set(existing.map((e) => e.pakketversieId));
@@ -71,9 +71,9 @@ export async function POST(request: Request) {
 
     let pakkettenAangemaakt = 0;
     for (const pv of toCreate) {
-      await prisma.gemeentePakket.create({
+      await prisma.organisatiePakket.create({
         data: {
-          gemeenteId: gemeente.id,
+          organisatieId: gemeente.id,
           pakketversieId: pv.id,
           status: statussen[Math.floor(Math.random() * statussen.length)],
           technologie: technologieen[Math.floor(Math.random() * technologieen.length)],
@@ -87,8 +87,8 @@ export async function POST(request: Request) {
     }
 
     // Add koppelingen between pakketten of this gemeente
-    const gemeentePakketten = await prisma.gemeentePakket.findMany({
-      where: { gemeenteId: gemeente.id },
+    const gemeentePakketten = await prisma.organisatiePakket.findMany({
+      where: { organisatieId: gemeente.id },
       select: { pakketversieId: true },
       take: 20,
     });
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
         try {
           await prisma.koppeling.create({
             data: {
-              gemeenteId: gemeente.id,
+              organisatieId: gemeente.id,
               bronPakketversieId: pvIds[bronIdx],
               doelPakketversieId: pvIds[doelIdx],
               richting: richtingen[Math.floor(Math.random() * richtingen.length)],
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
         try {
           await prisma.koppeling.create({
             data: {
-              gemeenteId: gemeente.id,
+              organisatieId: gemeente.id,
               bronPakketversieId: bronPv,
               doelExternPakketId: ep.id,
               richting: "bron_naar_doel",
@@ -157,11 +157,11 @@ export async function POST(request: Request) {
     }
 
     // Update progress
-    const totalPakketten = await prisma.gemeentePakket.count({
-      where: { gemeenteId: gemeente.id },
+    const totalPakketten = await prisma.organisatiePakket.count({
+      where: { organisatieId: gemeente.id },
     });
     const progress = Math.min(5, Math.floor(totalPakketten / 5));
-    await prisma.gemeente.update({
+    await prisma.organisatie.update({
       where: { id: gemeente.id },
       data: { progress, lastActivity: new Date() },
     });

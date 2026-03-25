@@ -30,7 +30,7 @@ export default async function RegistratieDetailPage({ params }: Props) {
       select: { id: true, naam: true },
       orderBy: { naam: "asc" },
     }),
-    prisma.gemeente.findMany({
+    prisma.organisatie.findMany({
       select: { id: true, naam: true },
       orderBy: { naam: "asc" },
     }),

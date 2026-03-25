@@ -87,7 +87,7 @@ export async function POST() {
   }
 
   try {
-    const gemeenten = await prisma.gemeente.findMany({
+    const gemeenten = await prisma.organisatie.findMany({
       select: { id: true, naam: true, contactpersoon: true, email: true, telefoon: true },
     });
 
@@ -98,7 +98,7 @@ export async function POST() {
       const fakeEmail = generateFakeEmail(fakeName, gemeente.naam);
       const fakePhone = generateFakePhone(gemeente.naam);
 
-      await prisma.gemeente.update({
+      await prisma.organisatie.update({
         where: { id: gemeente.id },
         data: {
           contactpersoon: fakeName,

@@ -19,14 +19,14 @@ export default async function DashboardRedirect({ searchParams }: Props) {
   }
 
   // For GEMEENTE users, find their gemeente
-  if (user.role === "GEMEENTE" && user.gemeenteId) {
+  if (user.role === "GEMEENTE" && user.organisatieId) {
     const tab = params.tab || "dashboard";
-    redirect(`/gemeenten/${user.gemeenteId}?tab=${tab}`);
+    redirect(`/gemeenten/${user.organisatieId}?tab=${tab}`);
   }
 
   // For ADMIN, redirect to first gemeente or gemeenten list
   if (user.role === "ADMIN") {
-    const first = await prisma.gemeente.findFirst({ orderBy: { naam: "asc" } });
+    const first = await prisma.organisatie.findFirst({ orderBy: { naam: "asc" } });
     if (first) {
       const tab = params.tab || "dashboard";
       redirect(`/gemeenten/${first.id}?tab=${tab}`);

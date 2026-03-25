@@ -30,13 +30,13 @@ export default async function SamenwerkingenPage({
     prisma.samenwerking.findMany({
       where,
       include: {
-        gemeenten: {
+        organisaties: {
           include: {
-            gemeente: {
+            organisatie: {
               select: { id: true, naam: true },
             },
           },
-          orderBy: { gemeente: { naam: "asc" } },
+          orderBy: { organisatie: { naam: "asc" } },
         },
       },
       orderBy: { naam: "asc" },
@@ -129,8 +129,8 @@ export default async function SamenwerkingenPage({
                       </span>
                     )}
                     <span className="text-xs text-gray-500">
-                      {sw.gemeenten.length} gemeente
-                      {sw.gemeenten.length !== 1 ? "n" : ""}
+                      {sw.organisaties.length} gemeente
+                      {sw.organisaties.length !== 1 ? "n" : ""}
                     </span>
                   </div>
                 </div>
@@ -150,19 +150,19 @@ export default async function SamenwerkingenPage({
               </div>
 
               {/* Deelnemende gemeenten */}
-              {sw.gemeenten.length > 0 && (
+              {sw.organisaties.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <p className="text-xs font-medium text-gray-500 mb-1">
                     Deelnemende gemeenten:
                   </p>
                   <div className="flex flex-wrap gap-1.5">
-                    {sw.gemeenten.map((sg) => (
+                    {sw.organisaties.map((sg) => (
                       <Link
-                        key={sg.gemeenteId}
-                        href={`/gemeenten/${encodeURIComponent(sg.gemeente.naam.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}`}
+                        key={sg.organisatieId}
+                        href={`/gemeenten/${encodeURIComponent(sg.organisatie.naam.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}`}
                         className="text-xs bg-blue-50 text-[#1a6ca8] hover:bg-blue-100 px-2 py-0.5 rounded transition"
                       >
-                        {sg.gemeente.naam}
+                        {sg.organisatie.naam}
                       </Link>
                     ))}
                   </div>

@@ -41,7 +41,7 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const gemeente = await prisma.gemeente.findUnique({ where: { id: slug } });
+  const gemeente = await prisma.organisatie.findUnique({ where: { id: slug } });
   if (!gemeente) return {};
   return {
     title: gemeente.naam,

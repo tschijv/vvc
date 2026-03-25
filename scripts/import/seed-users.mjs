@@ -14,7 +14,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Get 3 gemeenten and 3 leveranciers to link to
-  const gemeenten = await prisma.gemeente.findMany({
+  const gemeenten = await prisma.organisatie.findMany({
     orderBy: { naam: "asc" },
     take: 3,
     select: { id: true, naam: true },
@@ -37,7 +37,7 @@ async function main() {
       naam: "Admin VC",
       passwordHash: hashSync("admin2026", 10),
       role: "ADMIN",
-      gemeenteId: null,
+      organisatieId: null,
       leverancierId: null,
     },
     ...gemeenten.map((g, i) => ({
@@ -45,7 +45,7 @@ async function main() {
       naam: `Testgebruiker ${g.naam}`,
       passwordHash: hashSync("test2026", 10),
       role: "GEMEENTE",
-      gemeenteId: g.id,
+      organisatieId: g.id,
       leverancierId: null,
     })),
     ...leveranciers.map((l, i) => ({
@@ -53,7 +53,7 @@ async function main() {
       naam: `Testgebruiker ${l.naam}`,
       passwordHash: hashSync("test2026", 10),
       role: "LEVERANCIER",
-      gemeenteId: null,
+      organisatieId: null,
       leverancierId: l.id,
     })),
   ];
@@ -65,7 +65,7 @@ async function main() {
         naam: user.naam,
         passwordHash: user.passwordHash,
         role: user.role,
-        gemeenteId: user.gemeenteId,
+        organisatieId: user.organisatieId,
         leverancierId: user.leverancierId,
       },
       create: user,

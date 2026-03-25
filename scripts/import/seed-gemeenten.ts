@@ -369,7 +369,7 @@ function seededRandom(seed: number): () => number {
 
 async function main() {
   // Check existing gemeenten
-  const existing = await prisma.gemeente.findMany({ select: { id: true, cbsCode: true } });
+  const existing = await prisma.organisatie.findMany({ select: { id: true, cbsCode: true } });
   const existingByCbs = new Map(existing.map((g) => [g.cbsCode, g.id]));
   console.log(`Existing: ${existing.length} gemeenten in database`);
   console.log(`Target:   ${GEMEENTEN.length} gemeenten in seed`);
@@ -395,7 +395,7 @@ async function main() {
 
     if (existingId) {
       // Update name if changed
-      await prisma.gemeente.update({
+      await prisma.organisatie.update({
         where: { id: existingId },
         data: { naam: g.naam },
       });
@@ -403,7 +403,7 @@ async function main() {
       process.stdout.write(".");
     } else {
       // Create new gemeente + link pakketversies
-      const gemeente = await prisma.gemeente.create({
+      const gemeente = await prisma.organisatie.create({
         data: {
           naam: g.naam,
           cbsCode: g.cbs,
@@ -416,9 +416,9 @@ async function main() {
       const shuffled = [...versieIds].sort(() => rand() - 0.5);
       const selected = shuffled.slice(0, Math.min(aantal, versieIds.length));
 
-      await prisma.gemeentePakket.createMany({
+      await prisma.organisatiePakket.createMany({
         data: selected.map((pakketversieId) => ({
-          gemeenteId: gemeente.id,
+          organisatieId: gemeente.id,
           pakketversieId,
         })),
         skipDuplicates: true,
@@ -430,8 +430,8 @@ async function main() {
   }
 
   console.log(`\nDone! ${created} created, ${updated} updated, ${skipped} skipped`);
-  const count = await prisma.gemeente.count();
-  const linkCount = await prisma.gemeentePakket.count();
+  const count = await prisma.organisatie.count();
+  const linkCount = await prisma.organisatiePakket.count();
   console.log(`Total: ${count} gemeenten with ${linkCount} pakket links`);
 }
 

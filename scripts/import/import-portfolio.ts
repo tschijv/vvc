@@ -40,7 +40,7 @@ async function main() {
     )
   );
   const bestaandeGemeenten = new Set(
-    (await prisma.gemeente.findMany({ select: { id: true } })).map(
+    (await prisma.organisatie.findMany({ select: { id: true } })).map(
       (g) => g.id
     )
   );
@@ -61,7 +61,7 @@ async function main() {
       const naam = row["Gemeente naam"]?.trim();
       if (naam) {
         try {
-          await prisma.gemeente.create({
+          await prisma.organisatie.create({
             data: {
               id: gemeenteId,
               naam,
@@ -81,13 +81,13 @@ async function main() {
     const pakketversieId = row["Pakketversie ID"]?.trim();
     if (pakketversieId && bestaandeVersies.has(pakketversieId)) {
       try {
-        await prisma.gemeentePakket.upsert({
+        await prisma.organisatiePakket.upsert({
           where: {
-            gemeenteId_pakketversieId: { gemeenteId, pakketversieId },
+            organisatieId_pakketversieId: { organisatieId: gemeenteId, pakketversieId },
           },
           update: {},
           create: {
-            gemeenteId,
+            organisatieId: gemeenteId,
             pakketversieId,
             status: row["Gebruik Status"] || null,
             datumIngangStatus:

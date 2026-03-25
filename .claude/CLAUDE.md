@@ -141,3 +141,67 @@
 - Claude API voor AI-adviseur
 - N3.js voor RDF serialisatie
 - Playwright voor E2E tests
+- Vitest voor unit tests
+- Zod voor input validatie
+
+## Golden Rulebook — Verplichte regels (rwrw01/golden-rulebook)
+
+### Code-kwaliteit (elke wijziging)
+- Max 300 regels per bestand — refactor bij >300
+- Max 40 regels per functie — extraheer helpers
+- Geen `any` types — gebruik `unknown` + type guards
+- Geen `@ts-ignore` zonder linked issue nummer
+- Geen bare `try/catch` die fouten slikt — altijd loggen of retourneren
+- Zod schema voor ALLE externe input (API requests, CSV imports, env vars, URL params)
+- Bestanden coloceren: `{module}.test.ts` naast bronbestand, niet in aparte `__tests__/`
+- Error messages: Nederlands (gebruiker), Engels (logs)
+- Geen TODO/FIXME zonder linked issue nummer
+- Nieuwe functies: JSDoc met `@param` en `@returns`
+
+### API & Architectuur
+- Gelaagde afhankelijkheden: Pages → Services → Prisma (nooit omhoog of lagen overslaan)
+- REST per NL API Strategy: versioned URLs (`/api/v1/`), RFC 9457 problem details
+- Zod schema VOOR de handler schrijven — schema IS de documentatie
+- Server valideert ALTIJD onafhankelijk van client
+- RBAC check VOOR business logic, niet erna
+- Deny by default — log elke autorisatie-failure
+
+### Testen (quality gates)
+- Unit tests: 80% line coverage op services + data-laag
+- Integratie tests: elke API endpoint minimaal 1 happy + 1 error path
+- E2E tests: alle kritische user journeys (login, CRUD, export)
+- WCAG 2.2 AA: 0 errors bij UI-wijzigingen (axe-core audit)
+- Geen test-afhankelijkheden — elke test eigen setup en teardown
+- Mock externe services op integration boundary, niet binnen services
+
+### Container & Portabiliteit
+- Multi-stage Dockerfile — geen build tools in final image
+- Non-root user (`USER 1001`)
+- Geen secrets in image — runtime env of mounted secrets
+- `.dockerignore`: `.git`, `node_modules`, `.env*`, `*.md`, `tests/`
+- Health endpoints: `/api/health` (liveness), `/api/readyz` (readiness)
+- Graceful shutdown op SIGTERM
+- Haven compliance: Helm chart in `helm/`, resource limits verplicht
+
+### 12-Factor App
+- Config via env vars — geen hardcoded URLs/ports/credentials
+- Stateless processen — geen lokale bestandsopslag voor user data
+- Logs naar stdout/stderr — nooit log files
+- Startup <5s, graceful shutdown met SIGTERM
+- Dev/prod parity: Docker Compose spiegelt productie
+
+### Naamgeving (Golden Rulebook)
+- Bestanden/directories: kebab-case, Engels (`user-profile.ts`)
+- Variabelen/functies: camelCase, Engels (`getUserProfile()`)
+- Classes/interfaces: PascalCase, Engels (`UserProfile`)
+- Constanten: UPPER_SNAKE (`MAX_RETRY_COUNT`)
+- DB tabellen: snake_case via Prisma `@@map()`
+- UI labels: Nederlands (`"Gebruikersprofiel"`)
+- Log messages: Engels (`"Failed to load user profile"`)
+- Commits: Engels
+
+### Performance baselines
+- API: p95 <200ms reads, p95 <500ms writes
+- Lighthouse: Accessibility >95
+- DB queries: geen N+1, `EXPLAIN` op nieuwe queries met joins
+- Container startup: <5s to healthy
