@@ -37,7 +37,7 @@ export const domeinen: Domein[] = [
     ],
   },
   {
-    naam: "GEMMA-domein",
+    naam: "Domein referentie-architectuur",
     kleur: "bg-blue-50 border-blue-200",
     objecttypen: [
       { naam: "Referentiecomponent", attrs: "naam, guid, beschrijving, status" },
@@ -112,6 +112,40 @@ export const enumeraties: Enumeratie[] = [
   { naam: "Koppelrichting", waarden: "heen, weer, beide" },
   { naam: "Versie-status", waarden: "in ontwikkeling, in test, in distributie, uit distributie" },
   { naam: "Begrip-status", waarden: "actief, inactief, concept" },
+];
+
+// Relaties tussen objecttypen (voor het UML-diagram)
+export interface Relatie {
+  van: string;
+  naar: string;
+  label?: string;
+  cardVan?: string;
+  cardNaar?: string;
+}
+
+export const relaties: Relatie[] = [
+  { van: "Leverancier", naar: "Pakket", label: "levert", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakket", naar: "Pakketversie", label: "heeft versie", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakket", naar: "PakketContact", label: "contactpersoon", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakketversie", naar: "Testrapport", label: "testrapport", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakketversie", naar: "OrganisatiePakket", label: "in gebruik", cardVan: "1", cardNaar: "0..*" },
+  { van: "Organisatie", naar: "OrganisatiePakket", label: "gebruikt", cardVan: "1", cardNaar: "0..*" },
+  { van: "Organisatie", naar: "SamenwerkingOrganisatie", label: "lid van", cardVan: "1", cardNaar: "0..*" },
+  { van: "Samenwerking", naar: "SamenwerkingOrganisatie", label: "heeft lid", cardVan: "1", cardNaar: "0..*" },
+  { van: "Organisatie", naar: "Koppeling", label: "heeft koppeling", cardVan: "1", cardNaar: "0..*" },
+  { van: "Gebruiker", naar: "Organisatie", label: "werkt bij", cardVan: "0..*", cardNaar: "0..1" },
+  { van: "Gebruiker", naar: "Leverancier", label: "werkt bij", cardVan: "0..*", cardNaar: "0..1" },
+  { van: "Gebruiker", naar: "Notificatie", label: "ontvangt", cardVan: "1", cardNaar: "0..*" },
+  { van: "Gebruiker", naar: "Favoriet", label: "heeft favoriet", cardVan: "1", cardNaar: "0..*" },
+  { van: "Leverancier", naar: "LeverancierAddendum", label: "ondertekent", cardVan: "1", cardNaar: "0..*" },
+  { van: "Addendum", naar: "LeverancierAddendum", label: "betreft", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakket", naar: "PakketReferentiecomponent", cardVan: "1", cardNaar: "0..*" },
+  { van: "Referentiecomponent", naar: "PakketReferentiecomponent", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakket", naar: "PakketStandaard", cardVan: "1", cardNaar: "0..*" },
+  { van: "Standaardversie", naar: "PakketStandaard", cardVan: "1", cardNaar: "0..*" },
+  { van: "Standaard", naar: "Standaardversie", label: "heeft versie", cardVan: "1", cardNaar: "0..*" },
+  { van: "Pakket", naar: "PakketApplicatiefunctie", cardVan: "1", cardNaar: "0..*" },
+  { van: "Applicatiefunctie", naar: "PakketApplicatiefunctie", cardVan: "1", cardNaar: "0..*" },
 ];
 
 // Computed counts

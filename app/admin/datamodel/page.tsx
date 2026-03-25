@@ -7,6 +7,7 @@ import {
   domeinen,
   koppelklassen,
   enumeraties,
+  relaties,
   aantalObjecttypen,
   aantalKoppelklassen,
   aantalEnumeraties,
@@ -37,7 +38,7 @@ export default async function DatamodelPage() {
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-3">UML-klassendiagram</h2>
         <div className="overflow-auto border border-gray-100 rounded bg-gray-50 p-2">
-          <MimDiagram domeinen={domeinen} koppelklassen={koppelklassen} />
+          <MimDiagram domeinen={domeinen} koppelklassen={koppelklassen} relaties={relaties} />
         </div>
       </div>
 
