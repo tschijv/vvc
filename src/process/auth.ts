@@ -1,8 +1,23 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { prisma } from "@/data/prisma";
 import { logAudit } from "@/service/audit";
+import { verifyTotpToken } from "@/service/totp";
+
+class TotpRequiredError extends CredentialsSignin {
+  code = "TOTP_REQUIRED";
+}
+
+class TotpInvalidError extends CredentialsSignin {
+  code = "TOTP_INVALID";
+}
+
+export type UserOrganisatieInfo = {
+  organisatieId: string;
+  rol: string;
+  organisatie: { id: string; naam: string };
+};
 
 declare module "next-auth" {
   interface User {
@@ -10,6 +25,7 @@ declare module "next-auth" {
     organisatieId?: string | null;
     leverancierId?: string | null;
     isBeheerder?: boolean;
+    organisaties?: UserOrganisatieInfo[];
   }
   interface Session {
     user: {
@@ -21,6 +37,7 @@ declare module "next-auth" {
       organisatieId?: string | null;
       leverancierId?: string | null;
       isBeheerder?: boolean;
+      organisaties?: UserOrganisatieInfo[];
     };
   }
 }
@@ -33,6 +50,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "E-mail", type: "email" },
         password: { label: "Wachtwoord", type: "password" },
+        totpToken: { label: "2FA Code", type: "text" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
@@ -51,6 +69,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!isValid) return null;
 
+        // Check TOTP for non-ADMIN users with 2FA enabled
+        const isAdmin = user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER");
+        if (user.totpEnabled && !isAdmin) {
+          const totpToken = credentials.totpToken as string | undefined;
+          if (!totpToken) {
+            throw new TotpRequiredError();
+          }
+          if (!user.totpSecret || !verifyTotpToken(user.totpSecret, totpToken)) {
+            throw new TotpInvalidError();
+          }
+        }
+
         // Log successful login
         logAudit({
           userId: user.id,
@@ -65,6 +95,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           where: { id: user.id },
           data: { laatsteToegangOp: new Date() },
         }).catch(() => {});
+
+        // Fetch user organisaties for multi-org support
+        const userOrganisaties = await prisma.userOrganisatie.findMany({
+          where: { userId: user.id },
+          select: {
+            organisatieId: true,
+            rol: true,
+            organisatie: { select: { id: true, naam: true } },
+          },
+        });
 
         // Derive primary role from rollen array for backward compat
         const primaryRole = user.rollen.includes("ADMIN")
@@ -87,6 +127,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           organisatieId: user.organisatieId,
           leverancierId: user.leverancierId,
           isBeheerder: user.rollen.includes("GEMEENTE_BEHEERDER") || user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER"),
+          organisaties: userOrganisaties,
         };
       },
     }),
@@ -95,12 +136,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.role = (user as { role: string }).role;
         token.organisatieId = (user as { organisatieId?: string | null }).organisatieId;
         token.leverancierId = (user as { leverancierId?: string | null }).leverancierId;
         token.isBeheerder = (user as { isBeheerder?: boolean }).isBeheerder;
+        token.organisaties = (user as { organisaties?: UserOrganisatieInfo[] }).organisaties || [];
+      }
+      // Refresh organisatieId from DB on session update (e.g. after switching org)
+      if (trigger === "update" && token.sub) {
+        const freshUser = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { organisatieId: true },
+        });
+        if (freshUser) {
+          token.organisatieId = freshUser.organisatieId;
+        }
+        const freshOrgs = await prisma.userOrganisatie.findMany({
+          where: { userId: token.sub },
+          select: {
+            organisatieId: true,
+            rol: true,
+            organisatie: { select: { id: true, naam: true } },
+          },
+        });
+        token.organisaties = freshOrgs;
       }
       return token;
     },
@@ -112,6 +173,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.leverancierId = token.leverancierId as string | null;
         session.user.naam = session.user.name as string;
         session.user.isBeheerder = token.isBeheerder as boolean | undefined;
+        session.user.organisaties = token.organisaties as UserOrganisatieInfo[] | undefined;
       }
       return session;
     },

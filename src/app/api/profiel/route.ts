@@ -27,6 +27,7 @@ export async function GET() {
       functie: true,
       rollen: true,
       emailNotificaties: true,
+      totpEnabled: true,
       lastLoginAt: true,
       organisatieId: true,
       leverancierId: true,

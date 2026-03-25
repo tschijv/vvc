@@ -11,6 +11,7 @@ import { menuItems } from "@/ui/menu-items";
 import ImpersonationBanner from "@/ui/components/ImpersonationBanner";
 import KeyboardShortcuts from "@/ui/components/KeyboardShortcuts";
 import NotificatieBel from "@/ui/components/NotificatieBel";
+import OrganisatieSwitcher from "@/ui/components/OrganisatieSwitcher";
 import DemoPlayer from "@/ui/components/DemoPlayer";
 
 export const metadata: Metadata = {
@@ -123,6 +124,7 @@ export default function RootLayout({
               >
                 ?
               </Link>
+              <OrganisatieSwitcher />
               <NotificatieBel />
               <ThemeToggle />
               <AuthButton />

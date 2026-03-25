@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getUserById, ROLLEN_LABELS, ALL_ROLES } from "@/service/user";
 import { getGemeentenForAdmin } from "@/service/gemeente";
 import { getLeveranciersForAdmin } from "@/service/leverancier";
+import { prisma } from "@/data/prisma";
 import UserEditForm from "./UserEditForm";
 
 export default async function GebruikerDetailPage({
@@ -20,9 +21,18 @@ export default async function GebruikerDetailPage({
     getLeveranciersForAdmin(),
   ]);
 
+  // Fetch user organisatie-koppelingen for multi-org section
+  const userOrganisaties = isNieuw
+    ? []
+    : await prisma.userOrganisatie.findMany({
+        where: { userId: id },
+        include: { organisatie: { select: { id: true, naam: true } } },
+        orderBy: { createdAt: "asc" },
+      });
+
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold text-[#1a6ca8] mb-6">
+      <h1 className="text-2xl font-bold text-[#1a6ca8] dark:text-blue-300 mb-6">
         {isNieuw ? "Gebruiker toevoegen" : user!.naam}
       </h1>
 
@@ -44,6 +54,11 @@ export default async function GebruikerDetailPage({
         leveranciers={leveranciers}
         rollenLabels={ROLLEN_LABELS}
         alleRollen={ALL_ROLES}
+        userOrganisaties={userOrganisaties.map((uo) => ({
+          organisatieId: uo.organisatieId,
+          organisatieNaam: uo.organisatie.naam,
+          rol: uo.rol,
+        }))}
       />
     </div>
   );

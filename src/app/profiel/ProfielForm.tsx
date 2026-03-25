@@ -11,6 +11,7 @@ type UserProfile = {
   functie: string | null;
   rollen: string[];
   emailNotificaties: boolean;
+  totpEnabled: boolean;
   lastLoginAt: string | null;
   gemeenteId: string | null;
   leverancierId: string | null;
@@ -205,6 +206,27 @@ export default function ProfielForm({ user, favorietenCount, ongelezen, recenteA
             >
               Wachtwoord wijzigen
             </Link>
+          </div>
+
+          {/* Tweestapsverificatie */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Link
+                href="/profiel/totp"
+                className="text-sm text-blue-700 dark:text-blue-400 hover:underline"
+              >
+                Tweestapsverificatie (2FA)
+              </Link>
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                  user.totpEnabled
+                    ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300"
+                    : "bg-gray-100 dark:bg-slate-600 text-gray-600 dark:text-slate-400"
+                }`}
+              >
+                {user.totpEnabled ? "Actief" : "Inactief"}
+              </span>
+            </div>
           </div>
 
           <div className="pt-2">

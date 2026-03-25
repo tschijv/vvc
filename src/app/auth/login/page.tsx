@@ -2,7 +2,67 @@
 
 import { signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, useRef, Suspense } from "react";
+
+function TotpInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const digits = value.padEnd(6, "").split("").slice(0, 6);
+
+  const handleChange = (index: number, char: string) => {
+    // Only allow digits
+    if (char && !/^\d$/.test(char)) return;
+
+    const newDigits = [...digits];
+    newDigits[index] = char;
+    const newValue = newDigits.join("").trim();
+    onChange(newValue);
+
+    // Auto-advance to next box
+    if (char && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Backspace" && !digits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    onChange(pasted);
+    const focusIndex = Math.min(pasted.length, 5);
+    inputRefs.current[focusIndex]?.focus();
+  };
+
+  return (
+    <div className="flex gap-2 justify-center" onPaste={handlePaste}>
+      {Array.from({ length: 6 }).map((_, i) => (
+        <input
+          key={i}
+          ref={(el) => { inputRefs.current[i] = el; }}
+          type="text"
+          inputMode="numeric"
+          maxLength={1}
+          value={digits[i] || ""}
+          onChange={(e) => handleChange(i, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(i, e)}
+          autoFocus={i === 0}
+          aria-label={`Cijfer ${i + 1} van 6`}
+          className="w-12 h-14 text-center text-2xl font-mono border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a6ca8] focus:border-transparent bg-white dark:bg-slate-700 dark:border-slate-500 dark:text-slate-100"
+        />
+      ))}
+    </div>
+  );
+}
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -10,6 +70,10 @@ function LoginForm() {
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showTotp, setShowTotp] = useState(false);
+  const [totpToken, setTotpToken] = useState("");
+  const [savedEmail, setSavedEmail] = useState("");
+  const [savedPassword, setSavedPassword] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,19 +84,110 @@ function LoginForm() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    // Save credentials for TOTP resubmit
+    if (!showTotp) {
+      setSavedEmail(email);
+      setSavedPassword(password);
+    }
+
     const result = await signIn("credentials", {
-      email,
-      password,
+      email: showTotp ? savedEmail : email,
+      password: showTotp ? savedPassword : password,
+      totpToken: showTotp ? totpToken : undefined,
       redirect: false,
     });
 
     if (result?.error) {
+      if (result.code === "TOTP_REQUIRED") {
+        setShowTotp(true);
+        setTotpToken("");
+        setLoading(false);
+        return;
+      }
+      if (result.code === "TOTP_INVALID") {
+        setError("Ongeldige verificatiecode. Probeer opnieuw.");
+        setTotpToken("");
+        setLoading(false);
+        return;
+      }
       setError("Onjuist e-mailadres of wachtwoord.");
       setLoading(false);
     } else {
       router.push(callbackUrl);
       router.refresh();
     }
+  }
+
+  async function handleTotpSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    const result = await signIn("credentials", {
+      email: savedEmail,
+      password: savedPassword,
+      totpToken,
+      redirect: false,
+    });
+
+    if (result?.error) {
+      if (result.code === "TOTP_INVALID") {
+        setError("Ongeldige verificatiecode. Probeer opnieuw.");
+        setTotpToken("");
+        setLoading(false);
+        return;
+      }
+      setError("Er ging iets mis. Probeer opnieuw.");
+      setLoading(false);
+    } else {
+      router.push(callbackUrl);
+      router.refresh();
+    }
+  }
+
+  if (showTotp) {
+    return (
+      <div className="max-w-md mx-auto mt-16">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-600 rounded-lg shadow-sm p-8">
+          <h1 className="text-2xl font-bold text-[#1a6ca8] dark:text-blue-400 mb-2">
+            Tweestapsverificatie
+          </h1>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
+            Voer de 6-cijferige code in uit je authenticator-app.
+          </p>
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-4 text-sm">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleTotpSubmit} className="space-y-6">
+            <TotpInput value={totpToken} onChange={setTotpToken} />
+
+            <button
+              type="submit"
+              disabled={loading || totpToken.length < 6}
+              className="w-full bg-[#1a6ca8] text-white py-2.5 px-4 rounded font-medium hover:bg-[#155a8c] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? "Verifiëren..." : "Verifiëren"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setShowTotp(false);
+                setTotpToken("");
+                setError("");
+              }}
+              className="w-full text-sm text-[#1a6ca8] dark:text-blue-400 hover:underline"
+            >
+              Terug naar inloggen
+            </button>
+          </form>
+        </div>
+      </div>
+    );
   }
 
   return (

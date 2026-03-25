@@ -1,4 +1,5 @@
 import { auth } from "./auth";
+import type { UserOrganisatieInfo } from "./auth";
 import { cookies } from "next/headers";
 import { prisma } from "@/data/prisma";
 
@@ -14,6 +15,7 @@ export type SessionUser = {
   isBeheerder?: boolean;
   isImpersonating?: boolean;
   realUser?: { id: string; naam: string } | null;
+  organisaties?: UserOrganisatieInfo[];
 } | null;
 
 /**
@@ -117,13 +119,38 @@ export function canEditPagina(user: SessionUser): boolean {
 /**
  * Mag deze gebruiker het portfolio van een gemeente bewerken?
  * - Admin: altijd
- * - Gemeente beheerder: alleen eigen gemeente
+ * - Gemeente beheerder: eigen actieve organisatie OR any organisatie via UserOrganisatie met BEHEERDER rol
  */
 export function canEditGemeentePortfolio(user: SessionUser, organisatieId: string): boolean {
   if (!user) return false;
   if (user.role === "ADMIN") return true;
   if (user.role === "GEMEENTE" && user.isBeheerder && user.organisatieId === organisatieId) return true;
+  // Check multi-org: user may have BEHEERDER role for this org via UserOrganisatie
+  if (user.role === "GEMEENTE" && user.organisaties) {
+    const membership = user.organisaties.find(
+      (uo) => uo.organisatieId === organisatieId && uo.rol === "BEHEERDER"
+    );
+    if (membership) return true;
+  }
   return false;
+}
+
+/**
+ * Switch the active organisatie for a user.
+ * Verifies user has access to the org via UserOrganisatie.
+ * Returns true on success, false if user has no access.
+ */
+export async function switchActiveOrganisatie(userId: string, organisatieId: string): Promise<boolean> {
+  const membership = await prisma.userOrganisatie.findUnique({
+    where: { userId_organisatieId: { userId, organisatieId } },
+  });
+  if (!membership) return false;
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { organisatieId },
+  });
+  return true;
 }
 
 /**

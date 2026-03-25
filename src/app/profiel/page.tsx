@@ -17,7 +17,7 @@ export default async function ProfielPage() {
     prisma.user.findUnique({
       where: { id: sessionUser.id },
       include: {
-        gemeente: { select: { id: true, naam: true } },
+        organisatie: { select: { id: true, naam: true } },
         leverancier: { select: { id: true, naam: true, slug: true } },
       },
     }),
