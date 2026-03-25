@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGemeentePakketten } from "@/service/gemeente";
 import { prisma } from "@/data/prisma";
+import type { components } from "@/integration/api-types";
+
+type GemeentePakket = components["schemas"]["GemeentePakket"];
 
 export async function GET(
   _request: NextRequest,
@@ -24,7 +27,7 @@ export async function GET(
 
     const pakketten = await getGemeentePakketten(id);
 
-    const data = pakketten.map((gp) => ({
+    const data: GemeentePakket[] = pakketten.map((gp) => ({
       pakketId: gp.pakketversie.pakket.id,
       pakketNaam: gp.pakketversie.pakket.naam,
       pakketSlug: gp.pakketversie.pakket.slug,

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getLeverancierPakketten } from "@/service/leverancier";
 import { prisma } from "@/data/prisma";
+import type { components } from "@/integration/api-types";
+
+type LeverancierPakket = components["schemas"]["LeverancierPakket"];
 
 export async function GET(
   _request: NextRequest,
@@ -24,7 +27,7 @@ export async function GET(
 
     const pakketten = await getLeverancierPakketten(id);
 
-    const data = pakketten.map((p) => ({
+    const data: LeverancierPakket[] = pakketten.map((p) => ({
       id: p.id,
       naam: p.naam,
       slug: p.slug,

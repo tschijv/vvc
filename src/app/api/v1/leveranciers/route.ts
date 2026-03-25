@@ -7,6 +7,10 @@ import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiat
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { leverancierToTriples } from "@/integration/rdf/mappers";
 import { withRateLimit, RATE_LIMITS } from "@/process/rate-limit";
+import type { components } from "@/integration/api-types";
+
+type LeverancierSummary = components["schemas"]["LeverancierSummary"];
+type PaginationMeta = components["schemas"]["PaginationMeta"];
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
@@ -35,7 +39,7 @@ export async function GET(request: NextRequest) {
       getLeverancierCount({ zoek }),
     ]);
 
-    const data = leveranciers.map((l) => ({
+    const data: LeverancierSummary[] = leveranciers.map((l) => ({
       id: l.id,
       naam: l.naam,
       slug: l.slug,
@@ -50,8 +54,10 @@ export async function GET(request: NextRequest) {
       addenda: l.addenda.map((a) => a.addendum.naam),
     }));
 
+    const meta: PaginationMeta = { total, offset, limit };
+
     return NextResponse.json(
-      { data, meta: { total, offset, limit } },
+      { data, meta },
       { headers: { "X-Total-Count": String(total) } }
     );
   } catch (error) {

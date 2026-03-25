@@ -3,6 +3,9 @@ import { getLeverancierById } from "@/service/leverancier";
 import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiation";
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { leverancierToTriples } from "@/integration/rdf/mappers";
+import type { components } from "@/integration/api-types";
+
+type LeverancierDetail = components["schemas"]["LeverancierDetail"];
 
 export async function GET(
   request: NextRequest,
@@ -26,30 +29,30 @@ export async function GET(
       return serializeRdf(quads, format);
     }
 
-    return NextResponse.json({
-      data: {
-        id: leverancier.id,
-        naam: leverancier.naam,
-        slug: leverancier.slug,
-        contactpersoon: leverancier.contactpersoon,
-        email: leverancier.email,
-        website: leverancier.website,
-        telefoon: leverancier.telefoon,
-        beschrijvingDiensten: leverancier.beschrijvingDiensten,
-        supportPortalUrl: leverancier.supportPortalUrl,
-        documentatieUrl: leverancier.documentatieUrl,
-        kennisbankUrl: leverancier.kennisbankUrl,
-        addenda: leverancier.addenda.map((a) => a.addendum.naam),
-        pakketten: leverancier.pakketten.map((p) => ({
-          id: p.id,
-          naam: p.naam,
-          slug: p.slug,
-          laatsteVersie: p.versies[0]
-            ? { naam: p.versies[0].naam, status: p.versies[0].status }
-            : null,
-        })),
-      },
-    });
+    const data: LeverancierDetail = {
+      id: leverancier.id,
+      naam: leverancier.naam,
+      slug: leverancier.slug,
+      contactpersoon: leverancier.contactpersoon,
+      email: leverancier.email,
+      website: leverancier.website,
+      telefoon: leverancier.telefoon,
+      beschrijvingDiensten: leverancier.beschrijvingDiensten,
+      supportPortalUrl: leverancier.supportPortalUrl,
+      documentatieUrl: leverancier.documentatieUrl,
+      kennisbankUrl: leverancier.kennisbankUrl,
+      addenda: leverancier.addenda.map((a) => a.addendum.naam),
+      pakketten: leverancier.pakketten.map((p) => ({
+        id: p.id,
+        naam: p.naam,
+        slug: p.slug,
+        laatsteVersie: p.versies[0]
+          ? { naam: p.versies[0].naam, status: p.versies[0].status }
+          : null,
+      })),
+    };
+
+    return NextResponse.json({ data });
   } catch (error) {
     console.error("API v1 leverancier detail fout:", error);
     return NextResponse.json(

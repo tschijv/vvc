@@ -4,6 +4,10 @@ import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiat
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { gemeenteToTriples } from "@/integration/rdf/mappers";
 import { withRateLimit, RATE_LIMITS } from "@/process/rate-limit";
+import type { components } from "@/integration/api-types";
+
+type GemeenteSummary = components["schemas"]["GemeenteSummary"];
+type PaginationMeta = components["schemas"]["PaginationMeta"];
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
@@ -32,16 +36,18 @@ export async function GET(request: NextRequest) {
       getGemeenteCount({ zoek }),
     ]);
 
-    const data = gemeenten.map((g) => ({
+    const data: GemeenteSummary[] = gemeenten.map((g) => ({
       id: g.id,
       naam: g.naam,
-      cbsCode: g.cbsCode,
+      cbsCode: g.cbsCode ?? "",
       progress: g.progress,
       aantalPakketten: g._count.pakketten,
     }));
 
+    const meta: PaginationMeta = { total, offset, limit };
+
     return NextResponse.json(
-      { data, meta: { total, offset, limit } },
+      { data, meta },
       { headers: { "X-Total-Count": String(total) } }
     );
   } catch (error) {

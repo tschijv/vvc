@@ -3,6 +3,9 @@ import { getReferentiecomponenten } from "@/service/referentiecomponent";
 import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiation";
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { referentiecomponentToTriples } from "@/integration/rdf/mappers";
+import type { components } from "@/integration/api-types";
+
+type Referentiecomponent = components["schemas"]["Referentiecomponent"];
 
 export async function GET(request: NextRequest) {
   const format = negotiateFormat(request);
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
       return serializeRdf(quads, format);
     }
 
-    const data = refComps.map((rc) => ({
+    const data: Referentiecomponent[] = refComps.map((rc) => ({
       id: rc.id,
       naam: rc.naam,
       guid: rc.guid,

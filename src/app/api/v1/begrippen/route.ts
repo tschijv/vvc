@@ -3,6 +3,9 @@ import { searchLiveBegrippen } from "@/service/begrippen-live";
 import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiation";
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { begripToTriples } from "@/integration/rdf/mappers";
+import type { components } from "@/integration/api-types";
+
+type Begrip = components["schemas"]["Begrip"];
 
 export async function GET(request: NextRequest) {
   const format = negotiateFormat(request);
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
       return serializeRdf(quads, format);
     }
 
-    const data = begrippen.map((b) => ({
+    const data: Begrip[] = begrippen.map((b) => ({
       term: b.term,
       definitie: b.definitie,
       toelichting: b.toelichting,

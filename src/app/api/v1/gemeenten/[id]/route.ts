@@ -3,6 +3,9 @@ import { getGemeenteById } from "@/service/gemeente";
 import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiation";
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { gemeenteToTriples } from "@/integration/rdf/mappers";
+import type { components } from "@/integration/api-types";
+
+type GemeenteDetail = components["schemas"]["GemeenteDetail"];
 
 export async function GET(
   request: NextRequest,
@@ -26,22 +29,22 @@ export async function GET(
       return serializeRdf(quads, format);
     }
 
-    return NextResponse.json({
-      data: {
-        id: gemeente.id,
-        naam: gemeente.naam,
-        cbsCode: gemeente.cbsCode,
-        progress: gemeente.progress,
-        contactpersoon: gemeente.contactpersoon,
-        email: gemeente.email,
-        website: gemeente.website,
-        telefoon: gemeente.telefoon,
-        samenwerkingen: gemeente.samenwerkingen.map((sg) => ({
-          naam: sg.samenwerking.naam,
-          type: sg.samenwerking.type,
-        })),
-      },
-    });
+    const data: GemeenteDetail = {
+      id: gemeente.id,
+      naam: gemeente.naam,
+      cbsCode: gemeente.cbsCode,
+      progress: gemeente.progress,
+      contactpersoon: gemeente.contactpersoon,
+      email: gemeente.email,
+      website: gemeente.website,
+      telefoon: gemeente.telefoon,
+      samenwerkingen: gemeente.samenwerkingen.map((sg) => ({
+        naam: sg.samenwerking.naam,
+        type: sg.samenwerking.type,
+      })),
+    };
+
+    return NextResponse.json({ data });
   } catch (error) {
     console.error("API v1 gemeente detail fout:", error);
     return NextResponse.json(

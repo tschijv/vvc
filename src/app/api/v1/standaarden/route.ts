@@ -3,6 +3,9 @@ import { getStandaarden } from "@/service/standaard";
 import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiation";
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { standaardToTriples } from "@/integration/rdf/mappers";
+import type { components } from "@/integration/api-types";
+
+type Standaard = components["schemas"]["Standaard"];
 
 export async function GET(request: NextRequest) {
   const format = negotiateFormat(request);
@@ -17,7 +20,7 @@ export async function GET(request: NextRequest) {
       return serializeRdf(quads, format);
     }
 
-    const data = standaarden.map((s) => ({
+    const data: Standaard[] = standaarden.map((s) => ({
       id: s.id,
       naam: s.naam,
       guid: s.guid,

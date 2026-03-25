@@ -8,7 +8,8 @@
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "generate:api-types": "tsx -e \"import{openApiSpec}from'./src/integration/openapi';import fs from'fs';fs.writeFileSync('/tmp/openapi.json',JSON.stringify(openApiSpec))\" && openapi-typescript /tmp/openapi.json -o src/integration/api-types.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.79.0",
@@ -58,6 +59,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "jsdom": "^28.1.0",
+    "openapi-typescript": "^7.13.0",
     "playwright": "^1.58.2",
     "prisma": "^7.5.0",
     "tailwindcss": "^4",
