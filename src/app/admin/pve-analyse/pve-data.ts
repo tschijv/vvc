@@ -154,8 +154,8 @@ export const sections: PveSection[] = [
     rows: [
       { id: "100", naam: "Raadplegen aanbod API", prio: "eis", status: "yes", toelichting: "Publieke API v1 met leveranciers, pakketten, standaarden, begrippen. OpenAPI documentatie. Rate limiting (100/min API, 10/min auth, 30/min admin). RSS/Atom feed via /api/feed.", link: "/api/v1/docs", linkTitle: "API documentatie" },
       { id: "101", naam: "Raadplegen gebruik API", prio: "wens", status: "yes", toelichting: "API v1 endpoints voor gemeenten en hun pakketten. Beveiligd met rolcontrole.", link: "/api/v1/docs", linkTitle: "API documentatie" },
-      { id: "102", naam: "Registreren aanbod API", prio: "could", status: "no", toelichting: "Geen write-API voor aanbod. Alleen upload via UI." },
-      { id: "103", naam: "Registreren gebruik API", prio: "could", status: "no", toelichting: "Geen write-API voor gebruik. Alleen upload via UI." },
+      { id: "102", naam: "Registreren aanbod API", prio: "could", status: "yes", toelichting: "Write-API: POST/PUT/DELETE pakketten, POST pakketversies, POST leveranciers. Bearer auth, Zod validation, rate limiting.", link: "/api/v1/docs", linkTitle: "API documentatie" },
+      { id: "103", naam: "Registreren gebruik API", prio: "could", status: "yes", toelichting: "Write-API: POST/DELETE gemeentepakketten, POST koppelingen. Bearer auth, ownership check, audit logging.", link: "/api/v1/docs", linkTitle: "API documentatie" },
     ],
   },
   {
