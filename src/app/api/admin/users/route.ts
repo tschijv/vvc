@@ -1,0 +1,61 @@
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { getUsers, getUserCount, createUser } from "@/service/user";
+import { Role } from "@prisma/client";
+import { parseBody, emailSchema, naamSchema } from "@/process/validation";
+
+const createUserSchema = z.object({
+  email: emailSchema,
+  naam: naamSchema,
+  wachtwoord: z.string().optional(),
+  rollen: z.array(z.string()).optional(),
+  organisatieId: z.string().nullable().optional(),
+  leverancierId: z.string().nullable().optional(),
+});
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const zoek = searchParams.get("zoek") || undefined;
+  const rol = (searchParams.get("rol") as Role) || undefined;
+  const actiefParam = searchParams.get("actief");
+  const actief =
+    actiefParam === "true" ? true : actiefParam === "false" ? false : undefined;
+  const skip = parseInt(searchParams.get("skip") || "0");
+  const take = parseInt(searchParams.get("take") || "50");
+
+  const [users, total] = await Promise.all([
+    getUsers({ zoek, rol, actief, skip, take }),
+    getUserCount({ zoek, rol, actief }),
+  ]);
+
+  return NextResponse.json({ users, total });
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const parsed = await parseBody(request, createUserSchema);
+    if ("error" in parsed) return parsed.error;
+    const { email, naam, wachtwoord, rollen, organisatieId, leverancierId } = parsed.data;
+
+    const user = await createUser({
+      email,
+      naam,
+      wachtwoord,
+      rollen: rollen || ["GEVERIFIEERD"],
+      organisatieId,
+      leverancierId,
+    });
+
+    return NextResponse.json(user, { status: 201 });
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : "Onbekende fout";
+    if (message.includes("Unique constraint")) {
+      return NextResponse.json(
+        { error: "E-mailadres is al in gebruik" },
+        { status: 409 }
+      );
+    }
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

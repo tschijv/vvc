@@ -19,7 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
       "gvc": ["../gvc/index.ts"],
       "gvc/components/*": ["../gvc/components/*.tsx"],
       "gvc/lib/services/*": ["../gvc/lib/services/*.ts"],
