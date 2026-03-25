@@ -1,0 +1,73 @@
+# VNG Voorzieningencatalogus — Helm values
+# Pas deze waarden aan voor je omgeving.
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/tschijv/vvc
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: voorzieningencatalogus.vng.nl
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: vvc-tls
+      hosts:
+        - voorzieningencatalogus.vng.nl
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+
+# Environment variables — vul aan met je eigen waarden
+env:
+  DATABASE_URL: ""
+  AUTH_SECRET: ""
+  NEXTAUTH_URL: "https://voorzieningencatalogus.vng.nl"
+  ANTHROPIC_API_KEY: ""
+  RESEND_API_KEY: ""
+  MATOMO_URL: ""
+  MATOMO_SITE_ID: ""
+
+# Optioneel: laad secrets uit een bestaand Kubernetes Secret
+existingSecret: ""
+
+# Health checks
+livenessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 15
+  periodSeconds: 30
+
+readinessProbe:
+  httpGet:
+    path: /api/health
+    port: 3000
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Node.js specifiek
+nodeOptions: "--max-old-space-size=512"

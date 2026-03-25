@@ -1,0 +1,15 @@
+apiVersion: v2
+name: vvc
+description: VNG Voorzieningencatalogus - Helm Chart
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - voorzieningencatalogus
+  - gemeenten
+  - gemma
+  - next.js
+home: https://github.com/tschijv/vvc
+maintainers:
+  - name: ArchiXL
+    email: info@archixl.nl
