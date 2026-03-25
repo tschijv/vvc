@@ -8,6 +8,7 @@ import GemmaSyncPanel from "./GemmaSyncPanel";
 import BegrippenSyncPanel from "./BegrippenSyncPanel";
 import ApiDocPanel from "./ApiDocPanel";
 import DeployPanel from "./DeployPanel";
+import TestRunnerPanel from "./TestRunnerPanel";
 import AnonymizePanel from "./AnonymizePanel";
 import NpmHealthPanel from "./NpmHealthPanel";
 
@@ -194,6 +195,7 @@ export default async function AdminPage() {
           />
         </div>
         {process.env.NODE_ENV === "development" && <DeployPanel />}
+        {process.env.NODE_ENV === "development" && <TestRunnerPanel />}
       </div>
     </div>
   );
