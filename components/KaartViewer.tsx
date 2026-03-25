@@ -245,7 +245,7 @@ export default function KaartViewer({
           <p className="text-gray-600 text-sm">
             Kaart wordt gegenereerd door GEMMA Online...
           </p>
-          <p className="text-gray-400 text-xs mt-1">
+          <p className="text-gray-500 text-xs mt-1">
             Dit kan enkele seconden duren
           </p>
         </div>
@@ -294,7 +294,7 @@ export default function KaartViewer({
           className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded text-lg"
           title="Inzoomen"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
           </svg>
         </button>
@@ -315,7 +315,7 @@ export default function KaartViewer({
           className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded text-lg"
           title="Uitzoomen"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
           </svg>
         </button>
@@ -324,7 +324,7 @@ export default function KaartViewer({
           className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded"
           title="Passend maken"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
           </svg>
         </button>
@@ -338,7 +338,7 @@ export default function KaartViewer({
           className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded"
           title="Download SVG"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
         </button>

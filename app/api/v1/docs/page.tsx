@@ -27,7 +27,7 @@ export default function ApiDocsPage() {
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-5">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">Aan de slag</h2>
             <pre className="bg-gray-900 text-gray-100 rounded p-3 text-sm overflow-x-auto mb-3">
-{`cd ~/claude/softwarecatalogus
+{`cd ~/claude/vvc
 npm install    # Afhankelijkheden installeren
 npm run dev    # Server starten op :3000`}
             </pre>

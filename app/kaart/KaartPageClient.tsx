@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import KaartViewer from "@/components/KaartViewer";
+import dynamic from "next/dynamic";
+const KaartViewer = dynamic(() => import("@/components/KaartViewer"), {
+  ssr: false,
+  loading: () => <div className="h-[500px] bg-gray-100 animate-pulse rounded-lg" />,
+});
 
 interface GemmaView {
   id: string;

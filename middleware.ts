@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 /**
  * HTTP Basic Authentication middleware.
  * Only active when BASIC_AUTH_USER and BASIC_AUTH_PASS are set (i.e. on Vercel production).
@@ -8,14 +7,11 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const user = process.env.BASIC_AUTH_USER;
   const pass = process.env.BASIC_AUTH_PASS;
-
   // Skip basic auth if credentials are not configured (local development)
   if (!user || !pass) {
     return NextResponse.next();
   }
-
   const authHeader = request.headers.get("authorization");
-
   if (authHeader) {
     const [scheme, encoded] = authHeader.split(" ");
     if (scheme === "Basic" && encoded) {
@@ -31,7 +27,6 @@ export function middleware(request: NextRequest) {
       }
     }
   }
-
   return new NextResponse("Toegang geweigerd", {
     status: 401,
     headers: {
@@ -39,7 +34,6 @@ export function middleware(request: NextRequest) {
     },
   });
 }
-
 // Only match page routes, not _next internals, API routes, or static files
 export const config = {
   matcher: [

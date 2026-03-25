@@ -3,11 +3,18 @@ import {
   getLeveranciers,
   getLeverancierCount,
 } from "@/lib/services/leverancier";
+import { negotiateFormat, isRdfFormat } from "@/lib/rdf/content-negotiation";
+import { serializeRdf } from "@/lib/rdf/serializer";
+import { leverancierToTriples } from "@/lib/rdf/mappers";
+import { withRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
 
 export async function GET(request: NextRequest) {
+  const blocked = withRateLimit(request, RATE_LIMITS.api);
+  if (blocked) return blocked;
+  const format = negotiateFormat(request);
   const { searchParams } = new URL(request.url);
   const zoek = searchParams.get("zoek") || undefined;
   const offset = Math.max(0, parseInt(searchParams.get("offset") || "0") || 0);
@@ -17,6 +24,12 @@ export async function GET(request: NextRequest) {
   );
 
   try {
+    if (isRdfFormat(format)) {
+      const leveranciers = await getLeveranciers({ zoek, skip: offset, take: limit });
+      const quads = leveranciers.flatMap((l) => leverancierToTriples(l));
+      return serializeRdf(quads, format);
+    }
+
     const [leveranciers, total] = await Promise.all([
       getLeveranciers({ zoek, skip: offset, take: limit }),
       getLeverancierCount({ zoek }),

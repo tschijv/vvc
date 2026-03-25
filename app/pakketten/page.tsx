@@ -1,5 +1,6 @@
 import Link from "next/link";
 import MobileFilterToggle from "@/components/MobileFilterToggle";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getPakketten, getPakketCount, getAlleLeveranciers, getAlleReferentiecomponenten } from "@/lib/services/pakket";
 
 interface Props {
@@ -50,7 +51,9 @@ export default async function PakkettenPage({ searchParams }: Props) {
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
+    <>
+      <Breadcrumbs items={[{ label: "Pakketten", href: "/pakketten" }]} />
+      <div className="flex flex-col md:flex-row gap-6">
       {/* Mobile filter toggle */}
       <MobileFilterToggle>
         <form role="search" method="GET" action="/pakketten" className="bg-gray-50 rounded p-4">
@@ -107,10 +110,10 @@ export default async function PakkettenPage({ searchParams }: Props) {
             <p className="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide">
               Leverancier
             </p>
-            <select name="leverancier" className="w-full border rounded px-2 py-1 text-sm">
+            <select name="leverancier" defaultValue={leverancierId} className="w-full border rounded px-2 py-1 text-sm">
               <option value="">Alle leveranciers</option>
               {alleLeveranciers.map((l) => (
-                <option key={l.id} value={l.id} selected={l.id === leverancierId}>
+                <option key={l.id} value={l.id}>
                   {l.naam}
                 </option>
               ))}
@@ -121,10 +124,10 @@ export default async function PakkettenPage({ searchParams }: Props) {
             <p className="text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wide">
               Referentiecomponent
             </p>
-            <select name="referentiecomponent" className="w-full border rounded px-2 py-1 text-sm">
+            <select name="referentiecomponent" defaultValue={refCompId} className="w-full border rounded px-2 py-1 text-sm">
               <option value="">Alle componenten</option>
               {alleRefComps.map((r) => (
-                <option key={r.id} value={r.id} selected={r.id === refCompId}>
+                <option key={r.id} value={r.id}>
                   {r.naam}
                 </option>
               ))}
@@ -167,11 +170,11 @@ export default async function PakkettenPage({ searchParams }: Props) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b border-gray-300 text-left">
-                <th className="pb-2 pr-4 font-semibold">
+                <th scope="col" className="pb-2 pr-4 font-semibold">
                   <Link href={buildUrl({})} className="hover:underline">Naam</Link>
                 </th>
-                <th className="pb-2 pr-4 font-semibold">Leverancier</th>
-                <th className="pb-2 font-semibold hidden sm:table-cell">Beschrijving</th>
+                <th scope="col" className="pb-2 pr-4 font-semibold">Leverancier</th>
+                <th scope="col" className="pb-2 font-semibold hidden sm:table-cell">Beschrijving</th>
               </tr>
             </thead>
             <tbody>
@@ -200,6 +203,14 @@ export default async function PakkettenPage({ searchParams }: Props) {
           </table>
         </div>
 
+        {pakketten.length === 0 && (
+          <div className="text-center py-12 text-gray-500">
+            <span className="text-4xl block mb-3" role="img" aria-label="Zoeken">&#x1F50D;</span>
+            <p className="font-bold mb-1">Geen resultaten gevonden</p>
+            <p className="text-sm text-gray-400">Probeer een andere zoekterm of filter</p>
+          </div>
+        )}
+
         {/* Paginering */}
         {aantalPaginas > 1 && (
           <div className="flex gap-2 mt-4 text-sm">
@@ -226,5 +237,6 @@ export default async function PakkettenPage({ searchParams }: Props) {
         )}
       </main>
     </div>
+    </>
   );
 }

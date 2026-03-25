@@ -9,6 +9,7 @@ declare module "next-auth" {
     role: string;
     gemeenteId?: string | null;
     leverancierId?: string | null;
+    isBeheerder?: boolean;
   }
   interface Session {
     user: {
@@ -19,6 +20,7 @@ declare module "next-auth" {
       role: string;
       gemeenteId?: string | null;
       leverancierId?: string | null;
+      isBeheerder?: boolean;
     };
   }
 }
@@ -82,6 +84,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: primaryRole,
           gemeenteId: user.gemeenteId,
           leverancierId: user.leverancierId,
+          isBeheerder: user.rollen.includes("GEMEENTE_BEHEERDER") || user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER"),
         };
       },
     }),
@@ -95,6 +98,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = (user as { role: string }).role;
         token.gemeenteId = (user as { gemeenteId?: string | null }).gemeenteId;
         token.leverancierId = (user as { leverancierId?: string | null }).leverancierId;
+        token.isBeheerder = (user as { isBeheerder?: boolean }).isBeheerder;
       }
       return token;
     },
@@ -105,6 +109,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.gemeenteId = token.gemeenteId as string | null;
         session.user.leverancierId = token.leverancierId as string | null;
         session.user.naam = session.user.name as string;
+        session.user.isBeheerder = token.isBeheerder as boolean | undefined;
       }
       return session;
     },

@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getLeverancierBySlug } from "@/lib/services/leverancier";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import ShareButton from "@/components/ShareButton";
+import FavorietButton from "@/components/FavorietButton";
+import QRCode from "@/components/QRCode";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -31,8 +35,19 @@ export default async function LeverancierDetailPage({ params }: Props) {
 
   return (
     <div>
+      <Breadcrumbs
+        items={[
+          { label: "Leveranciers", href: "/leveranciers" },
+          { label: leverancier.naam, href: `/leveranciers/${slug}` },
+        ]}
+      />
       <div className="border rounded p-5 mb-6">
-        <h1 className="text-2xl font-bold text-blue-700 mb-3">{leverancier.naam}</h1>
+        <div className="flex items-center gap-2 mb-3">
+          <h1 className="text-2xl font-bold text-blue-700">{leverancier.naam}</h1>
+          <ShareButton />
+          <FavorietButton entityType="leverancier" entityId={leverancier.id} />
+          <QRCode url={`${process.env.NEXT_PUBLIC_BASE_URL || ""}/leveranciers/${slug}`} title={leverancier.naam} />
+        </div>
         <div className="grid sm:grid-cols-2 gap-4 text-sm">
           {leverancier.contactpersoon && (
             <div><span className="text-gray-500">Contactpersoon:</span> {leverancier.contactpersoon}</div>
@@ -99,6 +114,47 @@ export default async function LeverancierDetailPage({ params }: Props) {
         )}
       </div>
 
+      {/* Addenda section */}
+      {leverancier.addenda.length > 0 && (
+        <>
+          <h2 className="text-lg font-semibold mb-3">
+            Addenda ({leverancier.addenda.length})
+          </h2>
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0 mb-6">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-gray-300 text-left">
+                  <th scope="col" className="pb-2 pr-4 font-semibold">Addendum</th>
+                  <th scope="col" className="pb-2 pr-4 font-semibold">Datum ondertekend</th>
+                  <th scope="col" className="pb-2 font-semibold">Deadline</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leverancier.addenda.map((a) => (
+                  <tr key={a.addendumId} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-2 pr-4">
+                      <Link href={`/addenda?type=${encodeURIComponent(a.addendum.naam)}`} className="text-blue-700 hover:underline">
+                        {a.addendum.naam}
+                      </Link>
+                    </td>
+                    <td className="py-2 pr-4 text-gray-600">
+                      {a.ondertekend
+                        ? new Date(a.ondertekend).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })
+                        : "—"}
+                    </td>
+                    <td className="py-2 text-gray-600">
+                      {a.deadline
+                        ? new Date(a.deadline).toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" })
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
+
       <h2 className="text-lg font-semibold mb-3">
         Pakketten ({leverancier.pakketten.length})
       </h2>
@@ -106,8 +162,8 @@ export default async function LeverancierDetailPage({ params }: Props) {
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b border-gray-300 text-left">
-              <th className="pb-2 pr-4 font-semibold">Pakket</th>
-              <th className="pb-2 font-semibold">Laatste versie / status</th>
+              <th scope="col" className="pb-2 pr-4 font-semibold">Pakket</th>
+              <th scope="col" className="pb-2 font-semibold">Laatste versie / status</th>
             </tr>
           </thead>
           <tbody>

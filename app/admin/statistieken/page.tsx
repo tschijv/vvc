@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
@@ -67,9 +68,12 @@ export default async function StatistiekenPage() {
 
   return (
     <div className="max-w-5xl">
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Statistieken", href: "/admin/statistieken" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-[#1a6ca8]">Platformstatistieken</h1>
-        <Link href="/admin" className="text-sm text-[#1a6ca8] hover:underline">← Beheer</Link>
       </div>
 
       {/* Overview grid */}
@@ -89,10 +93,10 @@ export default async function StatistiekenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 dark:border-slate-600 text-left">
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">#</th>
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Pakket</th>
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Leverancier</th>
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400 text-right">Gemeenten</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">#</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Pakket</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Leverancier</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400 text-right">Gemeenten</th>
               </tr>
             </thead>
             <tbody>
@@ -116,9 +120,9 @@ export default async function StatistiekenPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200 dark:border-slate-600 text-left">
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">#</th>
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Leverancier</th>
-                <th className="pb-1.5 font-medium text-gray-500 dark:text-slate-400 text-right">Pakketten</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">#</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Leverancier</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400 text-right">Pakketten</th>
               </tr>
             </thead>
             <tbody>

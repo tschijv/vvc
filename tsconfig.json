@@ -19,7 +19,11 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "gvc": ["../gvc/index.ts"],
+      "gvc/components/*": ["../gvc/components/*.tsx"],
+      "gvc/lib/services/*": ["../gvc/lib/services/*.ts"],
+      "gvc/lib/*": ["../gvc/lib/*.ts"]
     }
   },
   "include": [
@@ -30,5 +34,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "tests", "playwright.config.ts"]
 }

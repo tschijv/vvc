@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { approveRegistration, rejectRegistration } from "@/lib/services/user";
+import { parseBody } from "@/lib/validation";
+
+const registratieActieSchema = z.object({
+  actie: z.enum(["goedkeuren", "afwijzen"], {
+    errorMap: () => ({ message: "Ongeldige actie. Gebruik 'goedkeuren' of 'afwijzen'." }),
+  }),
+  rollen: z.array(z.string()).optional(),
+  gemeenteId: z.string().nullable().optional(),
+  leverancierId: z.string().nullable().optional(),
+  reden: z.string().optional(),
+});
 
 export async function PUT(
   req: NextRequest,
@@ -12,11 +24,14 @@ export async function PUT(
   }
 
   const { id } = await params;
-  const body = await req.json();
+
+  const parsed = await parseBody(req, registratieActieSchema);
+  if ("error" in parsed) return parsed.error;
+  const { actie, rollen, gemeenteId, leverancierId, reden } = parsed.data;
 
   try {
-    if (body.actie === "goedkeuren") {
-      if (!body.rollen || body.rollen.length === 0) {
+    if (actie === "goedkeuren") {
+      if (!rollen || rollen.length === 0) {
         return NextResponse.json(
           { error: "Rollen zijn verplicht bij goedkeuren." },
           { status: 400 }
@@ -24,23 +39,18 @@ export async function PUT(
       }
 
       await approveRegistration(id, {
-        rollen: body.rollen,
-        gemeenteId: body.gemeenteId || null,
-        leverancierId: body.leverancierId || null,
+        rollen,
+        gemeenteId: gemeenteId || null,
+        leverancierId: leverancierId || null,
       });
 
       return NextResponse.json({ message: "Registratie goedgekeurd." });
     }
 
-    if (body.actie === "afwijzen") {
-      await rejectRegistration(id, body.reden);
+    if (actie === "afwijzen") {
+      await rejectRegistration(id, reden);
       return NextResponse.json({ message: "Registratie afgewezen." });
     }
-
-    return NextResponse.json(
-      { error: "Ongeldige actie. Gebruik 'goedkeuren' of 'afwijzen'." },
-      { status: 400 }
-    );
   } catch {
     return NextResponse.json(
       { error: "Er is een fout opgetreden." },

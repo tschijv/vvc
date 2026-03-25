@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { redirect } from "next/navigation";
@@ -86,6 +87,7 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Koppelingen", href: "/koppelingen" }]} />
       <h1 className="text-3xl font-light text-[#1a6ca8] mb-6">Alle koppelingen</h1>
 
       <div className="flex gap-8">
@@ -161,20 +163,20 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b-2 border-gray-200 text-left">
-                <th className="pb-2 pr-4 font-semibold">Gemeenten</th>
-                <th className="pb-2 pr-4">
+                <th scope="col" className="pb-2 pr-4 font-semibold">Gemeenten</th>
+                <th scope="col" className="pb-2 pr-4">
                   <Link href="#" className="text-[#1a6ca8] hover:underline font-semibold">
                     Pakketversie/Extern
                   </Link>
                 </th>
-                <th className="pb-2 pr-4 font-semibold text-center">Koppeling</th>
-                <th className="pb-2 pr-4">
+                <th scope="col" className="pb-2 pr-4 font-semibold text-center">Koppeling</th>
+                <th scope="col" className="pb-2 pr-4">
                   <Link href="#" className="text-[#1a6ca8] hover:underline font-semibold">
                     Pakketversie/Extern/Buitengemeentelijk
                   </Link>
                 </th>
-                <th className="pb-2 pr-4 font-semibold">Status</th>
-                <th className="pb-2">
+                <th scope="col" className="pb-2 pr-4 font-semibold">Status</th>
+                <th scope="col" className="pb-2">
                   <Link href="#" className="text-[#1a6ca8] hover:underline font-semibold">
                     Standaard
                   </Link>

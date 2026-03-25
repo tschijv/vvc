@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { mergeGemeenten } from "@/lib/services/gemeente";
 import { logAudit } from "@/lib/services/audit";
+import { parseBody, idSchema } from "@/lib/validation";
+
+const samenvoegSchema = z.object({
+  bronGemeenteId: idSchema,
+  doelGemeenteId: idSchema,
+}).refine((data) => data.bronGemeenteId !== data.doelGemeenteId, {
+  message: "Bron- en doelgemeente mogen niet dezelfde zijn.",
+});
 
 export async function POST(req: NextRequest) {
   const user = await getSessionUser();
@@ -10,21 +19,9 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { bronGemeenteId, doelGemeenteId } = await req.json();
-
-    if (!bronGemeenteId || !doelGemeenteId) {
-      return NextResponse.json(
-        { error: "bronGemeenteId en doelGemeenteId zijn verplicht." },
-        { status: 400 }
-      );
-    }
-
-    if (bronGemeenteId === doelGemeenteId) {
-      return NextResponse.json(
-        { error: "Bron- en doelgemeente mogen niet dezelfde zijn." },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(req, samenvoegSchema);
+    if ("error" in parsed) return parsed.error;
+    const { bronGemeenteId, doelGemeenteId } = parsed.data;
 
     await mergeGemeenten(bronGemeenteId, doelGemeenteId);
 

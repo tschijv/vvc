@@ -8,8 +8,10 @@ const DATABASE_URL =
 const adapter = new PrismaPg({ connectionString: DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
-// All 342 Dutch municipalities (2024)
+// All 342 Dutch municipalities (2025) — sourced from CBS/Kadaster GeoJSON
 const GEMEENTEN = [
+  { naam: "'s-Gravenhage", cbs: "0518" },
+  { naam: "'s-Hertogenbosch", cbs: "0796" },
   { naam: "Aa en Hunze", cbs: "1680" },
   { naam: "Aalsmeer", cbs: "0358" },
   { naam: "Aalten", cbs: "0197" },
@@ -22,6 +24,7 @@ const GEMEENTEN = [
   { naam: "Alphen aan den Rijn", cbs: "0484" },
   { naam: "Alphen-Chaam", cbs: "1723" },
   { naam: "Altena", cbs: "1959" },
+  { naam: "Ameland", cbs: "0060" },
   { naam: "Amersfoort", cbs: "0307" },
   { naam: "Amstelveen", cbs: "0362" },
   { naam: "Amsterdam", cbs: "0363" },
@@ -30,8 +33,10 @@ const GEMEENTEN = [
   { naam: "Assen", cbs: "0106" },
   { naam: "Asten", cbs: "0743" },
   { naam: "Baarle-Nassau", cbs: "0744" },
+  { naam: "Baarn", cbs: "0308" },
   { naam: "Barendrecht", cbs: "0489" },
   { naam: "Barneveld", cbs: "0203" },
+  { naam: "Beek", cbs: "0888" },
   { naam: "Beekdaelen", cbs: "1954" },
   { naam: "Beesel", cbs: "0889" },
   { naam: "Berg en Dal", cbs: "1945" },
@@ -64,38 +69,44 @@ const GEMEENTEN = [
   { naam: "Castricum", cbs: "0383" },
   { naam: "Coevorden", cbs: "0109" },
   { naam: "Cranendonck", cbs: "1706" },
-  { naam: "Cuijk", cbs: "1684" },
   { naam: "Culemborg", cbs: "0216" },
   { naam: "Dalfsen", cbs: "0148" },
-  { naam: "Dantumadiel", cbs: "0065" },
+  { naam: "Dantumadiel", cbs: "1891" },
+  { naam: "De Bilt", cbs: "0310" },
   { naam: "De Fryske Marren", cbs: "1940" },
   { naam: "De Ronde Venen", cbs: "0736" },
   { naam: "De Wolden", cbs: "1690" },
   { naam: "Delft", cbs: "0503" },
-  { naam: "'s-Gravenhage", cbs: "0518" },
+  { naam: "Den Helder", cbs: "0400" },
   { naam: "Deurne", cbs: "0762" },
   { naam: "Deventer", cbs: "0150" },
   { naam: "Diemen", cbs: "0384" },
+  { naam: "Dijk en Waard", cbs: "1980" },
   { naam: "Dinkelland", cbs: "1774" },
+  { naam: "Doesburg", cbs: "0221" },
+  { naam: "Doetinchem", cbs: "0222" },
+  { naam: "Dongen", cbs: "0766" },
   { naam: "Dordrecht", cbs: "0505" },
   { naam: "Drechterland", cbs: "0498" },
   { naam: "Drimmelen", cbs: "1719" },
-  { naam: "Dronten", cbs: "0010" },
+  { naam: "Dronten", cbs: "0303" },
   { naam: "Druten", cbs: "0225" },
   { naam: "Duiven", cbs: "0226" },
   { naam: "Echt-Susteren", cbs: "1711" },
   { naam: "Edam-Volendam", cbs: "0385" },
   { naam: "Ede", cbs: "0228" },
+  { naam: "Eemnes", cbs: "0317" },
   { naam: "Eemsdelta", cbs: "1979" },
   { naam: "Eersel", cbs: "0770" },
   { naam: "Eijsden-Margraten", cbs: "1903" },
+  { naam: "Eindhoven", cbs: "0772" },
+  { naam: "Elburg", cbs: "0230" },
   { naam: "Emmen", cbs: "0114" },
   { naam: "Enkhuizen", cbs: "0388" },
   { naam: "Enschede", cbs: "0153" },
   { naam: "Epe", cbs: "0232" },
   { naam: "Ermelo", cbs: "0233" },
   { naam: "Etten-Leur", cbs: "0777" },
-  { naam: "Ferwert(deradiel)", cbs: "0070" },
   { naam: "Geertruidenberg", cbs: "0779" },
   { naam: "Geldrop-Mierlo", cbs: "1771" },
   { naam: "Gemert-Bakel", cbs: "1652" },
@@ -131,14 +142,18 @@ const GEMEENTEN = [
   { naam: "Hengelo", cbs: "0164" },
   { naam: "Het Hogeland", cbs: "1966" },
   { naam: "Heumen", cbs: "0252" },
+  { naam: "Heusden", cbs: "0797" },
   { naam: "Hillegom", cbs: "0534" },
   { naam: "Hilvarenbeek", cbs: "0798" },
   { naam: "Hilversum", cbs: "0402" },
   { naam: "Hoeksche Waard", cbs: "1963" },
+  { naam: "Hof van Twente", cbs: "1735" },
   { naam: "Hollands Kroon", cbs: "1911" },
   { naam: "Hoogeveen", cbs: "0118" },
   { naam: "Hoorn", cbs: "0405" },
   { naam: "Horst aan de Maas", cbs: "1507" },
+  { naam: "Houten", cbs: "0321" },
+  { naam: "Huizen", cbs: "0406" },
   { naam: "Hulst", cbs: "0677" },
   { naam: "IJsselstein", cbs: "0353" },
   { naam: "Kaag en Braassem", cbs: "1884" },
@@ -152,18 +167,21 @@ const GEMEENTEN = [
   { naam: "Laarbeek", cbs: "1659" },
   { naam: "Land van Cuijk", cbs: "1982" },
   { naam: "Landgraaf", cbs: "0882" },
+  { naam: "Landsmeer", cbs: "0415" },
   { naam: "Lansingerland", cbs: "1621" },
-  { naam: "Laren", cbs: "0415" },
+  { naam: "Laren", cbs: "0417" },
   { naam: "Leeuwarden", cbs: "0080" },
   { naam: "Leiden", cbs: "0546" },
   { naam: "Leiderdorp", cbs: "0547" },
   { naam: "Leidschendam-Voorburg", cbs: "1916" },
   { naam: "Lelystad", cbs: "0995" },
   { naam: "Leudal", cbs: "1640" },
+  { naam: "Leusden", cbs: "0327" },
   { naam: "Lingewaard", cbs: "1705" },
+  { naam: "Lisse", cbs: "0553" },
+  { naam: "Lochem", cbs: "0262" },
   { naam: "Loon op Zand", cbs: "0809" },
   { naam: "Lopik", cbs: "0331" },
-  { naam: "Loppersum", cbs: "0024" },
   { naam: "Losser", cbs: "0168" },
   { naam: "Maasdriel", cbs: "0263" },
   { naam: "Maasgouw", cbs: "1641" },
@@ -171,12 +189,13 @@ const GEMEENTEN = [
   { naam: "Maassluis", cbs: "0556" },
   { naam: "Maastricht", cbs: "0935" },
   { naam: "Medemblik", cbs: "0420" },
-  { naam: "Meijerijstad", cbs: "1948" },
+  { naam: "Meerssen", cbs: "0938" },
+  { naam: "Meierijstad", cbs: "1948" },
   { naam: "Meppel", cbs: "0119" },
   { naam: "Middelburg", cbs: "0687" },
   { naam: "Midden-Delfland", cbs: "1842" },
+  { naam: "Midden-Drenthe", cbs: "1731" },
   { naam: "Midden-Groningen", cbs: "1952" },
-  { naam: "Mill en Sint Hubert", cbs: "0815" },
   { naam: "Moerdijk", cbs: "1709" },
   { naam: "Molenlanden", cbs: "1978" },
   { naam: "Montferland", cbs: "1955" },
@@ -188,12 +207,15 @@ const GEMEENTEN = [
   { naam: "Nieuwkoop", cbs: "0569" },
   { naam: "Nijkerk", cbs: "0267" },
   { naam: "Nijmegen", cbs: "0268" },
+  { naam: "Nissewaard", cbs: "1930" },
+  { naam: "Noardeast-Fryslân", cbs: "1970" },
   { naam: "Noord-Beveland", cbs: "1695" },
   { naam: "Noordenveld", cbs: "1699" },
   { naam: "Noordoostpolder", cbs: "0171" },
-  { naam: "Noardeast-Fryslân", cbs: "1970" },
+  { naam: "Noordwijk", cbs: "0575" },
   { naam: "Nuenen, Gerwen en Nederwetten", cbs: "0820" },
   { naam: "Nunspeet", cbs: "0302" },
+  { naam: "Oegstgeest", cbs: "0579" },
   { naam: "Oirschot", cbs: "0823" },
   { naam: "Oisterwijk", cbs: "0824" },
   { naam: "Oldambt", cbs: "1895" },
@@ -203,7 +225,7 @@ const GEMEENTEN = [
   { naam: "Ommen", cbs: "0175" },
   { naam: "Oost Gelre", cbs: "1586" },
   { naam: "Oosterhout", cbs: "0826" },
-  { naam: "Ooststellingwerf", cbs: "0086" },
+  { naam: "Ooststellingwerf", cbs: "0085" },
   { naam: "Oostzaan", cbs: "0431" },
   { naam: "Opmeer", cbs: "0432" },
   { naam: "Opsterland", cbs: "0086" },
@@ -221,6 +243,8 @@ const GEMEENTEN = [
   { naam: "Raalte", cbs: "0177" },
   { naam: "Reimerswaal", cbs: "0703" },
   { naam: "Renkum", cbs: "0274" },
+  { naam: "Renswoude", cbs: "0339" },
+  { naam: "Reusel-De Mierden", cbs: "1667" },
   { naam: "Rheden", cbs: "0275" },
   { naam: "Rhenen", cbs: "0340" },
   { naam: "Ridderkerk", cbs: "0597" },
@@ -233,8 +257,9 @@ const GEMEENTEN = [
   { naam: "Rozendaal", cbs: "0277" },
   { naam: "Rucphen", cbs: "0840" },
   { naam: "Schagen", cbs: "0441" },
+  { naam: "Scherpenzeel", cbs: "0279" },
   { naam: "Schiedam", cbs: "0606" },
-  { naam: "Schijndel", cbs: "0843" },
+  { naam: "Schiermonnikoog", cbs: "0088" },
   { naam: "Schouwen-Duiveland", cbs: "1676" },
   { naam: "Simpelveld", cbs: "0965" },
   { naam: "Sint-Michielsgestel", cbs: "0845" },
@@ -252,7 +277,7 @@ const GEMEENTEN = [
   { naam: "Steenwijkerland", cbs: "1708" },
   { naam: "Stein", cbs: "0971" },
   { naam: "Stichtse Vecht", cbs: "1904" },
-  { naam: "Sudwest Fryslân", cbs: "1900" },
+  { naam: "Súdwest-Fryslân", cbs: "1900" },
   { naam: "Terneuzen", cbs: "0715" },
   { naam: "Terschelling", cbs: "0093" },
   { naam: "Texel", cbs: "0448" },
@@ -266,6 +291,7 @@ const GEMEENTEN = [
   { naam: "Tytsjerksteradiel", cbs: "0737" },
   { naam: "Uitgeest", cbs: "0450" },
   { naam: "Uithoorn", cbs: "0451" },
+  { naam: "Urk", cbs: "0184" },
   { naam: "Utrecht", cbs: "0344" },
   { naam: "Utrechtse Heuvelrug", cbs: "1581" },
   { naam: "Vaals", cbs: "0981" },
@@ -273,6 +299,7 @@ const GEMEENTEN = [
   { naam: "Valkenswaard", cbs: "0858" },
   { naam: "Veendam", cbs: "0047" },
   { naam: "Veenendaal", cbs: "0345" },
+  { naam: "Veere", cbs: "0717" },
   { naam: "Veldhoven", cbs: "0861" },
   { naam: "Velsen", cbs: "0453" },
   { naam: "Venlo", cbs: "0983" },
@@ -282,8 +309,14 @@ const GEMEENTEN = [
   { naam: "Vlieland", cbs: "0096" },
   { naam: "Vlissingen", cbs: "0718" },
   { naam: "Voerendaal", cbs: "0986" },
-  { naam: "Volkerwaard", cbs: "0626" },
-  { naam: "Voorschoten", cbs: "0627" },
+  { naam: "Voorne aan Zee", cbs: "1992" },
+  { naam: "Voorschoten", cbs: "0626" },
+  { naam: "Voorst", cbs: "0285" },
+  { naam: "Vught", cbs: "0865" },
+  { naam: "Waadhoeke", cbs: "1949" },
+  { naam: "Waalre", cbs: "0866" },
+  { naam: "Waalwijk", cbs: "0867" },
+  { naam: "Waddinxveen", cbs: "0627" },
   { naam: "Wageningen", cbs: "0289" },
   { naam: "Wassenaar", cbs: "0629" },
   { naam: "Waterland", cbs: "0852" },
@@ -293,6 +326,7 @@ const GEMEENTEN = [
   { naam: "Westerkwartier", cbs: "1969" },
   { naam: "Westerveld", cbs: "1701" },
   { naam: "Westervoort", cbs: "0293" },
+  { naam: "Westerwolde", cbs: "1950" },
   { naam: "Westland", cbs: "1783" },
   { naam: "Weststellingwerf", cbs: "0098" },
   { naam: "Wierden", cbs: "0189" },
@@ -303,8 +337,10 @@ const GEMEENTEN = [
   { naam: "Woensdrecht", cbs: "0873" },
   { naam: "Woerden", cbs: "0632" },
   { naam: "Wormerland", cbs: "0880" },
+  { naam: "Woudenberg", cbs: "0351" },
   { naam: "Zaanstad", cbs: "0479" },
   { naam: "Zaltbommel", cbs: "0297" },
+  { naam: "Zandvoort", cbs: "0473" },
   { naam: "Zeewolde", cbs: "0050" },
   { naam: "Zeist", cbs: "0355" },
   { naam: "Zevenaar", cbs: "0299" },
@@ -332,15 +368,13 @@ function seededRandom(seed: number): () => number {
 }
 
 async function main() {
-  console.log("Deleting existing gemeenten and GemeentePakket links...");
-  await prisma.gemeentePakket.deleteMany({});
-  await prisma.samenwerkingGemeente.deleteMany({});
-  await prisma.samenwerking.deleteMany({});
-  await prisma.gemeente.deleteMany({});
+  // Check existing gemeenten
+  const existing = await prisma.gemeente.findMany({ select: { id: true, cbsCode: true } });
+  const existingByCbs = new Map(existing.map((g) => [g.cbsCode, g.id]));
+  console.log(`Existing: ${existing.length} gemeenten in database`);
+  console.log(`Target:   ${GEMEENTEN.length} gemeenten in seed`);
 
-  console.log(`Importing ${GEMEENTEN.length} gemeenten...`);
-
-  // Get all pakketversie IDs (one per pakket - the latest versie)
+  // Get all pakketversie IDs for linking new gemeenten
   const pakketten = await prisma.pakket.findMany({
     include: { versies: { take: 1, orderBy: { createdAt: "desc" } } },
   });
@@ -349,40 +383,56 @@ async function main() {
     .map((p) => p.versies[0].id);
   console.log(`Found ${versieIds.length} pakketversies to link`);
 
+  let created = 0;
+  let updated = 0;
+  let skipped = 0;
+
   for (const g of GEMEENTEN) {
-    // Seeded random per gemeente for reproducibility
     const rand = seededRandom(parseInt(g.cbs.replace(/\D/g, "")) || 1000);
     const progress = Math.floor(rand() * 101);
 
-    const gemeente = await prisma.gemeente.create({
-      data: {
-        naam: g.naam,
-        cbsCode: g.cbs,
-        progress,
-      },
-    });
+    const existingId = existingByCbs.get(g.cbs);
 
-    // Random ~200 pakketversies per gemeente (range 120-280)
-    const aantal = randomBetween(120, 280);
-    const shuffled = [...versieIds].sort(() => rand() - 0.5);
-    const selected = shuffled.slice(0, Math.min(aantal, versieIds.length));
+    if (existingId) {
+      // Update name if changed
+      await prisma.gemeente.update({
+        where: { id: existingId },
+        data: { naam: g.naam },
+      });
+      updated++;
+      process.stdout.write(".");
+    } else {
+      // Create new gemeente + link pakketversies
+      const gemeente = await prisma.gemeente.create({
+        data: {
+          naam: g.naam,
+          cbsCode: g.cbs,
+          progress,
+        },
+      });
 
-    // Batch insert with createMany
-    await prisma.gemeentePakket.createMany({
-      data: selected.map((pakketversieId) => ({
-        gemeenteId: gemeente.id,
-        pakketversieId,
-      })),
-      skipDuplicates: true,
-    });
+      // Random ~200 pakketversies per gemeente (range 120-280)
+      const aantal = randomBetween(120, 280);
+      const shuffled = [...versieIds].sort(() => rand() - 0.5);
+      const selected = shuffled.slice(0, Math.min(aantal, versieIds.length));
 
-    process.stdout.write(".");
+      await prisma.gemeentePakket.createMany({
+        data: selected.map((pakketversieId) => ({
+          gemeenteId: gemeente.id,
+          pakketversieId,
+        })),
+        skipDuplicates: true,
+      });
+
+      created++;
+      process.stdout.write("+");
+    }
   }
 
-  console.log("\nDone!");
+  console.log(`\nDone! ${created} created, ${updated} updated, ${skipped} skipped`);
   const count = await prisma.gemeente.count();
   const linkCount = await prisma.gemeentePakket.count();
-  console.log(`Imported ${count} gemeenten with ${linkCount} pakket links`);
+  console.log(`Total: ${count} gemeenten with ${linkCount} pakket links`);
 }
 
 main()

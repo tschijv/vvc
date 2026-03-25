@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function CloudProvidersPage() {
   return (
     <div className="max-w-2xl mx-auto py-16 text-center">
+      <Breadcrumbs items={[{ label: "Cloud-providers", href: "/cloudproviders" }]} />
       <div className="mb-6">
         <svg viewBox="0 0 80 80" className="w-20 h-20 mx-auto" fill="none">
           <path d="M22 54 C10 54 10 40 22 37 C22 26 36 20 44 28 C52 22 66 28 64 38 C72 40 72 54 64 54 Z" stroke="#059669" strokeWidth="2.5" strokeLinejoin="round" />

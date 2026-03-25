@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getUsers, getUserCount, createUser } from "@/lib/services/user";
 import { Role } from "@prisma/client";
+import { parseBody, emailSchema, naamSchema } from "@/lib/validation";
+
+const createUserSchema = z.object({
+  email: emailSchema,
+  naam: naamSchema,
+  wachtwoord: z.string().optional(),
+  rollen: z.array(z.string()).optional(),
+  gemeenteId: z.string().nullable().optional(),
+  leverancierId: z.string().nullable().optional(),
+});
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -22,15 +33,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, naam, wachtwoord, rollen, gemeenteId, leverancierId } = body;
-
-    if (!email || !naam) {
-      return NextResponse.json(
-        { error: "E-mail en naam zijn verplicht" },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(request, createUserSchema);
+    if ("error" in parsed) return parsed.error;
+    const { email, naam, wachtwoord, rollen, gemeenteId, leverancierId } = parsed.data;
 
     const user = await createUser({
       email,

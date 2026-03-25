@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import type { Metadata } from "next";
 import PveDetailTables from "./PveDetailTables";
+import { computePveStats } from "./pve-data";
 
 export const metadata: Metadata = {
   title: "PvE-analyse",
@@ -14,21 +16,34 @@ export default async function PveAnalysePage() {
     redirect("/");
   }
 
+  const stats = computePveStats();
+  const yesPercent = stats.total > 0 ? Math.round((stats.yes / stats.total) * 100) : 0;
+  const partialPercent = stats.total > 0 ? Math.round((stats.partial / stats.total) * 100) : 0;
+  const noPercent = stats.total > 0 ? Math.round((stats.no / stats.total) * 100) : 0;
+  const extraCount = stats.extra;
+  const eisYesOrPartial = stats.eisYes + stats.eisPartial;
+  const eisYesOrPartialPercent = stats.eisTotal > 0 ? Math.round((eisYesOrPartial / stats.eisTotal) * 100) : 0;
+  const eisYesPercent = stats.eisTotal > 0 ? Math.round((stats.eisYes / stats.eisTotal) * 100) : 0;
+  const wensYesOrPartial = stats.wensYes + stats.wensPartial;
+  const wensYesOrPartialPercent = stats.wensTotal > 0 ? Math.round((wensYesOrPartial / stats.wensTotal) * 100) : 0;
+
   return (
     <>
       <style>{`
-        .pve .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin: 1.5rem 0; }
+        .pve .summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; margin: 1.5rem 0; }
         .pve .summary-card { background: white; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border-left: 4px solid #e2e8f0; }
         .pve .summary-card.green { border-left-color: #16a34a; }
         .pve .summary-card.amber { border-left-color: #d97706; }
         .pve .summary-card.red { border-left-color: #dc2626; }
         .pve .summary-card.blue { border-left-color: #1a6ca8; }
+        .pve .summary-card.purple { border-left-color: #7c3aed; }
         .pve .summary-card .label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
         .pve .summary-card .value { font-size: 1.75rem; font-weight: 700; margin: 0.25rem 0; }
         .pve .summary-card.green .value { color: #16a34a; }
         .pve .summary-card.amber .value { color: #d97706; }
         .pve .summary-card.red .value { color: #dc2626; }
         .pve .summary-card.blue .value { color: #1a6ca8; }
+        .pve .summary-card.purple .value { color: #7c3aed; }
         .pve .summary-card .detail { font-size: 0.8rem; color: #94a3b8; }
         .pve .summary-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; background: white; border-radius: 0.75rem; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
         .pve .summary-table th { background: #1a6ca8; color: white; padding: 0.75rem 1rem; text-align: left; font-size: 0.85rem; font-weight: 600; }
@@ -58,6 +73,7 @@ export default async function PveAnalysePage() {
         .pve .tag-wens { background: #fef3c7; color: #92400e; }
         .pve .tag-could { background: #f3e8ff; color: #7c3aed; }
         .pve .tag-nvt { background: #f1f5f9; color: #64748b; }
+        .pve .tag-extra { background: #f3e8ff; color: #7c3aed; }
         .pve .toelichting { color: #475569; }
         .pve .peter { background: #fffbeb; border-left: 3px solid #e35b10; padding: 0.25rem 0.5rem; margin-top: 0.35rem; font-size: 0.82rem; color: #92400e; display: block; border-radius: 0 0.25rem 0.25rem 0; }
         .pve .opmerking-card { background: white; border-radius: 0.75rem; padding: 1.25rem 1.5rem; margin: 0.75rem 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -78,6 +94,9 @@ export default async function PveAnalysePage() {
         .pve .section-subtitle { font-size: 1.1rem; color: #334155; margin-top: 1.5rem; margin-bottom: 0.75rem; }
         @media (max-width: 768px) {
           .pve .summary-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .pve .summary-grid { grid-template-columns: repeat(3, 1fr); }
           .pve .points-grid { grid-template-columns: 1fr; }
           .pve .legend { flex-direction: column; gap: 0.5rem; }
         }
@@ -104,16 +123,20 @@ export default async function PveAnalysePage() {
         .dark .pve .tag-eis { background: #1e3a5f; color: #93c5fd; }
         .dark .pve .tag-wens { background: #451a03; color: #fbbf24; }
         .dark .pve .tag-could { background: #2e1065; color: #c4b5fd; }
+        .dark .pve .tag-extra { background: #2e1065; color: #c4b5fd; }
         .dark .pve .summary-card .label { color: #94a3b8; }
         .dark .pve .summary-card .detail { color: #64748b; }
       `}</style>
 
       <div className="pve">
-        <Link href="/admin" className="text-sm text-[#1a6ca8] hover:underline mb-4 inline-block">← Terug naar beheer</Link>
+        <Breadcrumbs items={[
+          { label: "Beheer", href: "/admin" },
+          { label: "PvE-analyse", href: "/admin/pve-analyse" },
+        ]} />
 
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Analyse Programma van Eisen vs. Gerealiseerde Functionaliteit</h1>
         <p className="text-gray-500 text-sm mb-1">Voorzieningencatalogus <span className="text-gray-400">(voorheen Softwarecatalogus)</span></p>
-        <p className="text-gray-400 text-xs mb-8">
+        <p className="text-gray-500 text-xs mb-8">
           <strong className="text-gray-500">Datum:</strong> 16 maart 2026 &nbsp;·&nbsp;
           <strong className="text-gray-500">Bron:</strong> Bijlage 1.2 — Programma van Eisen (Peter Makkes) &nbsp;·&nbsp;
           <strong className="text-gray-500">Vergeleken met:</strong> Huidige applicatie (Next.js / Prisma / PostgreSQL)
@@ -125,38 +148,43 @@ export default async function PveAnalysePage() {
         <div className="summary-grid">
           <div className="summary-card blue">
             <div className="label">Totaal eisen &amp; wensen</div>
-            <div className="value">104</div>
-            <div className="detail">68 eisen · 34 wensen · 2 could have</div>
+            <div className="value">{stats.total}</div>
+            <div className="detail">{stats.eisTotal} eisen &middot; {stats.wensTotal} wensen &middot; {stats.couldTotal} could have</div>
           </div>
           <div className="summary-card green">
             <div className="label">Gerealiseerd ✅</div>
-            <div className="value">54</div>
-            <div className="detail">52% van totaal</div>
+            <div className="value">{stats.yes}</div>
+            <div className="detail">{yesPercent}% van totaal</div>
           </div>
           <div className="summary-card amber">
             <div className="label">Deels gerealiseerd ⚠</div>
-            <div className="value">13</div>
-            <div className="detail">13% van totaal</div>
+            <div className="value">{stats.partial}</div>
+            <div className="detail">{partialPercent}% van totaal</div>
           </div>
           <div className="summary-card red">
             <div className="label">Niet gerealiseerd ❌</div>
-            <div className="value">37</div>
-            <div className="detail">36% van totaal</div>
+            <div className="value">{stats.no}</div>
+            <div className="detail">{noPercent}% van totaal</div>
+          </div>
+          <div className="summary-card purple">
+            <div className="label">Extra gerealiseerd 🚀</div>
+            <div className="value">{extraCount}</div>
+            <div className="detail">Niet in PvE</div>
           </div>
         </div>
 
         <table className="summary-table">
           <thead><tr><th>Categorie</th><th>Aantal</th><th>✅ Gerealiseerd</th><th>⚠ Deels</th><th>❌ Niet</th></tr></thead>
           <tbody>
-            <tr><td>Eisen (must have)</td><td>68</td><td>41</td><td>9</td><td>18</td></tr>
-            <tr><td>Wensen (nice to have)</td><td>34</td><td>13</td><td>4</td><td>17</td></tr>
-            <tr><td>Could have</td><td>2</td><td>0</td><td>0</td><td>2</td></tr>
-            <tr><td>Totaal</td><td>104</td><td>54 (52%)</td><td>13 (13%)</td><td>37 (36%)</td></tr>
+            <tr><td>Eisen (must have)</td><td>{stats.eisTotal}</td><td>{stats.eisYes}</td><td>{stats.eisPartial}</td><td>{stats.eisNo}</td></tr>
+            <tr><td>Wensen (nice to have)</td><td>{stats.wensTotal}</td><td>{stats.wensYes}</td><td>{stats.wensPartial}</td><td>{stats.wensNo}</td></tr>
+            <tr><td>Could have</td><td>{stats.couldTotal}</td><td>{stats.couldYes}</td><td>{stats.couldPartial}</td><td>{stats.couldNo}</td></tr>
+            <tr><td>Totaal</td><td>{stats.total}</td><td>{stats.yes} ({yesPercent}%)</td><td>{stats.partial} ({partialPercent}%)</td><td>{stats.no} ({noPercent}%)</td></tr>
           </tbody>
         </table>
 
         <div className="conclusion-box">
-          <strong>Conclusie:</strong> Circa <strong>64%</strong> van alle eisen en wensen is geheel of gedeeltelijk gerealiseerd. Van de 68 harde <strong>eisen</strong> is <strong>74%</strong> (50 van 68) geheel of deels gerealiseerd. <strong>60%</strong> van de eisen is volledig gerealiseerd. Van de 34 <strong>wensen</strong> is <strong>50%</strong> (17 van 34) geheel of deels gerealiseerd, waarvan 13 volledig.
+          <strong>Conclusie:</strong> Circa <strong>{stats.coveragePercent}%</strong> van alle eisen en wensen is geheel of gedeeltelijk gerealiseerd. Van de {stats.eisTotal} harde <strong>eisen</strong> is <strong>{eisYesOrPartialPercent}%</strong> ({eisYesOrPartial} van {stats.eisTotal}) geheel of deels gerealiseerd. <strong>{eisYesPercent}%</strong> van de eisen is volledig gerealiseerd. Van de {stats.wensTotal} <strong>wensen</strong> is <strong>{wensYesOrPartialPercent}%</strong> ({wensYesOrPartial} van {stats.wensTotal}) geheel of deels gerealiseerd, waarvan {stats.wensYes} volledig. Daarnaast zijn <strong>{extraCount} extra features</strong> gerealiseerd die niet in het oorspronkelijke PvE stonden.
         </div>
 
         {/* ─── LEGENDA ─── */}
@@ -164,6 +192,7 @@ export default async function PveAnalysePage() {
           <div className="legend-item">✅ <strong>Gerealiseerd</strong> — aanwezig en werkend</div>
           <div className="legend-item">⚠ <strong>Deels</strong> — basis aanwezig, niet volledig</div>
           <div className="legend-item">❌ <strong>Niet gerealiseerd</strong> — ontbreekt</div>
+          <div className="legend-item">🚀 <strong>Extra</strong> — niet in PvE, wel gebouwd</div>
           <div className="legend-item">📌 <strong>Opmerking Peter</strong> — context uit mail</div>
         </div>
 
@@ -220,6 +249,10 @@ export default async function PveAnalysePage() {
               <li><strong>API</strong> — Publieke REST API met OpenAPI docs</li>
               <li><strong>Vergelijkfunctie</strong> — Side-by-side gemeente-vergelijking</li>
               <li><strong>Fuzzy search</strong> — Typfouten-tolerant (pg_trgm)</li>
+              <li><strong>AI-adviseur</strong> — Eigen tabblad in dashboard + gemeentepagina, HTML-output, 5 suggestievragen</li>
+              <li><strong>Suggesties-tabblad</strong> — Nieuwe pakketten, versies en buitengemeentelijke koppelingen (conform softwarecatalogus.nl)</li>
+              <li><strong>Deploy naar productie</strong> — Eén-klik deploy met live terminal streaming</li>
+              <li><strong>Wachtwoordbeveiliging</strong> — Basic Auth op Vercel met eenmalige login (cookie)</li>
               <li><strong>Responsiveness &amp; Dark mode</strong></li>
             </ol>
           </div>

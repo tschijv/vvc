@@ -1,7 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import RichTextEditor from "@/components/RichTextEditor";
+import dynamic from "next/dynamic";
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+  ssr: false,
+  loading: () => <div className="h-48 bg-gray-100 animate-pulse rounded-lg" />,
+});
 import { updatePagina } from "../actions";
 
 interface PaginaEditorProps {

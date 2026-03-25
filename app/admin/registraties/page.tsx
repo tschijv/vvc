@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { getPendingRegistrations } from "@/lib/services/user";
@@ -13,11 +14,12 @@ export default async function RegistratiesPage() {
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Registraties", href: "/admin/registraties" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/admin" className="text-sm text-[#1a6ca8] hover:underline mb-2 inline-block">
-            ← Terug naar beheer
-          </Link>
           <h1 className="text-2xl font-bold text-gray-900">Registraties</h1>
         </div>
         {registraties.length > 0 && (
@@ -37,12 +39,12 @@ export default async function RegistratiesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Naam</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">E-mail</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Type</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Organisatie</th>
-                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Datum</th>
-                  <th className="px-4 py-3"></th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-600">Naam</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-600">E-mail</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-600">Type</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-600">Organisatie</th>
+                  <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-600">Datum</th>
+                  <th scope="col" className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>

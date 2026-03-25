@@ -127,6 +127,24 @@ Referentiecomponenten, applicatiefuncties en standaarden worden gesynchroniseerd
 # Via admin panel: /api/admin/sync-gemma
 ```
 
+## Licentie
+
+Dit project is gelicenseerd onder de [EUPL-1.2](LICENSE).
+
+### Dependency licenties
+
+| Licentie | Aantal packages |
+|----------|-----------------|
+| MIT | 555 |
+| Apache-2.0 | 60 |
+| ISC | 28 |
+| BSD-2-Clause | 13 |
+| BSD-3-Clause | 6 |
+| MPL-2.0 | 5 |
+| Overig (MIT-0, BlueOak, CC0, Unlicense) | 12 |
+
+Alle dependencies zijn compatibel met EUPL-1.2. Draai `npx license-checker --summary` voor een actueel overzicht.
+
 ## Service Layer
 
 Alle database queries zijn geabstraheerd in `lib/services/`:

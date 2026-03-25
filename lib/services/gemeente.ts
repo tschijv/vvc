@@ -487,3 +487,74 @@ export async function mergeGemeenten(bronId: string, doelId: string) {
     return { success: true };
   });
 }
+
+// ─── Vergelijkbare gemeenten (Jaccard-similariteit) ──────────────────────────
+
+export type SimilarGemeente = {
+  id: string;
+  naam: string;
+  similarity: number;
+  sharedCount: number;
+  totalA: number;
+  totalB: number;
+};
+
+export type SimilarGemeentenResult = {
+  gemeenten: SimilarGemeente[];
+  totalCount: number;
+};
+
+export async function getSimilarGemeenten(
+  gemeenteId: string,
+  limit = 20,
+): Promise<SimilarGemeentenResult> {
+  // Get pakketversieIds for this gemeente
+  const eigenPakketten = await prisma.gemeentePakket.findMany({
+    where: { gemeenteId },
+    select: { pakketversieId: true },
+  });
+  const eigenSet = new Set(eigenPakketten.map((p) => p.pakketversieId));
+  if (eigenSet.size === 0) return { gemeenten: [], totalCount: 0 };
+
+  // Get all other gemeenten with their pakketten
+  const alleGemeenten = await prisma.gemeente.findMany({
+    where: { id: { not: gemeenteId } },
+    select: {
+      id: true,
+      naam: true,
+      pakketten: { select: { pakketversieId: true } },
+    },
+  });
+
+  // Calculate Jaccard similarity
+  const similarities: SimilarGemeente[] = [];
+  for (const g of alleGemeenten) {
+    const anderSet = new Set(g.pakketten.map((p) => p.pakketversieId));
+    if (anderSet.size === 0) continue;
+
+    let shared = 0;
+    for (const id of eigenSet) {
+      if (anderSet.has(id)) shared++;
+    }
+    const union = eigenSet.size + anderSet.size - shared;
+    const similarity = union > 0 ? shared / union : 0;
+
+    if (similarity > 0) {
+      similarities.push({
+        id: g.id,
+        naam: g.naam,
+        similarity,
+        sharedCount: shared,
+        totalA: eigenSet.size,
+        totalB: anderSet.size,
+      });
+    }
+  }
+
+  similarities.sort((a, b) => b.similarity - a.similarity);
+
+  return {
+    gemeenten: similarities.slice(0, limit),
+    totalCount: similarities.length,
+  };
+}

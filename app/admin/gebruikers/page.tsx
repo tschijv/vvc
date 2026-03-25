@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getUsers, getUserCount, ROLLEN_LABELS } from "@/lib/services/user";
 import { Role } from "@prisma/client";
 import { startImpersonation } from "@/lib/actions/impersonation";
@@ -52,6 +53,10 @@ export default async function GebruikersPage({
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Gebruikers", href: "/admin/gebruikers" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-[#1a6ca8]">Gebruikersbeheer</h1>
         <Link
@@ -125,22 +130,22 @@ export default async function GebruikersPage({
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-gray-50 border-b">
-              <th className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
+              <th scope="col" className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
                 Naam
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
+              <th scope="col" className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
                 Actief
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
+              <th scope="col" className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
                 Rollen
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
+              <th scope="col" className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
                 Geregistreerd sinds
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
+              <th scope="col" className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
                 Laatste toegang
               </th>
-              <th className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
+              <th scope="col" className="text-left px-4 py-3 font-semibold text-[#1a6ca8]">
                 Bewerkingen
               </th>
             </tr>

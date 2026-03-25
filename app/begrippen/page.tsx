@@ -1,5 +1,6 @@
-import { getBegrippen } from "@/lib/services/begrippen";
+import { searchLiveBegrippen } from "@/lib/services/begrippen-live";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,10 +15,11 @@ export default async function BegrippenPage({
 }) {
   const params = await searchParams;
   const zoek = params.zoek || "";
-  const begrippen = await getBegrippen({ zoek: zoek || undefined });
+  const begrippen = await searchLiveBegrippen(zoek || undefined);
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Begrippen", href: "/begrippen" }]} />
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Begrippen</h1>
@@ -84,15 +86,15 @@ export default async function BegrippenPage({
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 w-48">Term</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700">Definitie</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 w-40">Synoniemen</th>
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 w-36">Vocabulaire</th>
+                <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-700 w-48">Term</th>
+                <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-700">Definitie</th>
+                <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-700 w-40">Synoniemen</th>
+                <th scope="col" className="text-left px-4 py-3 font-semibold text-gray-700 w-36">Vocabulaire</th>
               </tr>
             </thead>
             <tbody>
               {begrippen.map((b) => (
-                <tr key={b.id} className="border-b border-gray-100 hover:bg-gray-50">
+                <tr key={b.uri} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-4 py-3 font-medium text-gray-900">
                     {b.uri ? (
                       <a
@@ -110,7 +112,7 @@ export default async function BegrippenPage({
                   <td className="px-4 py-3 text-gray-600">
                     <div>{b.definitie}</div>
                     {b.toelichting && (
-                      <div className="text-xs text-gray-400 mt-1">{b.toelichting}</div>
+                      <div className="text-xs text-gray-500 mt-1">{b.toelichting}</div>
                     )}
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">

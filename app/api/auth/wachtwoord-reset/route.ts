@@ -1,24 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { parseBody, wachtwoordSchema } from "@/lib/validation";
+
+const resetSchema = z.object({
+  token: z.string().min(1, "Token is verplicht"),
+  wachtwoord: wachtwoordSchema,
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { token, wachtwoord } = await req.json();
-
-    if (!token || !wachtwoord) {
-      return NextResponse.json(
-        { error: "Token en wachtwoord zijn verplicht." },
-        { status: 400 }
-      );
-    }
-
-    if (wachtwoord.length < 8) {
-      return NextResponse.json(
-        { error: "Wachtwoord moet minimaal 8 tekens bevatten." },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(req, resetSchema);
+    if ("error" in parsed) return parsed.error;
+    const { token, wachtwoord } = parsed.data;
 
     const resetToken = await prisma.passwordResetToken.findUnique({
       where: { token },

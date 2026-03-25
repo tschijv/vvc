@@ -1,0 +1,134 @@
+[
+  {
+    "nr": 1,
+    "titel": "Homepage & Navigatie",
+    "file": "section-01.mp3",
+    "exists": true
+  },
+  {
+    "nr": 2,
+    "titel": "Pakketten overzicht",
+    "file": "section-02.mp3",
+    "exists": true
+  },
+  {
+    "nr": 3,
+    "titel": "Leveranciers",
+    "file": "section-03.mp3",
+    "exists": true
+  },
+  {
+    "nr": 4,
+    "titel": "Gemeenten & Voortgang",
+    "file": "section-04.mp3",
+    "exists": true
+  },
+  {
+    "nr": 5,
+    "titel": "AI-adviseur (Voortgang verbeteren)",
+    "file": "section-05.mp3",
+    "exists": true
+  },
+  {
+    "nr": 6,
+    "titel": "Gemeenten vergelijken",
+    "file": "section-06.mp3",
+    "exists": true
+  },
+  {
+    "nr": 7,
+    "titel": "Dashboard",
+    "file": "section-07.mp3",
+    "exists": true
+  },
+  {
+    "nr": 8,
+    "titel": "Compliancy Monitor",
+    "file": "section-08.mp3",
+    "exists": true
+  },
+  {
+    "nr": 9,
+    "titel": "Inkoopondersteuning",
+    "file": "section-09.mp3",
+    "exists": true
+  },
+  {
+    "nr": 10,
+    "titel": "Koppelingen",
+    "file": "section-10.mp3",
+    "exists": true
+  },
+  {
+    "nr": 11,
+    "titel": "Standaarden & Referentiecomponenten",
+    "file": "section-11.mp3",
+    "exists": true
+  },
+  {
+    "nr": 12,
+    "titel": "Zoeken",
+    "file": "section-12.mp3",
+    "exists": true
+  },
+  {
+    "nr": 13,
+    "titel": "Begrippenkader",
+    "file": "section-13.mp3",
+    "exists": true
+  },
+  {
+    "nr": 14,
+    "titel": "Kaart",
+    "file": "section-14.mp3",
+    "exists": true
+  },
+  {
+    "nr": 15,
+    "titel": "REST API & Documentatie",
+    "file": "section-15.mp3",
+    "exists": true
+  },
+  {
+    "nr": 16,
+    "titel": "Admin beheer",
+    "file": "section-16.mp3",
+    "exists": true
+  },
+  {
+    "nr": 17,
+    "titel": "Linked Data (RDF)",
+    "file": "section-17.mp3",
+    "exists": true
+  },
+  {
+    "nr": 18,
+    "titel": "Pakketversies & Testrapporten",
+    "file": "section-18.mp3",
+    "exists": true
+  },
+  {
+    "nr": 19,
+    "titel": "Addenda & Applicatiefuncties",
+    "file": "section-19.mp3",
+    "exists": true
+  },
+  {
+    "nr": 20,
+    "titel": "Notificaties",
+    "file": "section-20.mp3",
+    "exists": true
+  },
+  {
+    "nr": 21,
+    "titel": "Favorieten",
+    "file": "section-21.mp3",
+    "exists": true
+  },
+  {
+    "nr": 22,
+    "titel": "Dark mode, QR-codes & Print",
+    "file": "section-22.mp3",
+    "exists": true
+  }
+]

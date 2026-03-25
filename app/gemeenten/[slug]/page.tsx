@@ -2,18 +2,42 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { getGemeenteById, getGemeenteHistorie } from "@/lib/services/gemeente";
+import {
+  getGemeenteById,
+  getSimilarGemeenten,
+  getGemeenteForDashboard,
+  getGemeentenForAdmin,
+  getGemeenteDashboardStats,
+  getStandaardFilters,
+  getGemeenteKoppelingen,
+} from "@/lib/services/gemeente";
 import {
   getSessionUser,
   canViewGemeentePortfolio,
   canViewGemeenteContact,
-  filterGemeentePakketten,
+  canEditGemeentePortfolio,
 } from "@/lib/auth-helpers";
 import AIAdviseur from "./AIAdviseur";
+import Breadcrumbs from "@/components/Breadcrumbs";
+import ShareButton from "@/components/ShareButton";
+import FavorietButton from "@/components/FavorietButton";
+import QRCode from "@/components/QRCode";
+import GemeenteEditButton from "./GemeenteEditButton";
+import GemeenteSelector from "@/components/GemeenteSelector";
+import HelpLink from "@/components/HelpLink";
+import { sterren, loadPakketRows, loadSuggesties } from "./helpers";
+import TabLink from "./TabLink";
+import DashboardTab from "./DashboardTab";
+import PakkettenTab from "./PakkettenTab";
+import KoppelingenTab from "./KoppelingenTab";
+import SuggestiesTab from "./SuggestiesTab";
 
 interface Props {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ tab?: string; compliancy?: string; standaard?: string; testrapport?: string; bron?: string; buitengemeentelijk?: string }>;
 }
+
+// ─── Metadata ────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -21,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!gemeente) return {};
   return {
     title: gemeente.naam,
-    description: `${gemeente.naam} — gemeente in de VNG Voorzieningencatalogus`,
+    description: `${gemeente.naam} \u2014 gemeente in de VNG Voorzieningencatalogus`,
     openGraph: {
       title: gemeente.naam,
       description: `Applicatieportfolio en voortgang van ${gemeente.naam}`,
@@ -29,214 +53,258 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function GemeenteDetailPage({ params }: Props) {
+// ─── Page ────────────────────────────────────────────────────────────────────
+
+export default async function GemeenteDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
+  const sp = await searchParams;
   const user = await getSessionUser();
 
   const gemeente = await getGemeenteById(slug);
-
   if (!gemeente) notFound();
 
   const showContact = canViewGemeenteContact(user);
   const showPortfolio = canViewGemeentePortfolio(user);
-  const visiblePakketten = showPortfolio
-    ? filterGemeentePakketten(user, gemeente.pakketten)
+  const isAuth = !!user && (user.role === "ADMIN" || user.role === "GEMEENTE");
+  const isAdmin = user?.role === "ADMIN";
+  const isLeverancier = user?.role === "LEVERANCIER";
+  const canEdit = canEditGemeentePortfolio(user, slug);
+
+  const activeTab = sp.tab || "dashboard";
+
+  // Admin gemeente selector data + dashboard data in parallel
+  const [gemeenten, dashboardGemeente] = await Promise.all([
+    isAdmin ? getGemeentenForAdmin() : Promise.resolve([]),
+    isAuth ? getGemeenteForDashboard(slug) : Promise.resolve(null),
+  ]);
+  const pakketCount = dashboardGemeente?._count.pakketten ?? 0;
+  const koppelingCount = dashboardGemeente?._count.koppelingen ?? 0;
+
+  // ─── Tab-specific data loading ─────────────────────────────────────────────
+
+  // Dashboard tab — parallel stats + similar gemeenten
+  const [dashboardStats, similarResult] = activeTab === "dashboard" && isAuth
+    ? await Promise.all([
+        getGemeenteDashboardStats(slug),
+        getSimilarGemeenten(slug),
+      ])
+    : [null, { gemeenten: [], totalCount: 0 }];
+  const similarGemeenten = similarResult.gemeenten;
+  const similarTotalCount = similarResult.totalCount;
+
+  // Pakketten tab — parallel pakketRows + standaardFilters
+  const [pakketRows, standaardFilters] = activeTab === "pakketten" && isAuth
+    ? await Promise.all([
+        loadPakketRows(slug, { compliancy: sp.compliancy, standaard: sp.standaard, testrapport: sp.testrapport }),
+        getStandaardFilters(slug),
+      ])
+    : [[], []];
+
+  // Koppelingen tab
+  const koppelingen = activeTab === "koppelingen" && isAuth ? await getGemeenteKoppelingen(slug) : [];
+
+  // Suggesties tab
+  const suggesties = activeTab === "suggesties" && isAuth ? await loadSuggesties(slug) : null;
+  const suggestieCount = suggesties
+    ? suggesties.nieuwePakketten.length + suggesties.nieuweVersies.length + suggesties.buitengemeentelijkeKoppelingen.length
+    : (dashboardStats?.suggestieCount || 0);
+
+  // Views for kaart bar (pakketten and koppelingen tabs)
+  const views = (activeTab === "pakketten" || activeTab === "koppelingen") && isAuth
+    ? await prisma.gemmaView.findMany({
+        where: { actief: true },
+        select: { id: true, titel: true, domein: true },
+        orderBy: [{ domein: "asc" }, { volgorde: "asc" }],
+      })
     : [];
 
-  const isLeverancier = user?.role === "LEVERANCIER";
-
-  const historie = showPortfolio ? await getGemeenteHistorie(slug) : [];
+  // Tab definitions — Dashboard is het hoofd-tab
+  const tabs = [
+    { key: "dashboard", label: "Dashboard", show: isAuth },
+    { key: "pakketten", label: "Pakketten", show: isAuth, count: pakketCount },
+    { key: "koppelingen", label: "Koppelingen", show: isAuth, count: koppelingCount },
+    { key: "suggesties", label: "Suggesties", show: isAuth, count: suggestieCount },
+    { key: "ai-adviseur", label: "Voortgang verbeteren (AI)", show: isAuth },
+  ];
 
   return (
-    <div className="max-w-4xl">
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <Link href="/gemeenten" className="text-sm text-blue-600 hover:underline">
-            ← Terug naar gemeenten
-          </Link>
-          {showPortfolio && (
-            <Link
-              href={`/gemeenten/vergelijk?a=${slug}`}
-              className="text-sm text-[#1a6ca8] border border-[#1a6ca8] rounded px-3 py-1 hover:bg-blue-50"
-            >
-              Vergelijk →
-            </Link>
-          )}
-        </div>
-        <h1 className="text-2xl font-bold text-[#1a6ca8] mt-2">{gemeente.naam}</h1>
-        {gemeente.cbsCode && (
-          <p className="text-sm text-gray-500 mt-0.5">CBS-code: {gemeente.cbsCode}</p>
-        )}
-      </div>
-
-      {/* Contactgegevens */}
-      {showContact && (
-        <div className="bg-gray-50 rounded p-4 mb-6 text-sm">
-          <h2 className="font-semibold text-gray-800 mb-2">Contactgegevens</h2>
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-1">
-            <dt className="text-gray-500">Contactpersoon</dt>
-            <dd>{gemeente.contactpersoon || "—"}</dd>
-            <dt className="text-gray-500">E-mail</dt>
-            <dd>
-              {gemeente.email ? (
-                <a href={`mailto:${gemeente.email}`} className="text-blue-600 hover:underline">
-                  {gemeente.email}
-                </a>
-              ) : (
-                "—"
-              )}
-            </dd>
-          </dl>
-        </div>
+    <div>
+      {/* Admin gemeente selector */}
+      {isAdmin && gemeenten.length > 1 && (
+        <GemeenteSelector gemeenten={gemeenten} selectedId={slug} currentTab={activeTab} />
       )}
 
-      {/* Voortgang */}
-      <div className="bg-gray-50 rounded p-4 mb-6 text-sm">
-        <h2 className="font-semibold text-gray-800 mb-2">Voortgang</h2>
-        <div className="flex items-center gap-2">
-          <div className="w-32 bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-[#1a6ca8] h-2 rounded-full"
-              style={{ width: `${Math.min(gemeente.progress, 100)}%` }}
-            />
-          </div>
-          <span className="text-gray-700">{gemeente.progress}%</span>
-        </div>
-        {gemeente.lastActivity && (
-          <p className="text-gray-500 mt-1">
-            Laatste activiteit: {new Date(gemeente.lastActivity).toLocaleDateString("nl-NL")}
-          </p>
-        )}
-      </div>
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { label: "Gemeenten", href: "/gemeenten" },
+          { label: gemeente.naam, href: `/gemeenten/${slug}` },
+        ]}
+      />
 
-      {/* Applicatieportfolio */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-3">
-          Applicatieportfolio
-          {showPortfolio && ` (${visiblePakketten.length})`}
-        </h2>
-
-        {!showPortfolio ? (
-          <div className="bg-yellow-50 border border-yellow-200 rounded p-4 text-sm">
-            <p className="text-yellow-800">
-              <span className="font-semibold">Inloggen vereist.</span>{" "}
-              <Link href={`/auth/login?callbackUrl=/gemeenten/${slug}`} className="text-[#1a6ca8] hover:underline">
-                Log in
-              </Link>{" "}
-              om het applicatieportfolio te bekijken.
-            </p>
-          </div>
-        ) : visiblePakketten.length > 0 ? (
-          <>
-            {isLeverancier && (
-              <p className="text-sm text-gray-500 mb-2 italic">
-                U ziet alleen de pakketten van uw eigen organisatie.
-              </p>
-            )}
-            <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="border-b border-gray-300 text-left">
-                  <th className="pb-2 pr-4 font-semibold">Pakket</th>
-                  <th className="pb-2 pr-4 font-semibold">Leverancier</th>
-                  <th className="pb-2 pr-4 font-semibold hidden sm:table-cell">Versie</th>
-                  <th className="pb-2 pr-4 font-semibold hidden sm:table-cell">Status</th>
-                  <th className="pb-2 pr-4 font-semibold hidden lg:table-cell">Verantwoordelijke</th>
-                  <th className="pb-2 pr-4 font-semibold hidden lg:table-cell">Licentievorm</th>
-                  <th className="pb-2 pr-4 font-semibold hidden lg:table-cell">Maatwerk</th>
-                  <th className="pb-2 font-semibold hidden lg:table-cell">Gebruikers</th>
-                </tr>
-              </thead>
-              <tbody>
-                {visiblePakketten.map((gp) => (
-                  <tr key={gp.pakketversieId} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="py-2 pr-4">
-                      <Link
-                        href={`/pakketten/${gp.pakketversie.pakket.slug}`}
-                        className="text-[#1a6ca8] hover:underline"
-                      >
-                        {gp.pakketversie.pakket.naam}
-                      </Link>
-                    </td>
-                    <td className="py-2 pr-4 text-gray-600">
-                      {gp.pakketversie.pakket.leverancier.naam}
-                    </td>
-                    <td className="py-2 pr-4 text-gray-600 hidden sm:table-cell">{gp.pakketversie.naam}</td>
-                    <td className="py-2 pr-4 text-gray-600 hidden sm:table-cell">{gp.status || "—"}</td>
-                    <td className="py-2 pr-4 text-gray-600 hidden lg:table-cell">{gp.verantwoordelijke || "—"}</td>
-                    <td className="py-2 pr-4 text-gray-600 hidden lg:table-cell">{gp.licentievorm || "—"}</td>
-                    <td className="py-2 pr-4 text-gray-600 hidden lg:table-cell">{gp.maatwerk || "—"}</td>
-                    <td className="py-2 text-gray-600 hidden lg:table-cell">{gp.aantalGebruikers ?? "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Header */}
+      <div className="bg-gray-50 rounded-lg p-6 mb-6">
+        <div className="flex justify-between items-start">
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 bg-white border border-gray-200 rounded flex items-center justify-center text-gray-400 text-xs font-medium">
+              {gemeente.naam.substring(0, 3).toUpperCase()}
             </div>
-          </>
-        ) : (
-          <p className="text-sm text-gray-500">
-            {isLeverancier
-              ? "Geen van uw pakketten is bij deze gemeente in gebruik."
-              : "Geen pakketten geregistreerd."}
-          </p>
-        )}
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-light text-[#1a6ca8]">{gemeente.naam}</h1>
+                <ShareButton />
+                <FavorietButton entityType="gemeente" entityId={slug} />
+                <QRCode url={`${process.env.NEXT_PUBLIC_BASE_URL || ""}/gemeenten/${slug}`} title={gemeente.naam} />
+              </div>
+              {gemeente.cbsCode && (
+                <p className="text-xs text-gray-500 mt-0.5">CBS-code: {gemeente.cbsCode}</p>
+              )}
+              <div className="flex items-center gap-2 mt-1 text-sm">
+                <span className="text-gray-600">Voortgang:</span>
+                <div className="flex items-center gap-0.5">
+                  {sterren(gemeente.progress).map((s, i) => (
+                    <svg
+                      key={i}
+                      className={`w-4 h-4 ${s === "filled" ? "text-[#e35b10]" : "text-gray-300"}`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <div className="w-24 bg-gray-200 rounded-full h-2 ml-2">
+                  <div
+                    className="bg-[#1a6ca8] h-2 rounded-full"
+                    style={{ width: `${Math.min(gemeente.progress, 100)}%` }}
+                  />
+                </div>
+                <span className="text-gray-500 text-xs">{gemeente.progress}%</span>
+                {showPortfolio && (
+                  <Link href={`/gemeenten/vergelijk?a=${slug}`} className="text-[#1a6ca8] hover:underline text-xs ml-2">
+                    Vergelijk
+                  </Link>
+                )}
+                <Link href="/kaart" className="text-[#1a6ca8] hover:underline text-xs ml-2">
+                  Applicatielandschap
+                </Link>
+              </div>
+            </div>
+          </div>
+          {/* Contact details */}
+          {showContact && (
+            <div className="text-right text-sm text-gray-600">
+              <div className="flex items-center justify-end gap-2">
+                <p className="font-medium">{gemeente.contactpersoon || "\u2014"}</p>
+                {canEdit && (
+                  <GemeenteEditButton
+                    gemeenteId={gemeente.id}
+                    contactpersoon={gemeente.contactpersoon || ""}
+                    email={gemeente.email || ""}
+                    telefoon={gemeente.telefoon || ""}
+                    website={gemeente.website || ""}
+                  />
+                )}
+              </div>
+              {gemeente.email && (
+                <a href={`mailto:${gemeente.email}`} className="text-[#1a6ca8] hover:underline block">
+                  {gemeente.email}
+                </a>
+              )}
+              {gemeente.website && (
+                <a href={gemeente.website} target="_blank" rel="noopener" className="text-[#1a6ca8] hover:underline block">
+                  {gemeente.website}
+                </a>
+              )}
+              {gemeente.telefoon && <p>{gemeente.telefoon}</p>}
+              {gemeente.lastActivity && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Laatst gewijzigd: {new Date(gemeente.lastActivity).toLocaleDateString("nl-NL", {
+                    day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
+                  })}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* AI-adviseur */}
-      {showPortfolio && (
-        <div className="mb-6">
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
+        {tabs.filter((t) => t.show).map((t) => (
+          <TabLink
+            key={t.key}
+            href={`/gemeenten/${slug}?tab=${t.key}`}
+            active={activeTab === t.key}
+            label={t.label}
+            count={(t as { count?: number }).count}
+          />
+        ))}
+      </div>
+
+      {/* ─── Tab content ───────────────────────────────────────────────────────── */}
+
+      {activeTab === "dashboard" && isAuth && dashboardStats && (
+        <DashboardTab
+          stats={dashboardStats}
+          gemeenteId={slug}
+          similarGemeenten={similarGemeenten}
+          similarTotalCount={similarTotalCount}
+          samenwerkingen={gemeente.samenwerkingen}
+        />
+      )}
+
+      {activeTab === "pakketten" && isAuth && (
+        <PakkettenTab
+          pakketten={pakketRows}
+          totalPakketCount={pakketCount}
+          compliancyFilter={sp.compliancy}
+          standaardFilter={sp.standaard}
+          testrapportFilter={sp.testrapport}
+          standaardFilters={standaardFilters}
+          views={views}
+          gemeenteId={slug}
+          gemeenteNaam={gemeente.naam}
+          canEdit={canEdit}
+        />
+      )}
+
+      {activeTab === "koppelingen" && isAuth && (
+        <KoppelingenTab
+          koppelingen={koppelingen}
+          views={views}
+          gemeenteId={slug}
+          gemeenteNaam={gemeente.naam}
+          filterStandaard={sp.standaard}
+          filterBron={sp.bron}
+          filterBuitengemeentelijk={sp.buitengemeentelijk}
+          canEdit={canEdit}
+        />
+      )}
+
+      {activeTab === "suggesties" && isAuth && suggesties && (
+        <SuggestiesTab suggesties={suggesties} />
+      )}
+
+      {activeTab === "ai-adviseur" && isAuth && (
+        <div>
+          <div className="flex items-center gap-2 mb-3">
+            <HelpLink section="ai-adviseur" label="Help over de AI-adviseur" />
+          </div>
           <AIAdviseur gemeenteId={slug} gemeenteNaam={gemeente.naam} />
         </div>
       )}
 
-      {/* Wijzigingshistorie */}
-      {historie.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">
-            Wijzigingshistorie
-          </h2>
-          <div className="bg-gray-50 rounded-lg p-4 dark:bg-gray-800">
-            <ul className="text-sm space-y-2">
-              {historie.map((log) => (
-                <li key={log.id} className="flex items-start gap-3 text-gray-600 dark:text-gray-300">
-                  <span className="text-xs text-gray-400 whitespace-nowrap mt-0.5">
-                    {new Date(log.createdAt).toLocaleDateString("nl-NL", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                  <span className="flex-1">
-                    {log.details || log.actie}
-                    {log.userEmail && (
-                      <span className="text-xs text-gray-400 ml-1">— {log.userEmail}</span>
-                    )}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {/* Samenwerkingen */}
-      {gemeente.samenwerkingen.length > 0 && (
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">
-            Samenwerkingsverbanden ({gemeente.samenwerkingen.length})
-          </h2>
-          <ul className="text-sm space-y-1">
-            {gemeente.samenwerkingen.map((sg) => (
-              <li key={sg.samenwerkingId} className="flex items-center gap-2">
-                <span className="text-gray-700">{sg.samenwerking.naam}</span>
-                {sg.samenwerking.type && (
-                  <span className="text-xs text-gray-500">({sg.samenwerking.type})</span>
-                )}
-              </li>
-            ))}
-          </ul>
+      {/* Auth gate when not logged in */}
+      {!isAuth && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded p-4 text-sm">
+          <p className="text-yellow-800">
+            <span className="font-semibold">Inloggen vereist.</span>{" "}
+            <Link href={`/auth/login?callbackUrl=/gemeenten/${slug}?tab=${activeTab}`} className="text-[#1a6ca8] hover:underline">
+              Log in
+            </Link>{" "}
+            om dit tabblad te bekijken.
+          </p>
         </div>
       )}
     </div>

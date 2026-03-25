@@ -168,13 +168,13 @@ export default function MergeForm({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 text-gray-600 font-medium">
+                <th scope="col" className="text-left py-2 text-gray-600 font-medium">
                   Onderdeel
                 </th>
-                <th className="text-right py-2 text-gray-600 font-medium">
+                <th scope="col" className="text-right py-2 text-gray-600 font-medium">
                   Verplaatst
                 </th>
-                <th className="text-right py-2 text-gray-600 font-medium">
+                <th scope="col" className="text-right py-2 text-gray-600 font-medium">
                   Overlap
                 </th>
               </tr>

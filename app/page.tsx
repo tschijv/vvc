@@ -2,6 +2,26 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { getSessionUser, canEditPagina } from "@/lib/auth-helpers";
 import GlossaryHighlighter from "@/components/GlossaryHighlighter";
+import { unstable_cache } from "next/cache";
+
+const getHomepageStats = unstable_cache(
+  async () => {
+    const [aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang] = await Promise.all([
+      prisma.pakket.count(),
+      prisma.pakketversie.count(),
+      prisma.leverancier.count(),
+      prisma.gemeente.count(),
+      prisma.standaard.count(),
+      prisma.referentiecomponent.count(),
+      prisma.leverancierAddendum.count(),
+      prisma.applicatiefunctie.count(),
+      prisma.gemeente.findMany({ select: { progress: true } }),
+    ]);
+    return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang };
+  },
+  ["homepage-stats"],
+  { revalidate: 300 }, // 5 minutes
+);
 
 // SVG icons matching the live voorzieningencatalogus
 function IconMijnCatalogus() {
@@ -38,6 +58,18 @@ function IconPakketten() {
       <path d="M10 24 L25 30 L40 24" stroke="#1a6ca8" strokeWidth="2" />
       <path d="M25 16 L25 44" stroke="#1a6ca8" strokeWidth="2" />
       <path d="M18 12 L25 16 L32 12" stroke="#1a6ca8" strokeWidth="2" />
+    </svg>
+  );
+}
+function IconPakketversies() {
+  return (
+    <svg viewBox="0 0 50 50" className="w-10 h-10" fill="none">
+      <rect x="10" y="16" width="30" height="24" rx="2" stroke="#1a6ca8" strokeWidth="2" />
+      <path d="M10 24 L25 30 L40 24" stroke="#1a6ca8" strokeWidth="2" />
+      <path d="M25 16 L25 44" stroke="#1a6ca8" strokeWidth="2" />
+      <path d="M18 12 L25 16 L32 12" stroke="#1a6ca8" strokeWidth="2" />
+      <circle cx="38" cy="12" r="6" fill="#1a6ca8" />
+      <text x="38" y="15" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold">V</text>
     </svg>
   );
 }
@@ -87,6 +119,26 @@ function IconReferentie() {
     </svg>
   );
 }
+function IconApplicatiefuncties() {
+  return (
+    <svg viewBox="0 0 50 50" className="w-10 h-10" fill="none">
+      <rect x="8" y="8" width="34" height="34" rx="3" stroke="#1a6ca8" strokeWidth="2" />
+      <path d="M16 18 L22 24 L16 30" stroke="#1a6ca8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="26" y1="30" x2="36" y2="30" stroke="#1a6ca8" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+function IconAddenda() {
+  return (
+    <svg viewBox="0 0 50 50" className="w-10 h-10" fill="none">
+      <rect x="8" y="6" width="24" height="32" rx="2" stroke="#1a6ca8" strokeWidth="2" />
+      <rect x="18" y="12" width="24" height="32" rx="2" stroke="#1a6ca8" strokeWidth="2" />
+      <line x1="24" y1="22" x2="36" y2="22" stroke="#1a6ca8" strokeWidth="2" />
+      <line x1="24" y1="28" x2="36" y2="28" stroke="#1a6ca8" strokeWidth="2" />
+      <line x1="24" y1="34" x2="32" y2="34" stroke="#1a6ca8" strokeWidth="2" />
+    </svg>
+  );
+}
 function IconZoeken() {
   return (
     <svg viewBox="0 0 50 50" className="w-10 h-10" fill="none">
@@ -126,18 +178,71 @@ function Stars({ count }: { count: number }) {
   );
 }
 
+function tijdGeleden(date: Date): string {
+  const nu = new Date();
+  const diff = nu.getTime() - date.getTime();
+  const seconden = Math.floor(diff / 1000);
+  const minuten = Math.floor(seconden / 60);
+  const uren = Math.floor(minuten / 60);
+  const dagen = Math.floor(uren / 24);
+  const weken = Math.floor(dagen / 7);
+
+  if (seconden < 60) return "zojuist";
+  if (minuten < 60) return `${minuten} ${minuten === 1 ? "minuut" : "minuten"} geleden`;
+  if (uren < 24) return `${uren} ${uren === 1 ? "uur" : "uur"} geleden`;
+  if (dagen < 7) return `${dagen} ${dagen === 1 ? "dag" : "dagen"} geleden`;
+  if (weken < 5) return `${weken} ${weken === 1 ? "week" : "weken"} geleden`;
+  return date.toLocaleDateString("nl-NL", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function actieIcon(actie: string) {
+  switch (actie) {
+    case "create":
+      return (
+        <span className="text-green-600 dark:text-green-400 flex-shrink-0" title="Aangemaakt">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+        </span>
+      );
+    case "update":
+      return (
+        <span className="text-blue-600 dark:text-blue-400 flex-shrink-0" title="Gewijzigd">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+        </span>
+      );
+    case "delete":
+      return (
+        <span className="text-red-600 dark:text-red-400 flex-shrink-0" title="Verwijderd">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+        </span>
+      );
+    case "sync":
+      return (
+        <span className="text-purple-600 dark:text-purple-400 flex-shrink-0" title="Gesynchroniseerd">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        </span>
+      );
+    default:
+      return (
+        <span className="text-gray-400 dark:text-gray-500 flex-shrink-0" title={actie}>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </span>
+      );
+  }
+}
+
 export default async function HomePage() {
-  const [aantalPakketten, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, gemeentenVoortgang, nieuwsPagina, doelPagina, user] = await Promise.all([
-    prisma.pakket.count(),
-    prisma.leverancier.count(),
-    prisma.gemeente.count(),
-    prisma.standaard.count(),
-    prisma.referentiecomponent.count(),
-    prisma.gemeente.findMany({ select: { progress: true } }),
+  const [stats, nieuwsPagina, doelPagina, user, recenteWijzigingen] = await Promise.all([
+    getHomepageStats(),
     prisma.pagina.findUnique({ where: { slug: "homepage-nieuws" } }),
     prisma.pagina.findUnique({ where: { slug: "homepage-doel" } }),
     getSessionUser(),
+    prisma.auditLog.findMany({
+      where: { actie: { in: ["create", "update", "delete", "sync", "merge"] } },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+    }),
   ]);
+  const { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang } = stats;
 
   const magBewerken = canEditPagina(user);
 
@@ -182,10 +287,13 @@ export default async function HomePage() {
           {/* Blue tiles */}
           {[
             { href: "/pakketten", label: "Pakketten", count: aantalPakketten, Icon: IconPakketten },
+            { href: "/pakketversies", label: "Pakket\nversies", count: aantalPakketversies, Icon: IconPakketversies },
             { href: "/leveranciers", label: "Leveranciers", count: aantalLeveranciers, Icon: IconLeveranciers },
+            { href: "/addenda", label: "Addenda", count: aantalAddenda, Icon: IconAddenda },
             { href: "/gemeenten", label: "Gemeenten", count: aantalGemeenten, Icon: IconGemeenten },
             { href: "/standaarden", label: "Standaarden", count: aantalStandaarden, Icon: IconStandaarden },
             { href: "/referentiecomponenten", label: "Referentie\ncomponenten", count: aantalRefComps, Icon: IconReferentie },
+            { href: "/applicatiefuncties", label: "Applicatie\nfuncties", count: aantalAppFuncties, Icon: IconApplicatiefuncties },
             { href: "/zoeken", label: "Zoeken", count: null, Icon: IconZoeken },
           ].map((tile) => (
             <Link
@@ -218,6 +326,22 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Quick search */}
+      <form action="/zoeken" method="get" className="max-w-2xl mx-auto mb-8">
+        <div className="relative">
+          <input
+            type="text"
+            name="q"
+            placeholder="Zoek in pakketten, leveranciers, gemeenten..."
+            className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-3 pl-11 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1a6ca8] focus:border-transparent shadow-sm"
+          />
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <circle cx="11" cy="11" r="8" />
+            <path strokeLinecap="round" d="M21 21l-4.35-4.35" />
+          </svg>
+        </div>
+      </form>
+
       {/* Three columns */}
       <div className="grid md:grid-cols-3 gap-8 max-w-7xl">
         {/* Nieuws */}
@@ -226,7 +350,7 @@ export default async function HomePage() {
             <h2 className="text-base font-bold text-[#e35b10]">Nieuws</h2>
             {magBewerken && (
               <Link href="/info/homepage-nieuws/bewerken" className="text-gray-400 hover:text-[#e35b10]" title="Bewerken">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </Link>
@@ -247,7 +371,7 @@ export default async function HomePage() {
             <h2 className="text-base font-bold text-[#e35b10]">Doel van de voorzieningencatalogus</h2>
             {magBewerken && (
               <Link href="/info/homepage-doel/bewerken" className="text-gray-400 hover:text-[#e35b10]" title="Bewerken">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </Link>
@@ -290,6 +414,31 @@ export default async function HomePage() {
           </Link>
         </div>
       </div>
+
+      {/* Laatste wijzigingen */}
+      {recenteWijzigingen.length > 0 && (
+        <div className="mt-10 max-w-7xl">
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <h2 className="text-base font-bold text-[#e35b10]">Laatste wijzigingen</h2>
+          </div>
+          <ul className="divide-y divide-gray-100 dark:divide-slate-700">
+            {recenteWijzigingen.map((log) => (
+              <li key={log.id} className="flex items-start gap-3 py-2.5">
+                {actieIcon(log.actie)}
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm text-gray-700 dark:text-slate-300">
+                    <span className="font-medium">{log.entiteit}</span>
+                    {log.details ? ` — ${log.details}` : ` ${log.actie}`}
+                  </span>
+                </div>
+                <span className="text-xs text-gray-400 dark:text-slate-500 whitespace-nowrap flex-shrink-0">
+                  {tijdGeleden(log.createdAt)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

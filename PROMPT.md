@@ -20,6 +20,7 @@ Bouw een **Voorzieningencatalogus** voor de Nederlandse gemeentelijke sector. Di
 - **Kaarten**: Leaflet / React-Leaflet
 - **CSV/Excel**: csv-parse, xlsx
 - **Document generatie**: docx (voor Word-documenten)
+- **AI**: Anthropic Claude API (@anthropic-ai/sdk) voor AI-advisering
 - **Deployment**: Vercel (Hobby tier)
 - **Tests**: Vitest
 
@@ -112,6 +113,8 @@ Maak de volgende entiteiten aan:
 - **`/admin/statistieken`** - Platform statistieken
 - **`/admin/pve-analyse`** - PvE-analyse (104 eisen en wensen)
 - **`/admin/datamodel`** - MIM-informatiemodel (UML-diagram)
+- **`/admin/migratie`** - Data-migratie mapping: documenteert de mapping van 6 CSV-bronbestanden (Drupal Softwarecatalogus) naar Prisma-entiteiten, inclusief kolomtoewijzingen, speciale verwerkingsregels en importvolgorde met FK-dependencies
+- **`/admin/prompt`** - PROMPT.md viewer: toont de regeneratie-prompt direct in de web-UI met kopieerknop
 - **`/upload`** - Data importeren (CSV, JSON, Excel)
 
 ### Admin panels (componenten op /admin)
@@ -119,6 +122,14 @@ Maak de volgende entiteiten aan:
 - **BegrippenSyncPanel** - Synchroniseer begrippen vanuit NL-SBB SKOS/Skosmos API
 - **ApiDocPanel** - Link naar API-documentatie
 - **DeployPanel** - Deploy naar Vercel (alleen in development)
+
+### AI-adviseur (op gemeente-detailpagina's)
+- **AIAdviseur** - Client-side component op `/gemeenten/[slug]` dat via de Claude API (Sonnet 4) intelligent advies geeft over het applicatieportfolio van een gemeente. Bevat voorgestelde vragen en een Q&A-interface. Context-aware: analyseert pakketten, compliancy, koppelingen, referentiecomponenten en standaarden. Toegankelijk voor rollen: ADMIN, GEMEENTE_BEHEERDER, GEMEENTE_RAADPLEGER, KING_BEHEERDER, KING_RAADPLEGER.
+- **getAIAdvies** - Server action (`app/gemeenten/[slug]/actions.ts`) die de Claude API aanroept met volledige gemeentecontext.
+
+### User impersonation (admin)
+- **ImpersonationBanner** - Toont een waarschuwingsbanner wanneer een admin een andere gebruiker impersoneert, met de naam van de echte en geïmpersoneerde gebruiker en een "Stop"-knop.
+- **lib/actions/impersonation.ts** - Server action voor het stoppen van impersonatie.
 
 ### REST API (v1)
 - **`/api/v1/gemeenten`** - GET gemeenten (paginatie, zoeken, include pakketten)
@@ -157,6 +168,7 @@ Maak de volgende entiteiten aan:
 - **`/api/upload/templates`** - GET download import templates
 
 ## Shared componenten
+- **ImpersonationBanner** - Waarschuwingsbanner bij admin-impersonatie van een andere gebruiker
 - **GlossaryHighlighter** - Markeert begrippen in tekst met tooltips (event delegation, onMouseOver/onMouseLeave)
 - **GlossaryProvider** - Client-side context provider die begrippen laadt
 - **AuthButton** - Login/logout knop met gebruikersnaam
@@ -197,6 +209,7 @@ Maak de volgende entiteiten aan:
 - **openapi.ts** - OpenAPI specificatie generator
 - **prisma.ts** - Prisma client singleton
 - **progress.ts** - Voortgangsberekening voor gemeenten
+- **actions/impersonation.ts** - Server action voor admin user impersonation
 
 ## GEMMA synchronisatie
 De applicatie synchroniseert data uit externe bronnen:
@@ -222,11 +235,52 @@ De applicatie ondersteunt import van:
 ## Environment variabelen
 ```
 DATABASE_URL=postgresql://...@neon.tech/...
-NEXTAUTH_SECRET=...
+AUTH_SECRET=... (willekeurige base64 string, genereer met: openssl rand -base64 32)
 NEXTAUTH_URL=http://localhost:3000
-RESEND_API_KEY=...
+ANTHROPIC_API_KEY=... (voor AI-adviseur op gemeentepagina's)
+RESEND_API_KEY=... (voor e-mail verzending)
 VERCEL_TOKEN=... (voor deploy functionaliteit)
 ```
+
+## Lokale ontwikkelomgeving opzetten
+
+### Vereisten
+- macOS (Apple Silicon of Intel)
+- Homebrew, Node.js (v20+), npm
+- PostgreSQL database (Neon)
+
+### Stappen
+```bash
+# 1. Homebrew installeren (als nog niet aanwezig)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Node.js installeren
+brew install node
+
+# 3. Naar projectmap navigeren
+cd ~/claude/vvc
+
+# 4. Dependencies installeren
+npm install
+
+# 5. Environment variabelen instellen
+cp .env.example .env  # of maak handmatig aan met bovenstaande variabelen
+
+# 6. Database schema synchroniseren (als je een verse Neon database gebruikt)
+npx prisma db push
+
+# 7. Data importeren (optioneel, als je CSV-exports hebt)
+npx ts-node --esm scripts/import/seed.ts
+
+# 8. Dev server starten
+npm run dev
+# Applicatie is beschikbaar op http://localhost:3000
+```
+
+### Troubleshooting
+- **"AUTH_SECRET missing"**: Zorg dat `AUTH_SECRET` in `.env` staat (genereer met `openssl rand -base64 32`)
+- **Node/npm niet gevonden na installatie**: Laad Homebrew in je shell: `eval "$(/opt/homebrew/bin/brew shellenv)"`
+- **Prisma generate errors**: Draai `npx prisma generate` na het installeren van dependencies
 
 ## Documentatie-generatie
 In `docs/` staan scripts voor het genereren van Word-documenten:

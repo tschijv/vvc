@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -22,6 +24,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ─── WCAG: Focus indicators ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #1a6ca8;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.dark :focus-visible {
+  outline-color: #60a5fa;
 }
 
 /* ─── Dark mode overrides for Tailwind utility classes ──────────────────────── */
@@ -81,6 +94,27 @@ body {
 .dark .border-orange-200 { border-color: #9a3412; }
 .dark .border-blue-200 { border-color: #1e40af; }
 .dark .text-yellow-800 { color: #fde68a; }
+
+/* Additional dark mode overrides for completeness */
+.dark .bg-gray-200 { background-color: #334155; }
+.dark .bg-gray-300 { background-color: #475569; }
+.dark .text-gray-300 { color: #cbd5e1; }
+.dark .divide-gray-200 > :not(:last-child) { border-color: #334155; }
+.dark .ring-gray-200 { --tw-ring-color: #334155; }
+.dark .hover\:bg-gray-200:hover { background-color: #334155; }
+.dark table { border-color: #334155; }
+.dark th { border-color: #475569; }
+.dark td { border-color: #334155; }
+.dark .bg-white\/80 { background-color: rgba(30, 41, 59, 0.8); }
+.dark .text-\[\#1a6ca8\] { color: #60a5fa; }
+.dark .text-\[\#145a8a\] { color: #93c5fd; }
+.dark .rounded-lg.bg-gray-50 { background-color: #1e293b; }
+.dark .bg-gray-50.rounded { background-color: #1e293b; }
+.dark pre { background-color: #0f172a; }
+.dark code { background-color: #1e293b; color: #e2e8f0; }
+.dark .hover\:text-blue-600:hover { color: #60a5fa; }
+.dark .focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6; }
+.dark .focus\:border-blue-500:focus { border-color: #3b82f6; }
 
 /* ─── CMS content styling — voor pagina's uit de database ─────────────────── */
 .cms-content h1 {
@@ -297,6 +331,117 @@ body {
   color: #e2e8f0;
 }
 
+/* ─── Print styles ─────────────────────────────────────────────────────────── */
+@media print {
+  /* Hide non-essential UI elements */
+  nav[aria-label="Hoofdnavigatie"],
+  footer[aria-label="Footer"],
+  .print\:hidden,
+  button,
+  [role="navigation"],
+  aside,
+  .mobile-filter-toggle,
+  .leaflet-container {
+    display: none !important;
+  }
+
+  /* Reset colours for printing */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+    line-height: 1.5;
+  }
+
+  * {
+    background: transparent !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Make tables print-friendly */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  table th,
+  table td {
+    border: 1px solid #999 !important;
+    padding: 4px 8px !important;
+    text-align: left !important;
+  }
+
+  table th {
+    font-weight: 700 !important;
+  }
+
+  /* Show hidden responsive table columns */
+  .hidden {
+    display: table-cell !important;
+  }
+
+  tr.hidden,
+  div.hidden {
+    display: block !important;
+  }
+
+  /* Show URLs after links */
+  a[href^="http"]::after,
+  a[href^="mailto"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    font-weight: normal;
+    word-break: break-all;
+  }
+
+  /* Don't show URL for internal navigation links */
+  a[href^="/"]::after {
+    content: none;
+  }
+
+  /* Page break control */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  h2 {
+    page-break-before: auto;
+  }
+
+  /* Major sections get page breaks */
+  .mb-6 + .mb-6 {
+    page-break-before: auto;
+  }
+
+  table, figure, img {
+    page-break-inside: avoid;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  /* Remove margin-top from body content to save space */
+  .mt-16 {
+    margin-top: 0 !important;
+  }
+
+  /* Ensure full-width layout */
+  .max-w-4xl,
+  .max-w-7xl,
+  .max-w-6xl {
+    max-width: 100% !important;
+  }
+
+  /* Remove overflow-hidden so all content is visible */
+  .overflow-x-auto,
+  .overflow-hidden {
+    overflow: visible !important;
+  }
+}
+
 /* ─── TipTap editor specifieke styling ──────────────────────────────────────── */
 .tiptap:focus {
   outline: none;
@@ -333,6 +478,20 @@ body {
   border-radius: 0.25rem;
 }
 
+/* TipTap dark mode */
+.dark .tiptap td,
+.dark .tiptap th {
+  border-color: #475569;
+}
+
+.dark .tiptap th {
+  background-color: #1e293b;
+}
+
+.dark .tiptap .selectedCell {
+  background-color: #1e3a5f;
+}
+
 /* Leaflet z-index containment — prevent map from overlapping nav dropdown */
 .leaflet-container {
   z-index: 0;
@@ -350,3 +509,151 @@ body {
 }
 
 /* Tooltip styles are inline in GlossaryHighlighter.tsx */
+
+/* ─── AI-adviseur HTML content styling ────────────────────────────────────── */
+.ai-advies-content h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a6ca8;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.ai-advies-content h3:first-child {
+  margin-top: 0;
+}
+
+.ai-advies-content p {
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+
+.ai-advies-content ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0.75rem;
+}
+
+.ai-advies-content ul li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-bottom: 0.4rem;
+}
+
+.ai-advies-content ul li::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: #1a6ca8;
+  font-weight: 700;
+}
+
+.ai-advies-content ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.ai-advies-content ol li {
+  margin-bottom: 0.4rem;
+}
+
+.ai-advies-content strong {
+  font-weight: 600;
+  color: #1e3a5f;
+}
+
+.ai-advies-content .ai-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.8125rem;
+}
+
+.ai-advies-content .ai-table th {
+  background-color: #1a6ca8;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.ai-advies-content .ai-table td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0.75rem;
+}
+
+.ai-advies-content .ai-table tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.ai-advies-content .ai-table tr:hover {
+  background-color: #eff6ff;
+}
+
+.ai-advies-content .ai-status-rood {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.ai-advies-content .ai-status-rood::before {
+  content: "●";
+  font-size: 0.625rem;
+}
+
+.ai-advies-content .ai-status-oranje {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #d97706;
+  font-weight: 600;
+}
+
+.ai-advies-content .ai-status-oranje::before {
+  content: "●";
+  font-size: 0.625rem;
+}
+
+.ai-advies-content .ai-status-groen {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.ai-advies-content .ai-status-groen::before {
+  content: "●";
+  font-size: 0.625rem;
+}
+
+/* AI-advies dark mode */
+.dark .ai-advies-content h3 {
+  color: #60a5fa;
+  border-bottom-color: #334155;
+}
+
+.dark .ai-advies-content strong {
+  color: #93c5fd;
+}
+
+.dark .ai-advies-content .ai-table th {
+  background-color: #1e3a5f;
+}
+
+.dark .ai-advies-content .ai-table td {
+  border-color: #334155;
+}
+
+.dark .ai-advies-content .ai-table tr:nth-child(even) {
+  background-color: #0f172a;
+}
+
+.dark .ai-advies-content .ai-table tr:hover {
+  background-color: #1e293b;
+}

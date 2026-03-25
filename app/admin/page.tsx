@@ -1,11 +1,65 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { getPendingRegistrationCount } from "@/lib/services/user";
+import { computePveStats } from "./pve-analyse/pve-data";
 import GemmaSyncPanel from "./GemmaSyncPanel";
 import BegrippenSyncPanel from "./BegrippenSyncPanel";
 import ApiDocPanel from "./ApiDocPanel";
 import DeployPanel from "./DeployPanel";
+import AnonymizePanel from "./AnonymizePanel";
+import NpmHealthPanel from "./NpmHealthPanel";
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mt-8 mb-3 first:mt-0">
+      {title}
+    </h2>
+  );
+}
+
+function AdminRow({
+  label,
+  description,
+  href,
+  linkText = "Bekijken →",
+  badge,
+  badgeColor = "blue",
+}: {
+  label: string;
+  description: string;
+  href: string;
+  linkText?: string;
+  badge?: string;
+  badgeColor?: "blue" | "green" | "orange";
+}) {
+  const colors = {
+    blue: "bg-blue-100 text-blue-700",
+    green: "bg-green-100 text-green-700",
+    orange: "bg-orange-100 text-orange-700",
+  };
+
+  return (
+    <div className="flex items-center justify-between px-5 py-3">
+      <div className="flex items-center gap-4 min-w-0">
+        <span className="font-semibold text-gray-800 whitespace-nowrap">{label}</span>
+        <span className="text-sm text-gray-500 truncate hidden sm:inline">{description}</span>
+        {badge && (
+          <span className={`${colors[badgeColor]} px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap`}>
+            {badge}
+          </span>
+        )}
+      </div>
+      <Link
+        href={href}
+        className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
+      >
+        {linkText}
+      </Link>
+    </div>
+  );
+}
 
 export default async function AdminPage() {
   const user = await getSessionUser();
@@ -14,171 +68,123 @@ export default async function AdminPage() {
   }
 
   const pendingCount = await getPendingRegistrationCount();
+  const pveStats = computePveStats();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Beheer</h1>
+      <Breadcrumbs items={[{ label: "Beheer", href: "/admin" }]} />
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">Beheer</h1>
+      <p className="text-sm text-gray-500 mb-6">Beheerdashboard voor de Voorzieningencatalogus</p>
 
+      {/* ─── Gebruikers & Toegang ─── */}
+      <SectionHeader title="Gebruikers & Toegang" />
       <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
-        {/* Gebruikersbeheer */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Gebruikersbeheer</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Beheer accounts, rollen en autorisaties</span>
-          </div>
-          <Link
-            href="/admin/gebruikers"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Beheren →
-          </Link>
-        </div>
-
-        {/* Registraties */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Registraties</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Beoordeel aanmeldingen van nieuwe leveranciers en gemeenten</span>
-            {pendingCount > 0 && (
-              <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
-                {pendingCount} wachtend
-              </span>
-            )}
-          </div>
-          <Link
-            href="/admin/registraties"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
-
-        {/* Data importeren */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Data importeren</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Upload CSV, JSON of Excel om pakketten te synchroniseren</span>
-          </div>
-          <Link
-            href="/upload"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Importeren →
-          </Link>
-        </div>
-
-        {/* Gemeente samenvoegen */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Gemeente samenvoegen</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Voeg gemeenten samen bij een herindeling</span>
-          </div>
-          <Link
-            href="/admin/gemeenten/samenvoegen"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Samenvoegen →
-          </Link>
-        </div>
-
-        {/* Audit log */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 dark:text-slate-200 whitespace-nowrap">Audit log</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Logging van alle gebruikersactiviteiten</span>
-          </div>
-          <Link
-            href="/admin/auditlog"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
-
-        {/* Statistieken */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 dark:text-slate-200 whitespace-nowrap">Statistieken</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Platformbrede gebruiksstatistieken</span>
-          </div>
-          <Link
-            href="/admin/statistieken"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
-
-        {/* Regeneratie-prompt */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Regeneratie-prompt</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Prompt om de applicatie opnieuw te genereren met AI</span>
-          </div>
-          <Link
-            href="/admin/prompt"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
-
-        {/* Datamodel (MIM) */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Datamodel (MIM)</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Logisch informatiemodel conform MIM 1.2</span>
-            <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
-              20 objecttypen
-            </span>
-          </div>
-          <Link
-            href="/admin/datamodel"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
-
-        {/* Datamigratie-mapping */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">Datamigratie</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">Mapping van Drupal CSV-exports naar Prisma-schema</span>
-            <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
-              6 bronbestanden
-            </span>
-          </div>
-          <Link
-            href="/admin/migratie"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
-
-        {/* PvE-analyse */}
-        <div className="flex items-center justify-between px-5 py-3">
-          <div className="flex items-center gap-4 min-w-0">
-            <span className="font-semibold text-gray-800 whitespace-nowrap">PvE-analyse</span>
-            <span className="text-sm text-gray-500 truncate hidden sm:inline">104 eisen en wensen geanalyseerd</span>
-            <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">
-              64% afgedekt
-            </span>
-          </div>
-          <Link
-            href="/admin/pve-analyse"
-            className="text-sm text-[#1a6ca8] hover:underline font-medium whitespace-nowrap ml-4"
-          >
-            Bekijken →
-          </Link>
-        </div>
+        <AdminRow
+          label="Gebruikersbeheer"
+          description="Beheer accounts, rollen en autorisaties"
+          href="/admin/gebruikers"
+          linkText="Beheren →"
+        />
+        <AdminRow
+          label="Registraties"
+          description="Beoordeel aanmeldingen van nieuwe leveranciers en gemeenten"
+          href="/admin/registraties"
+          badge={pendingCount > 0 ? `${pendingCount} wachtend` : undefined}
+          badgeColor="orange"
+        />
+        <AdminRow
+          label="Audit log"
+          description="Logging van alle gebruikersactiviteiten"
+          href="/admin/auditlog"
+        />
       </div>
 
-      <div className="mt-6 space-y-4">
+      {/* ─── Data & Synchronisatie ─── */}
+      <SectionHeader title="Data & Synchronisatie" />
+      <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100 mb-4">
+        <AdminRow
+          label="Data importeren"
+          description="Upload CSV, JSON of Excel om pakketten te synchroniseren"
+          href="/upload"
+          linkText="Importeren →"
+        />
+        <AdminRow
+          label="Gemeente samenvoegen"
+          description="Voeg gemeenten samen bij een herindeling"
+          href="/admin/gemeenten/samenvoegen"
+          linkText="Samenvoegen →"
+        />
+      </div>
+      <div className="space-y-4">
         <GemmaSyncPanel />
         <BegrippenSyncPanel />
+        <AnonymizePanel />
+      </div>
+
+      {/* ─── Analyse & Documentatie ─── */}
+      <SectionHeader title="Analyse & Documentatie" />
+      <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
+        <AdminRow
+          label="PvE-analyse"
+          description={`${pveStats.total} eisen en wensen geanalyseerd`}
+          href="/admin/pve-analyse"
+          badge={`${pveStats.coveragePercent}% afgedekt`}
+          badgeColor="green"
+        />
+        <AdminRow
+          label="Datamodel (MIM)"
+          description="Logisch informatiemodel conform MIM 1.2"
+          href="/admin/datamodel"
+          badge="30 modellen"
+          badgeColor="blue"
+        />
+        <AdminRow
+          label="Datamigratie"
+          description="Mapping van Drupal CSV-exports naar Prisma-schema"
+          href="/admin/migratie"
+          badge="6 bronbestanden"
+          badgeColor="blue"
+        />
+        <AdminRow
+          label="Demo draaiboek"
+          description="Stapsgewijs draaiboek met links voor een live demo"
+          href="/admin/demo"
+          badge="22 onderdelen"
+          badgeColor="orange"
+        />
+        <AdminRow
+          label="Linked Data (RDF)"
+          description="Publiceer en verken data als JSON-LD, Turtle en RDF/XML"
+          href="/admin/linked-data"
+          badge="3 formaten"
+          badgeColor="blue"
+        />
+        <AdminRow
+          label="Regeneratie-prompt"
+          description="Prompt om de applicatie opnieuw te genereren met AI"
+          href="/admin/prompt"
+        />
+        <AdminRow
+          label="Technische handleiding"
+          description="Architectuur, deployment, beveiliging en troubleshooting"
+          href="/admin/handleiding"
+          badge="15 onderwerpen"
+          badgeColor="blue"
+        />
+      </div>
+
+      {/* ─── Systeem ─── */}
+      <SectionHeader title="Systeem" />
+      <div className="space-y-4">
+        <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
+          <AdminRow
+            label="Statistieken"
+            description="Platformbrede gebruiksstatistieken"
+            href="/admin/statistieken"
+          />
+        </div>
         <ApiDocPanel />
+        <NpmHealthPanel />
         {process.env.NODE_ENV === "development" && <DeployPanel />}
       </div>
     </div>

@@ -1,31 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBegrippen, getBegrippenCount } from "@/lib/services/begrippen";
+import { searchLiveBegrippen } from "@/lib/services/begrippen-live";
+import { negotiateFormat, isRdfFormat } from "@/lib/rdf/content-negotiation";
+import { serializeRdf } from "@/lib/rdf/serializer";
+import { begripToTriples } from "@/lib/rdf/mappers";
 
 export async function GET(request: NextRequest) {
+  const format = negotiateFormat(request);
   const { searchParams } = new URL(request.url);
   const zoek = searchParams.get("zoek") || undefined;
 
   try {
-    const [begrippen, total] = await Promise.all([
-      getBegrippen({ zoek }),
-      getBegrippenCount({ zoek }),
-    ]);
+    const begrippen = await searchLiveBegrippen(zoek);
+
+    if (isRdfFormat(format)) {
+      const quads = begrippen.flatMap((b) => begripToTriples(b));
+      return serializeRdf(quads, format);
+    }
 
     const data = begrippen.map((b) => ({
-      id: b.id,
       term: b.term,
       definitie: b.definitie,
       toelichting: b.toelichting,
       scopeNote: b.scopeNote,
-      bron: b.bron,
       uri: b.uri,
       synoniemen: b.synoniemen,
       vocab: b.vocab,
     }));
 
     return NextResponse.json(
-      { data, meta: { total } },
-      { headers: { "X-Total-Count": String(total) } }
+      { data, meta: { total: data.length } },
+      { headers: { "X-Total-Count": String(data.length) } }
     );
   } catch (error) {
     console.error("API v1 begrippen fout:", error);

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata = {
   title: "Samenwerkingen - Voorzieningencatalogus",
@@ -58,6 +59,7 @@ export default async function SamenwerkingenPage({
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Samenwerkingen", href: "/samenwerkingen" }]} />
       <h1 className="text-2xl font-bold text-[#1a6ca8] mb-1">
         Samenwerkingen
       </h1>

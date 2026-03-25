@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser, canEditPagina } from "@/lib/auth-helpers";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import GlossaryHighlighter from "@/components/GlossaryHighlighter";
 
 export async function generateMetadata({
@@ -42,6 +43,10 @@ export default async function InfoPagina({
 
   return (
     <div className="max-w-4xl">
+      <Breadcrumbs items={[
+        { label: "Informatie", href: "/info" },
+        { label: pagina.titel, href: `/info/${slug}` },
+      ]} />
       {magBewerken && (
         <div className="flex gap-2 mb-4">
           <Link

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getGemeentenForAdmin } from "@/lib/services/gemeente";
 import MergeForm from "./MergeForm";
 
@@ -13,6 +14,10 @@ export default async function SamenVoegenPage() {
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Gemeente samenvoegen", href: "/admin/gemeenten/samenvoegen" },
+      ]} />
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
         Gemeente samenvoegen
       </h1>

@@ -119,7 +119,7 @@ export default function RegistratieApprovalForm({
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             De gebruiker krijgt automatisch de rol {isLeverancier ? "Leverancier" : "Gemeente beheerder"}.
           </p>
         </div>

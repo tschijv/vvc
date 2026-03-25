@@ -49,8 +49,8 @@ function cbsFromStatcode(statcode: string): string {
 // ─── Map bounds for Netherlands ─────────────────────────────────────────────
 
 const NL_BOUNDS: L.LatLngBoundsExpression = [
-  [50.7, 3.2],
-  [53.6, 7.3],
+  [50.75, 3.3],
+  [53.55, 7.25],
 ];
 
 const NL_CENTER: L.LatLngExpression = [52.2, 5.3];
@@ -61,6 +61,11 @@ function FitBounds() {
   const map = useMap();
   useEffect(() => {
     map.fitBounds(NL_BOUNDS, { padding: [10, 10] });
+    // Zoom in one extra level compared to the auto-fitted level
+    setTimeout(() => {
+      const currentZoom = map.getZoom();
+      map.setZoom(currentZoom + 1);
+    }, 100);
   }, [map]);
   return null;
 }
@@ -74,7 +79,7 @@ function Legenda() {
         position: "absolute",
         top: 10,
         right: 10,
-        zIndex: 1000,
+        zIndex: 400,
         background: "white",
         borderRadius: 6,
         padding: "10px 14px",
@@ -222,7 +227,7 @@ export default function NederlandKaart() {
 
   if (loading) {
     return (
-      <div className="h-[650px] bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400 text-sm">
+      <div className="h-[800px] bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 text-sm">
         <Spinner label="Kaart laden..." />
       </div>
     );
@@ -232,7 +237,7 @@ export default function NederlandKaart() {
   if (!geojson) return null;
 
   return (
-    <div className="relative h-[650px] rounded-lg overflow-hidden border border-gray-200">
+    <div className="relative z-0 h-[800px] rounded-lg overflow-hidden border border-gray-200">
       <Legenda />
       <MapContainer
         center={NL_CENTER}

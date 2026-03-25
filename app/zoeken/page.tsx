@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface Props {
   searchParams: Promise<{ q?: string; type?: string }>;
@@ -29,16 +30,48 @@ const TYPE_CONFIG: Record<
 
 const ALL_TYPES: ElementType[] = ["pakket", "leverancier", "gemeente", "standaard", "referentiecomponent", "begrip"];
 
+/** Parse comma-separated type param into array of valid types */
+function parseTypes(typeParam: string | undefined): ElementType[] {
+  if (!typeParam) return ALL_TYPES;
+  const types = typeParam.split(",").filter((t) => ALL_TYPES.includes(t as ElementType)) as ElementType[];
+  return types.length > 0 ? types : ALL_TYPES;
+}
+
+/** Build URL toggling a type in/out of the active set (multi-select) */
+function buildFilterUrl(q: string, activeTypes: ElementType[], toggleType: ElementType): string {
+  const isActive = activeTypes.includes(toggleType);
+  const isAll = activeTypes.length === ALL_TYPES.length;
+
+  let newTypes: ElementType[];
+  if (isAll) {
+    // From "all" → deselect this one (keep the rest)
+    newTypes = ALL_TYPES.filter((t) => t !== toggleType);
+  } else if (isActive && activeTypes.length === 1) {
+    // Deselecting the last one → back to all
+    newTypes = ALL_TYPES;
+  } else if (isActive) {
+    // Remove this type
+    newTypes = activeTypes.filter((t) => t !== toggleType);
+  } else {
+    // Add this type
+    newTypes = [...activeTypes, toggleType];
+  }
+
+  const isAllSelected = newTypes.length === ALL_TYPES.length;
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (!isAllSelected) params.set("type", newTypes.join(","));
+  const qs = params.toString();
+  return `/zoeken${qs ? `?${qs}` : ""}`;
+}
+
 // Fuzzy search helper using pg_trgm similarity
-// Falls back to ILIKE if pg_trgm is not available
 async function fuzzySearch(q: string, typesToSearch: ElementType[]): Promise<ZoekResultaat[]> {
   const resultaten: ZoekResultaat[] = [];
 
   try {
-    // Test if pg_trgm is available
     await prisma.$queryRaw`SELECT similarity('test', 'test')`;
 
-    // pg_trgm is available — use fuzzy search
     const searches = await Promise.all([
       typesToSearch.includes("pakket")
         ? prisma.$queryRaw<{ naam: string; slug: string; leverancier_naam: string; score: number }[]>`
@@ -133,18 +166,16 @@ async function fuzzySearch(q: string, typesToSearch: ElementType[]): Promise<Zoe
       });
     }
 
-    // Sort all results by score descending
     resultaten.sort((a, b) => b.score - a.score);
 
   } catch {
-    // pg_trgm not available — fall back to ILIKE substring search
     return fallbackSearch(q, typesToSearch);
   }
 
   return resultaten;
 }
 
-// Fallback: original ILIKE-based search
+// Fallback: ILIKE-based search
 async function fallbackSearch(q: string, typesToSearch: ElementType[]): Promise<ZoekResultaat[]> {
   const resultaten: ZoekResultaat[] = [];
 
@@ -211,13 +242,26 @@ async function fallbackSearch(q: string, typesToSearch: ElementType[]): Promise<
 export default async function ZoekenPage({ searchParams }: Props) {
   const params = await searchParams;
   const q = params.q?.trim() || "";
-  const activeType = (params.type as ElementType) || "";
-  const typesToSearch = activeType && ALL_TYPES.includes(activeType) ? [activeType] : ALL_TYPES;
+  const activeTypes = parseTypes(params.type);
+  const isAllSelected = activeTypes.length === ALL_TYPES.length;
 
-  const resultaten = q ? await fuzzySearch(q, typesToSearch) : [];
+  // Always search all types for counts, then filter for display
+  const alleResultaten = q ? await fuzzySearch(q, ALL_TYPES) : [];
+
+  // Count per type for badges (from all results)
+  const countPerType: Partial<Record<ElementType, number>> = {};
+  for (const r of alleResultaten) {
+    countPerType[r.type] = (countPerType[r.type] || 0) + 1;
+  }
+
+  // Filter for display
+  const resultaten = isAllSelected
+    ? alleResultaten
+    : alleResultaten.filter((r) => activeTypes.includes(r.type));
 
   return (
     <div className="max-w-3xl">
+      <Breadcrumbs items={[{ label: "Zoeken", href: "/zoeken" }]} />
       <h1 className="text-2xl font-bold text-[#1a6ca8] mb-4">Zoeken</h1>
 
       <form role="search" method="GET" action="/zoeken" className="mb-4">
@@ -230,7 +274,7 @@ export default async function ZoekenPage({ searchParams }: Props) {
             autoFocus
             className="border rounded px-3 py-2 text-sm flex-1"
           />
-          {activeType && <input type="hidden" name="type" value={activeType} />}
+          {!isAllSelected && <input type="hidden" name="type" value={activeTypes.join(",")} />}
           <button
             type="submit"
             className="bg-[#1a6ca8] text-white text-sm px-5 py-2 rounded hover:bg-[#155a8a]"
@@ -239,18 +283,18 @@ export default async function ZoekenPage({ searchParams }: Props) {
           </button>
         </div>
         {q && (
-          <p className="text-xs text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Fuzzy search: ook resultaten bij typefouten
           </p>
         )}
       </form>
 
-      {/* Type filter chips */}
+      {/* Type filter chips — multi-select */}
       <div className="flex flex-wrap gap-1.5 mb-4">
         <Link
           href={`/zoeken${q ? `?q=${encodeURIComponent(q)}` : ""}`}
           className={`text-xs font-medium px-3 py-1 rounded-full border transition ${
-            !activeType
+            isAllSelected
               ? "bg-[#1a6ca8] text-white border-[#1a6ca8]"
               : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"
           }`}
@@ -259,18 +303,24 @@ export default async function ZoekenPage({ searchParams }: Props) {
         </Link>
         {ALL_TYPES.map((t) => {
           const config = TYPE_CONFIG[t];
-          const isActive = activeType === t;
+          const isActive = activeTypes.includes(t);
+          const count = countPerType[t];
           return (
             <Link
               key={t}
-              href={`/zoeken?${q ? `q=${encodeURIComponent(q)}&` : ""}type=${t}`}
-              className={`text-xs font-medium px-3 py-1 rounded-full border transition ${
+              href={buildFilterUrl(q, activeTypes, t)}
+              className={`text-xs font-medium px-3 py-1 rounded-full border transition inline-flex items-center gap-1 ${
                 isActive
                   ? `${config.bgActive} ${config.textActive} border-transparent`
                   : `${config.bg} ${config.text} border-gray-200 hover:border-gray-400`
               }`}
             >
               {config.label}
+              {q && count !== undefined && (
+                <span className={`text-[10px] font-normal ${isActive ? "opacity-80" : "opacity-60"}`}>
+                  {count}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -279,10 +329,10 @@ export default async function ZoekenPage({ searchParams }: Props) {
       {q && (
         <p className="text-sm text-gray-500 mb-4">
           {resultaten.length} resultaten voor &ldquo;{q}&rdquo;
-          {activeType && (
+          {!isAllSelected && (
             <span>
               {" "}
-              (filter: <strong>{TYPE_CONFIG[activeType]?.label}</strong>)
+              (filter: <strong>{activeTypes.map((t) => TYPE_CONFIG[t]?.label).join(", ")}</strong>)
             </span>
           )}
         </p>

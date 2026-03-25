@@ -25,6 +25,7 @@ model Standaard {
   guid                  String?
   beschrijving          String?
   versies               Standaardversie[]
+  testrapporten         Testrapport[]
   createdAt             DateTime          @default(now())
   updatedAt             DateTime          @updatedAt
 }
@@ -98,9 +99,15 @@ model User {
   organisatieType  String?
   organisatieNaam  String?
   afgewezen        Boolean      @default(false)
+  telefoon         String?
+  functie          String?
+  lastLoginAt      DateTime?
+  emailNotificaties Boolean     @default(true)
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
   passwordResetTokens PasswordResetToken[]
+  notificaties        Notificatie[]
+  favorieten          Favoriet[]
 }
 
 model PasswordResetToken {
@@ -152,8 +159,12 @@ model LeverancierAddendum {
   leverancierId         String
   addendum              Addendum    @relation(fields: [addendumId], references: [id])
   addendumId            String
+  ondertekend           DateTime?   // signing date
+  deadline              DateTime?   // implementation deadline
 
   @@id([leverancierId, addendumId])
+  @@index([leverancierId])
+  @@index([addendumId])
 }
 
 // ─── Pakketten ───────────────────────────────────────────────────────────────
@@ -172,6 +183,8 @@ model Pakket {
   contactpersonen       PakketContact[]
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
+
+  @@index([leverancierId])
 }
 
 model PakketContact {
@@ -205,8 +218,29 @@ model Pakketversie {
   koppelingenAlsBron    Koppeling[]                       @relation("koppelingBron")
   koppelingenAlsDoel    Koppeling[]                       @relation("koppelingDoel")
   koppelingenAlsIntermediair Koppeling[]                  @relation("koppelingIntermediair")
+  testrapporten         Testrapport[]
   createdAt             DateTime                          @default(now())
   updatedAt             DateTime                          @updatedAt
+
+  @@index([pakketId])
+}
+
+// ─── Testrapporten ──────────────────────────────────────────────────────────
+
+model Testrapport {
+  id              String        @id @default(uuid())
+  pakketversie    Pakketversie  @relation(fields: [pakketversieId], references: [id])
+  pakketversieId  String
+  standaard       Standaard     @relation(fields: [standaardId], references: [id])
+  standaardId     String
+  status          String        @default("Onbekend") // Voldoet, Voldoet niet, Onbekend
+  rapportUrl      String?
+  datumTest       DateTime?
+  createdAt       DateTime      @default(now())
+
+  @@unique([pakketversieId, standaardId])
+  @@index([pakketversieId])
+  @@index([standaardId])
 }
 
 // ─── Koppeltabellen ──────────────────────────────────────────────────────────
@@ -220,6 +254,7 @@ model PakketversieReferentiecomponent {
   aantalGemeenten       Int                 @default(0)
 
   @@id([pakketversieId, referentiecomponentId, type])
+  @@index([referentiecomponentId])
 }
 
 model PakketversieStandaard {
@@ -232,6 +267,8 @@ model PakketversieStandaard {
   compliancyIndicated   Boolean?
 
   @@id([pakketversieId, standaardversieId])
+  @@index([standaardversieId])
+  @@index([compliancy])
 }
 
 model PakketversieApplicatiefunctie {
@@ -287,6 +324,8 @@ model GemeentePakket {
   maatwerk              String?
 
   @@id([gemeenteId, pakketversieId])
+  @@index([gemeenteId])
+  @@index([pakketversieId])
 }
 
 // ─── Samenwerkingen ──────────────────────────────────────────────────────────
@@ -335,6 +374,9 @@ model Koppeling {
   intermediairPakketversieId String?
   createdAt                 DateTime      @default(now())
   updatedAt                 DateTime      @updatedAt
+
+  @@index([gemeenteId])
+  @@index([status])
 }
 
 // ─── CMS Pagina's ──────────────────────────────────────────────────────────
@@ -367,6 +409,24 @@ model Begrip {
   @@unique([term, vocab])
 }
 
+// ─── Notificaties ────────────────────────────────────────────────────────────
+
+model Notificatie {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  titel       String
+  bericht     String
+  type        String    @default("info") // info, warning, error, success
+  gelezen     Boolean   @default(false)
+  link        String?   // optional link to navigate to
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([userId, gelezen])
+  @@index([createdAt])
+}
+
 // ─── Audit Log ──────────────────────────────────────────────────────────────
 
 model AuditLog {
@@ -383,6 +443,7 @@ model AuditLog {
   @@index([createdAt])
   @@index([userId])
   @@index([entiteit])
+  @@index([entiteitId])
 }
 
 // ─── Extern Pakket ───────────────────────────────────────────────────────────
@@ -396,4 +457,26 @@ model ExternPakket {
   koppelingenAlsBron    Koppeling[]   @relation("koppelingBronExtern")
   koppelingenAlsDoel    Koppeling[]   @relation("koppelingDoelExtern")
   createdAt             DateTime      @default(now())
+}
+
+// ─── Applicatie-instellingen (key-value) ─────────────────────────────────────
+
+model AppSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Favorieten ─────────────────────────────────────────────────────────────
+
+model Favoriet {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entityType  String   // "pakket" | "gemeente" | "leverancier"
+  entityId    String
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, entityType, entityId])
+  @@index([userId])
 }

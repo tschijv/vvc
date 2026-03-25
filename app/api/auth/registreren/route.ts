@@ -1,35 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { registerUser } from "@/lib/services/user";
 import { sendEmail } from "@/lib/email";
 import { registratieOntvangenEmail } from "@/lib/email-templates";
+import { withRateLimit, RATE_LIMITS } from "@/lib/rate-limit";
+import { parseBody, emailSchema, wachtwoordSchema, naamSchema } from "@/lib/validation";
+
+const registratieSchema = z.object({
+  naam: naamSchema,
+  email: emailSchema,
+  wachtwoord: wachtwoordSchema,
+  organisatieType: z.enum(["leverancier", "gemeente"], {
+    errorMap: () => ({ message: "Kies leverancier of gemeente" }),
+  }),
+  organisatieNaam: z.string().min(1, "Organisatienaam is verplicht").max(300),
+});
 
 export async function POST(req: NextRequest) {
+  const blocked = withRateLimit(req, RATE_LIMITS.auth);
+  if (blocked) return blocked;
   try {
-    const body = await req.json();
-    const { naam, email, wachtwoord, organisatieType, organisatieNaam } = body;
-
-    // Validatie
-    if (!naam || !email || !wachtwoord || !organisatieType || !organisatieNaam) {
-      return NextResponse.json(
-        { error: "Alle velden zijn verplicht." },
-        { status: 400 }
-      );
-    }
-
-    if (wachtwoord.length < 8) {
-      return NextResponse.json(
-        { error: "Wachtwoord moet minimaal 8 tekens bevatten." },
-        { status: 400 }
-      );
-    }
-
-    if (!["leverancier", "gemeente"].includes(organisatieType)) {
-      return NextResponse.json(
-        { error: "Ongeldig organisatietype." },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(req, registratieSchema);
+    if ("error" in parsed) return parsed.error;
+    const { naam, email, wachtwoord, organisatieType, organisatieNaam } = parsed.data;
 
     // Check of email al bestaat
     const bestaand = await prisma.user.findUnique({ where: { email } });
@@ -40,13 +34,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    await registerUser({
-      email,
-      naam,
-      wachtwoord,
-      organisatieType,
-      organisatieNaam,
-    });
+    await registerUser({ email, naam, wachtwoord, organisatieType, organisatieNaam });
 
     const { subject, html } = registratieOntvangenEmail(naam);
     await sendEmail({ to: email, subject, html });

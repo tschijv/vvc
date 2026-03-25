@@ -258,7 +258,7 @@ export default function UploadForm({
                   Overschrijven
                 </button>
               </div>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-xs text-gray-500 mt-1">
                 {mode === "merge"
                   ? "Bestaande data wordt aangevuld. Niets wordt verwijderd."
                   : "Alle bestaande data wordt vervangen door de inhoud van het bestand."}
@@ -351,9 +351,9 @@ export default function UploadForm({
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="text-left text-gray-500 border-b">
-                        <th className="py-1 pr-2">Rij</th>
-                        <th className="py-1 pr-2">Veld</th>
-                        <th className="py-1">Fout</th>
+                        <th scope="col" className="py-1 pr-2">Rij</th>
+                        <th scope="col" className="py-1 pr-2">Veld</th>
+                        <th scope="col" className="py-1">Fout</th>
                       </tr>
                     </thead>
                     <tbody>

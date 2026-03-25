@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { notFound } from "next/navigation";
 import {
   getSamenwerkingById,
@@ -33,6 +34,10 @@ export default async function SamenwerkingDetailPage({
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: "Samenwerkingen", href: "/samenwerkingen" },
+        { label: samenwerking.naam, href: `/samenwerkingen/${id}` },
+      ]} />
       {/* Header */}
       <div className="bg-gray-50 rounded-lg p-6 mb-6">
         <div className="flex justify-between items-start">
@@ -285,12 +290,12 @@ function PakkettenTab({
               <table className="w-full text-sm border-collapse mb-4">
                 <thead>
                   <tr className="border-b-2 border-gray-200 text-left">
-                    <th className="pb-2 pr-4 font-semibold">Leverancier</th>
-                    <th className="pb-2 pr-4 font-semibold">
+                    <th scope="col" className="pb-2 pr-4 font-semibold">Leverancier</th>
+                    <th scope="col" className="pb-2 pr-4 font-semibold">
                       Pakketnaam en -versie
                     </th>
-                    <th className="pb-2 pr-4 font-semibold">Status</th>
-                    <th className="pb-2 font-semibold">Gebruikt voor</th>
+                    <th scope="col" className="pb-2 pr-4 font-semibold">Status</th>
+                    <th scope="col" className="pb-2 font-semibold">Gebruikt voor</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -370,17 +375,17 @@ function KoppelingenTab({
               <table className="w-full text-sm border-collapse mb-4">
                 <thead>
                   <tr className="border-b-2 border-gray-200 text-left">
-                    <th className="pb-2 pr-4 font-semibold">
+                    <th scope="col" className="pb-2 pr-4 font-semibold">
                       Pakketversie/Extern
                     </th>
-                    <th className="pb-2 pr-4 font-semibold text-center">
+                    <th scope="col" className="pb-2 pr-4 font-semibold text-center">
                       Koppeling
                     </th>
-                    <th className="pb-2 pr-4 font-semibold">
+                    <th scope="col" className="pb-2 pr-4 font-semibold">
                       Pakketversie/Extern
                     </th>
-                    <th className="pb-2 pr-4 font-semibold">Status</th>
-                    <th className="pb-2 font-semibold">Standaard</th>
+                    <th scope="col" className="pb-2 pr-4 font-semibold">Status</th>
+                    <th scope="col" className="pb-2 font-semibold">Standaard</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import KaartPageClient from "./KaartPageClient";
 
 export default async function KaartPage() {
@@ -34,11 +35,14 @@ export default async function KaartPage() {
   }
 
   return (
-    <KaartPageClient
-      views={views}
-      gemeenten={gemeenten}
-      eigenGemeente={eigenGemeente}
-      isAdmin={user.role === "ADMIN"}
-    />
+    <>
+      <Breadcrumbs items={[{ label: "Kaart", href: "/kaart" }]} />
+      <KaartPageClient
+        views={views}
+        gemeenten={gemeenten}
+        eigenGemeente={eigenGemeente}
+        isAdmin={user.role === "ADMIN"}
+      />
+    </>
   );
 }

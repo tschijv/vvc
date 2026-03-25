@@ -1,8 +1,13 @@
 import KaartWrapper from "./KaartWrapper";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function NederlandKaartPage() {
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-7xl">
+      <Breadcrumbs items={[
+        { label: "Kaart", href: "/kaart" },
+        { label: "Nederland", href: "/kaart/nederland" },
+      ]} />
       <h1 className="text-2xl font-bold text-[#1a6ca8] mb-2">
         Gebruik Voorzieningencatalogus
       </h1>

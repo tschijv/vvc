@@ -1,5 +1,6 @@
 import Link from "next/link";
 import MobileFilterToggle from "@/components/MobileFilterToggle";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getSessionUser, canViewGemeenteContact } from "@/lib/auth-helpers";
 import { getGemeenten, getGemeenteCount, getPakkettenMetTellingen } from "@/lib/services/gemeente";
 import { sterrenDisplay } from "@/lib/progress";
@@ -68,17 +69,26 @@ export default async function GemeentenPage({ searchParams }: Props) {
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Gemeenten", href: "/gemeenten" }]} />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
         <h1 className="text-2xl sm:text-3xl font-light text-[#1a6ca8]">Gemeenten</h1>
-        <Link
-          href="/gemeenten/vergelijk"
-          className="text-sm text-[#1a6ca8] border border-[#1a6ca8] rounded px-3 py-1.5 hover:bg-blue-50 inline-flex items-center gap-1.5 self-start"
-        >
+        <div className="flex items-center gap-2 self-start">
+          <Link
+            href={`/api/gemeenten/export?zoek=${zoek}${pakketFilter ? `&pakket=${pakketFilter}` : ""}`}
+            className="text-sm text-[#1a6ca8] border border-[#1a6ca8] rounded px-3 py-1.5 hover:bg-blue-50 inline-flex items-center gap-1.5"
+          >
+            Export to CSV
+          </Link>
+          <Link
+            href="/gemeenten/vergelijk"
+            className="text-sm text-[#1a6ca8] border border-[#1a6ca8] rounded px-3 py-1.5 hover:bg-blue-50 inline-flex items-center gap-1.5"
+          >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
           Vergelijken
-        </Link>
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-8">
@@ -109,7 +119,7 @@ export default async function GemeentenPage({ searchParams }: Props) {
                 type="submit"
                 className="bg-[#1a6ca8] text-white px-5 py-2.5 rounded-r hover:bg-[#155a8c]"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                 </svg>
               </button>
@@ -123,18 +133,18 @@ export default async function GemeentenPage({ searchParams }: Props) {
             <table className="w-full text-sm border-collapse">
               <thead>
                 <tr className="border-b-2 border-gray-200 text-left">
-                  <th className="pb-2 pr-4">
+                  <th scope="col" className="pb-2 pr-4">
                     <Link href="/gemeenten?zoek=&pagina=1" className="text-[#1a6ca8] hover:underline font-semibold">
                       Naam
                     </Link>
                   </th>
                   {showContact && (
                     <>
-                      <th className="pb-2 pr-4 font-semibold hidden lg:table-cell">Contactpersoon</th>
-                      <th className="pb-2 pr-4 font-semibold hidden lg:table-cell">E-mailadres contactpersoon</th>
+                      <th scope="col" className="pb-2 pr-4 font-semibold hidden lg:table-cell">Contactpersoon</th>
+                      <th scope="col" className="pb-2 pr-4 font-semibold hidden lg:table-cell">E-mailadres contactpersoon</th>
                     </>
                   )}
-                  <th className="pb-2 font-semibold">
+                  <th scope="col" className="pb-2 font-semibold">
                     <Link href="/gemeenten?zoek=&pagina=1" className="text-[#1a6ca8] hover:underline">
                       Voortgang
                     </Link>
@@ -145,7 +155,7 @@ export default async function GemeentenPage({ searchParams }: Props) {
                 {gemeenten.map((g) => (
                   <tr key={g.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 pr-4">
-                      <Link href={`/dashboard?gemeenteId=${g.id}`} className="text-[#1a6ca8] hover:underline">
+                      <Link href={`/gemeenten/${g.id}`} className="text-[#1a6ca8] hover:underline">
                         {g.naam}
                       </Link>
                     </td>
@@ -182,6 +192,14 @@ export default async function GemeentenPage({ searchParams }: Props) {
               </tbody>
             </table>
           </div>
+
+          {gemeenten.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              <span className="text-4xl block mb-3" role="img" aria-label="Zoeken">&#x1F50D;</span>
+              <p className="font-bold mb-1">Geen resultaten gevonden</p>
+              <p className="text-sm text-gray-400">Probeer een andere zoekterm of filter</p>
+            </div>
+          )}
 
           {/* Pagination */}
           {aantalPaginas > 1 && (

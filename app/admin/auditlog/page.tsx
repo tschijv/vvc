@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getSessionUser } from "@/lib/auth-helpers";
 import { getAuditLogs } from "@/lib/services/audit";
 import type { Metadata } from "next";
@@ -40,9 +41,12 @@ export default async function AuditLogPage({ searchParams }: Props) {
 
   return (
     <div className="max-w-5xl">
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Audit log", href: "/admin/auditlog" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold text-[#1a6ca8]">Audit log</h1>
-        <Link href="/admin" className="text-sm text-[#1a6ca8] hover:underline">← Beheer</Link>
       </div>
 
       <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">{total} logregels gevonden</p>
@@ -55,11 +59,11 @@ export default async function AuditLogPage({ searchParams }: Props) {
             <table className="w-full text-sm border-collapse bg-white dark:bg-slate-800 rounded-lg overflow-hidden shadow-sm">
               <thead>
                 <tr className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-600 text-left">
-                  <th className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Tijdstip</th>
-                  <th className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Gebruiker</th>
-                  <th className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Actie</th>
-                  <th className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Entiteit</th>
-                  <th className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Details</th>
+                  <th scope="col" className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Tijdstip</th>
+                  <th scope="col" className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Gebruiker</th>
+                  <th scope="col" className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Actie</th>
+                  <th scope="col" className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Entiteit</th>
+                  <th scope="col" className="py-2 px-3 font-semibold text-gray-700 dark:text-slate-300">Details</th>
                 </tr>
               </thead>
               <tbody>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { getLeveranciers, getLeverancierCount } from "@/lib/services/leverancier";
 
 interface Props {
@@ -25,9 +26,24 @@ export default async function LeveranciersPage({ searchParams }: Props) {
 
   return (
     <div>
+      <Breadcrumbs items={[{ label: "Leveranciers", href: "/leveranciers" }]} />
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-blue-700">Leveranciers</h1>
-        <p className="text-sm text-gray-600">{totaal} resultaten</p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-gray-600">{totaal} resultaten</p>
+          <Link
+            href="/marktverdeling"
+            className="text-sm border px-3 py-1 rounded hover:bg-gray-50 text-[#1a6ca8]"
+          >
+            Marktverdeling
+          </Link>
+          <Link
+            href={`/api/leveranciers/export?zoek=${zoek}`}
+            className="text-sm border px-3 py-1 rounded hover:bg-gray-50"
+          >
+            Export to CSV
+          </Link>
+        </div>
       </div>
 
       <form role="search" method="GET" action="/leveranciers" className="mb-4">
@@ -56,11 +72,11 @@ export default async function LeveranciersPage({ searchParams }: Props) {
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="border-b border-gray-300 text-left">
-            <th className="pb-2 pr-4 font-semibold">Naam</th>
-            <th className="pb-2 pr-4 font-semibold">Contactpersoon</th>
-            <th className="pb-2 pr-4 font-semibold">E-mail</th>
-            <th className="pb-2 pr-4 font-semibold">Pakketten</th>
-            <th className="pb-2 font-semibold">Addenda</th>
+            <th scope="col" className="pb-2 pr-4 font-semibold">Naam</th>
+            <th scope="col" className="pb-2 pr-4 font-semibold">Contactpersoon</th>
+            <th scope="col" className="pb-2 pr-4 font-semibold">E-mail</th>
+            <th scope="col" className="pb-2 pr-4 font-semibold">Pakketten</th>
+            <th scope="col" className="pb-2 font-semibold">Addenda</th>
           </tr>
         </thead>
         <tbody>
@@ -87,6 +103,14 @@ export default async function LeveranciersPage({ searchParams }: Props) {
           ))}
         </tbody>
       </table>
+
+      {leveranciers.length === 0 && (
+        <div className="text-center py-12 text-gray-500">
+          <span className="text-4xl block mb-3" role="img" aria-label="Zoeken">&#x1F50D;</span>
+          <p className="font-bold mb-1">Geen resultaten gevonden</p>
+          <p className="text-sm text-gray-400">Probeer een andere zoekterm of filter</p>
+        </div>
+      )}
 
       {aantalPaginas > 1 && (
         <div className="flex gap-2 mt-4 text-sm">

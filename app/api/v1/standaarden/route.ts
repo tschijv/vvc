@@ -1,12 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStandaarden } from "@/lib/services/standaard";
+import { negotiateFormat, isRdfFormat } from "@/lib/rdf/content-negotiation";
+import { serializeRdf } from "@/lib/rdf/serializer";
+import { standaardToTriples } from "@/lib/rdf/mappers";
 
 export async function GET(request: NextRequest) {
+  const format = negotiateFormat(request);
   const { searchParams } = new URL(request.url);
   const zoek = searchParams.get("zoek") || undefined;
 
   try {
     const standaarden = await getStandaarden({ zoek });
+
+    if (isRdfFormat(format)) {
+      const quads = standaarden.flatMap((s) => standaardToTriples(s));
+      return serializeRdf(quads, format);
+    }
 
     const data = standaarden.map((s) => ({
       id: s.id,

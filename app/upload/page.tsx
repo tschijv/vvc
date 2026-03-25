@@ -1,6 +1,7 @@
 import { getSessionUser } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import UploadForm from "./UploadForm";
 
 export default async function UploadPage() {
@@ -27,6 +28,7 @@ export default async function UploadPage() {
 
   return (
     <div className="max-w-3xl">
+      <Breadcrumbs items={[{ label: "Data importeren", href: "/upload" }]} />
       <h1 className="text-2xl font-bold text-[#1a6ca8] mb-2">
         Data importeren
       </h1>

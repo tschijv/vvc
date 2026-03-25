@@ -1,19 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
 import { wachtwoordResetEmail } from "@/lib/email-templates";
+import { parseBody, emailSchema } from "@/lib/validation";
+
+const vergetenSchema = z.object({
+  email: emailSchema,
+});
 
 export async function POST(req: NextRequest) {
   try {
-    const { email } = await req.json();
-
-    if (!email) {
-      return NextResponse.json(
-        { error: "E-mailadres is verplicht." },
-        { status: 400 }
-      );
-    }
+    const parsed = await parseBody(req, vergetenSchema);
+    if ("error" in parsed) return parsed.error;
+    const { email } = parsed.data;
 
     const user = await prisma.user.findUnique({ where: { email } });
 

@@ -254,22 +254,22 @@ export default function InkoopClient({
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200 text-left">
-                      <th className="py-2 pr-4 font-semibold text-gray-600">
+                      <th scope="col" className="py-2 pr-4 font-semibold text-gray-600">
                         Leverancier
                       </th>
-                      <th className="py-2 pr-4 font-semibold text-gray-600">
+                      <th scope="col" className="py-2 pr-4 font-semibold text-gray-600">
                         Pakket
                       </th>
-                      <th className="py-2 pr-4 font-semibold text-gray-600">
+                      <th scope="col" className="py-2 pr-4 font-semibold text-gray-600">
                         Versie
                       </th>
-                      <th className="py-2 pr-4 font-semibold text-gray-600">
+                      <th scope="col" className="py-2 pr-4 font-semibold text-gray-600">
                         Status
                       </th>
-                      <th className="py-2 pr-4 font-semibold text-gray-600">
+                      <th scope="col" className="py-2 pr-4 font-semibold text-gray-600">
                         Referentiecomponenten
                       </th>
-                      <th className="py-2 font-semibold text-gray-600">
+                      <th scope="col" className="py-2 font-semibold text-gray-600">
                         Standaarden
                       </th>
                     </tr>

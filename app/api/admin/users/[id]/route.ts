@@ -1,5 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { getUserById, updateUser, deleteUser } from "@/lib/services/user";
+import { parseBody } from "@/lib/validation";
+
+const updateUserSchema = z.object({
+  naam: z.string().optional(),
+  email: z.string().email().optional(),
+  wachtwoord: z.string().optional(),
+  actief: z.boolean().optional(),
+  rollen: z.array(z.string()).optional(),
+  gemeenteId: z.string().nullable().optional(),
+  leverancierId: z.string().nullable().optional(),
+});
 
 export async function GET(
   _request: NextRequest,
@@ -22,8 +34,9 @@ export async function PUT(
 ) {
   const { id } = await params;
   try {
-    const body = await request.json();
-    const { naam, email, wachtwoord, actief, rollen, gemeenteId, leverancierId } = body;
+    const parsed = await parseBody(request, updateUserSchema);
+    if ("error" in parsed) return parsed.error;
+    const { naam, email, wachtwoord, actief, rollen, gemeenteId, leverancierId } = parsed.data;
 
     const user = await updateUser(id, {
       ...(naam !== undefined && { naam }),

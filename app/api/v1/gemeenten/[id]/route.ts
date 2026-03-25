@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getGemeenteById } from "@/lib/services/gemeente";
+import { negotiateFormat, isRdfFormat } from "@/lib/rdf/content-negotiation";
+import { serializeRdf } from "@/lib/rdf/serializer";
+import { gemeenteToTriples } from "@/lib/rdf/mappers";
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const format = negotiateFormat(request);
   const { id } = await params;
 
   try {
@@ -15,6 +19,11 @@ export async function GET(
         { error: "Gemeente niet gevonden" },
         { status: 404 }
       );
+    }
+
+    if (isRdfFormat(format)) {
+      const quads = gemeenteToTriples(gemeente);
+      return serializeRdf(quads, format);
     }
 
     return NextResponse.json({

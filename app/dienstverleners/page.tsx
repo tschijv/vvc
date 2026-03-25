@@ -1,8 +1,10 @@
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export default function DienstverlenerPage() {
   return (
     <div className="max-w-2xl mx-auto py-16 text-center">
+      <Breadcrumbs items={[{ label: "Dienstverleners", href: "/dienstverleners" }]} />
       <div className="mb-6">
         <svg viewBox="0 0 80 80" className="w-20 h-20 mx-auto" fill="none">
           <circle cx="32" cy="26" r="10" stroke="#059669" strokeWidth="2.5" />

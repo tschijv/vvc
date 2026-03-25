@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import InkoopClient from "./InkoopClient";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import GlossaryHighlighter from "@/components/GlossaryHighlighter";
+import HelpLink from "@/components/HelpLink";
 
 export const metadata = {
   title: "Inkoopondersteuning - Voorzieningencatalogus",
@@ -14,9 +16,13 @@ export default async function InkoopPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#1a6ca8] mb-4">
-        Inkoopondersteuning
-      </h1>
+      <Breadcrumbs items={[{ label: "Inkoopondersteuning", href: "/inkoop" }]} />
+      <div className="flex items-center gap-3 mb-4">
+        <h1 className="text-2xl font-bold text-[#1a6ca8]">
+          Inkoopondersteuning
+        </h1>
+        <HelpLink section="inkoop" label="Help over Inkoopondersteuning" />
+      </div>
       <p className="text-sm text-gray-700 mb-2 max-w-3xl">
         <strong>
           Bestekteksten voor het toepassen van GEMMA bij aanschaf van software

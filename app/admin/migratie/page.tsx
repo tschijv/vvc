@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -266,6 +267,10 @@ export default async function MigratiePage() {
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Datamigratie", href: "/admin/migratie" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Datamigratie-mapping</h1>
@@ -273,7 +278,6 @@ export default async function MigratiePage() {
             Mapping van Drupal Softwarecatalogus CSV-exports naar Prisma-schema
           </p>
         </div>
-        <Link href="/admin" className="text-sm text-[#1a6ca8] hover:underline">&larr; Beheer</Link>
       </div>
 
       {/* Overzicht */}
@@ -314,10 +318,10 @@ export default async function MigratiePage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200 text-left">
-              <th className="py-2 pr-3 text-gray-500 font-medium w-12">#</th>
-              <th className="py-2 pr-3 text-gray-500 font-medium">Entiteit(en)</th>
-              <th className="py-2 pr-3 text-gray-500 font-medium">Bron</th>
-              <th className="py-2 text-gray-500 font-medium">Opmerkingen</th>
+              <th scope="col" className="py-2 pr-3 text-gray-500 font-medium w-12">#</th>
+              <th scope="col" className="py-2 pr-3 text-gray-500 font-medium">Entiteit(en)</th>
+              <th scope="col" className="py-2 pr-3 text-gray-500 font-medium">Bron</th>
+              <th scope="col" className="py-2 text-gray-500 font-medium">Opmerkingen</th>
             </tr>
           </thead>
           <tbody>
@@ -353,10 +357,10 @@ export default async function MigratiePage() {
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-gray-200 text-left">
-                    <th className="py-2 pr-3 text-gray-500 font-medium whitespace-nowrap">CSV-kolom</th>
-                    <th className="py-2 pr-3 text-gray-500 font-medium whitespace-nowrap">Prisma-veld</th>
-                    <th className="py-2 pr-3 text-gray-500 font-medium whitespace-nowrap">Type / conversie</th>
-                    <th className="py-2 text-gray-500 font-medium">Opmerkingen</th>
+                    <th scope="col" className="py-2 pr-3 text-gray-500 font-medium whitespace-nowrap">CSV-kolom</th>
+                    <th scope="col" className="py-2 pr-3 text-gray-500 font-medium whitespace-nowrap">Prisma-veld</th>
+                    <th scope="col" className="py-2 pr-3 text-gray-500 font-medium whitespace-nowrap">Type / conversie</th>
+                    <th scope="col" className="py-2 text-gray-500 font-medium">Opmerkingen</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -367,7 +371,7 @@ export default async function MigratiePage() {
                       </td>
                       <td className="py-1.5 pr-3">
                         {col.prisma === "—" || col.prisma.startsWith("—") ? (
-                          <span className="text-gray-400 italic">{col.prisma}</span>
+                          <span className="text-gray-500 italic">{col.prisma}</span>
                         ) : (
                           <code className="bg-blue-50 text-blue-800 px-1 py-0.5 rounded text-xs font-mono">{col.prisma}</code>
                         )}

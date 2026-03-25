@@ -74,7 +74,17 @@ export async function getAIAdvies(gemeenteId: string, vraag: string) {
 
   const systemPrompt = `Je bent een deskundige ICT-adviseur voor Nederlandse gemeenten, gespecialiseerd in applicatieportfolio-management en de GEMMA-architectuur. Je geeft advies op basis van de data uit de VNG Voorzieningencatalogus.
 
-Antwoord in het Nederlands. Wees concreet en praktisch. Verwijs naar specifieke pakketten, leveranciers en standaarden uit de data. Gebruik geen markdown-kopjes, schrijf vloeiende tekst met alinea's.
+Antwoord in het Nederlands. Wees concreet en praktisch. Verwijs naar specifieke pakketten, leveranciers en standaarden uit de data.
+
+Formatteer je antwoord als HTML-fragmenten (geen volledige pagina). Gebruik:
+- <h3> voor sectiekoppen
+- <p> voor alinea's
+- <ul>/<li> voor opsommingen
+- <strong> voor nadruk op pakketnamen, leveranciers en standaarden
+- <table class="ai-table"><thead><tr><th>...</th></tr></thead><tbody><tr><td>...</td></tr></tbody></table> voor vergelijkingen of overzichten
+- <span class="ai-status-rood">, <span class="ai-status-oranje">, <span class="ai-status-groen"> voor statusindicatoren (rood=actie vereist, oranje=aandacht, groen=goed)
+
+Geef GEEN markdown terug, alleen schone HTML.
 
 ## Context: ${gemeente.naam}${gemeente.cbsCode ? ` (CBS: ${gemeente.cbsCode})` : ""}
 Voortgang: ${gemeente.progress}%
@@ -97,7 +107,7 @@ ${koppelingenTekst || "Geen koppelingen geregistreerd."}`;
 
   const message = await client.messages.create({
     model: "claude-sonnet-4-20250514",
-    max_tokens: 1024,
+    max_tokens: 2048,
     system: systemPrompt,
     messages: [{ role: "user", content: vraag }],
   });

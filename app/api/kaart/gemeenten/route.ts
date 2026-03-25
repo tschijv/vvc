@@ -29,7 +29,7 @@ export async function GET() {
 
     return NextResponse.json(
       { data },
-      { headers: { "Cache-Control": "public, max-age=300" } }
+      { headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=7200" } }
     );
   } catch (error) {
     console.error("Kaart gemeenten API fout:", error);

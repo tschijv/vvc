@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import GlossaryHighlighter from "@/components/GlossaryHighlighter";
+import HelpLink from "@/components/HelpLink";
 
 export const metadata = {
   title: "Compliancy Monitor - Voorzieningencatalogus",
@@ -60,9 +62,13 @@ export default async function CompliancyMonitorPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#1a6ca8] mb-4">
-        Compliancy Monitor
-      </h1>
+      <Breadcrumbs items={[{ label: "Compliancy Monitor", href: "/compliancy" }]} />
+      <div className="flex items-center gap-3 mb-4">
+        <h1 className="text-2xl font-bold text-[#1a6ca8]">
+          Compliancy Monitor
+        </h1>
+        <HelpLink section="compliancy" label="Help over de Compliancy Monitor" />
+      </div>
       <p className="text-sm text-gray-600 mb-6 max-w-3xl">
         <GlossaryHighlighter>De Compliancy Monitor toont per standaard welke pakketversies compliant zijn. Dit geeft gemeenten inzicht in welke software voldoet aan de verplichte standaarden voor gegevensuitwisseling en dienstverlening.</GlossaryHighlighter>
       </p>
@@ -99,13 +105,13 @@ export default async function CompliancyMonitorPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-gray-200 text-left">
-                          <th className="px-5 py-2 font-semibold text-gray-600">
+                          <th scope="col" className="px-5 py-2 font-semibold text-gray-600">
                             Leverancier
                           </th>
-                          <th className="px-5 py-2 font-semibold text-gray-600">
+                          <th scope="col" className="px-5 py-2 font-semibold text-gray-600">
                             Pakketversie
                           </th>
-                          <th className="px-5 py-2 font-semibold text-gray-600">
+                          <th scope="col" className="px-5 py-2 font-semibold text-gray-600">
                             Compliancy
                           </th>
                         </tr>

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import Link from "next/link";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import Image from "next/image";
 
 const domeinen = [
@@ -13,6 +14,7 @@ const domeinen = [
       { naam: "Pakketversie", attrs: "naam, status, startOntwikkeling/Test/Distributie, aantalGemeenten" },
       { naam: "PakketContact", attrs: "naam, email, telefoon, rol", stereotype: "Gegevensgroeptype" },
       { naam: "ExternPakket", attrs: "naam, leverancierNaam, versie, beschrijving" },
+      { naam: "Testrapport", attrs: "naam, status, resultaat, datum, pakketversieId" },
     ],
   },
   {
@@ -32,6 +34,7 @@ const domeinen = [
     objecttypen: [
       { naam: "Gemeente", attrs: "naam, cbsCode, contactpersoon, email, website, voortgang" },
       { naam: "Samenwerking", attrs: "naam, type, contactpersoon, email" },
+      { naam: "SamenwerkingGemeente", attrs: "samenwerkingId, gemeenteId", stereotype: "Koppelklasse" },
     ],
   },
   {
@@ -48,6 +51,8 @@ const domeinen = [
     objecttypen: [
       { naam: "Gebruiker", attrs: "email, naam, actief, rollen[], registratieBron, organisatieType" },
       { naam: "WachtwoordResetToken", attrs: "token, verlooptOp, gebruiktOp", stereotype: "Gegevensgroeptype" },
+      { naam: "Notificatie", attrs: "type, titel, bericht, gelezen, userId, link" },
+      { naam: "Favoriet", attrs: "userId, entiteitType, entiteitId" },
     ],
   },
   {
@@ -63,6 +68,13 @@ const domeinen = [
     kleur: "bg-gray-50 border-gray-200",
     objecttypen: [
       { naam: "AuditLogRegel", attrs: "actie, entiteit, entiteitId, details, ipAdres" },
+    ],
+  },
+  {
+    naam: "Configuratiedomein",
+    kleur: "bg-orange-50 border-orange-200",
+    objecttypen: [
+      { naam: "AppSetting", attrs: "key (PK), value, updatedAt — applicatieconfiguratie (bijv. SKOSMOS vocabulaires)" },
     ],
   },
 ];
@@ -91,12 +103,15 @@ export default async function DatamodelPage() {
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: "Beheer", href: "/admin" },
+        { label: "Datamodel", href: "/admin/datamodel" },
+      ]} />
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Logisch Informatiemodel (MIM)</h1>
           <p className="text-sm text-gray-500 mt-1">Conform MIM 1.2 – Niveau 3 (Logisch informatiemodel)</p>
         </div>
-        <Link href="/admin" className="text-sm text-[#1a6ca8] hover:underline">← Beheer</Link>
       </div>
 
       {/* MIM Diagram */}
@@ -174,9 +189,9 @@ export default async function DatamodelPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 pr-4 font-semibold text-gray-700">Koppelklasse</th>
-                <th className="text-left py-2 pr-4 font-semibold text-gray-700">Relatie</th>
-                <th className="text-left py-2 font-semibold text-gray-700">Attributen</th>
+                <th scope="col" className="text-left py-2 pr-4 font-semibold text-gray-700">Koppelklasse</th>
+                <th scope="col" className="text-left py-2 pr-4 font-semibold text-gray-700">Relatie</th>
+                <th scope="col" className="text-left py-2 font-semibold text-gray-700">Attributen</th>
               </tr>
             </thead>
             <tbody>
@@ -210,11 +225,11 @@ export default async function DatamodelPage() {
         <h2 className="text-lg font-semibold text-gray-800 mb-3">Kerncijfers</h2>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           {[
-            { label: "Objecttypen", waarde: "20" },
+            { label: "Objecttypen", waarde: "30" },
             { label: "Koppelklassen", waarde: "6" },
             { label: "Enumeraties", waarde: "4" },
-            { label: "Attributen", waarde: "~120" },
-            { label: "Relaties", waarde: "~25" },
+            { label: "Attributen", waarde: "~140" },
+            { label: "Relaties", waarde: "~30" },
           ].map((k) => (
             <div key={k.label} className="text-center">
               <div className="text-2xl font-bold text-[#1a6ca8]">{k.waarde}</div>

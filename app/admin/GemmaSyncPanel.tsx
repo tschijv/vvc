@@ -96,22 +96,22 @@ export default function GemmaSyncPanel() {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="bg-gray-50">
-                <th className="text-left p-2 border border-gray-200 font-semibold">
+                <th scope="col" className="text-left p-2 border border-gray-200 font-semibold">
                   Type
                 </th>
-                <th className="text-right p-2 border border-gray-200 font-semibold">
+                <th scope="col" className="text-right p-2 border border-gray-200 font-semibold">
                   GEMMA Online
                 </th>
-                <th className="text-right p-2 border border-gray-200 font-semibold">
+                <th scope="col" className="text-right p-2 border border-gray-200 font-semibold">
                   Database
                 </th>
-                <th className="text-right p-2 border border-gray-200 font-semibold">
+                <th scope="col" className="text-right p-2 border border-gray-200 font-semibold">
                   Nieuw gematcht
                 </th>
-                <th className="text-right p-2 border border-gray-200 font-semibold">
+                <th scope="col" className="text-right p-2 border border-gray-200 font-semibold">
                   Had al GUID
                 </th>
-                <th className="text-right p-2 border border-gray-200 font-semibold">
+                <th scope="col" className="text-right p-2 border border-gray-200 font-semibold">
                   Niet gevonden
                 </th>
               </tr>

@@ -11,6 +11,7 @@ export type SessionUser = {
   role: string;
   gemeenteId?: string | null;
   leverancierId?: string | null;
+  isBeheerder?: boolean;
   isImpersonating?: boolean;
   realUser?: { id: string; naam: string } | null;
 } | null;
@@ -62,6 +63,7 @@ export async function getSessionUser(): Promise<SessionUser> {
           role: primaryRole,
           gemeenteId: target.gemeenteId,
           leverancierId: target.leverancierId,
+          isBeheerder: target.rollen.includes("GEMEENTE_BEHEERDER") || target.rollen.includes("ADMIN") || target.rollen.includes("KING_BEHEERDER"),
           isImpersonating: true,
           realUser: { id: realUser.id, naam: realUser.naam },
         };
@@ -108,6 +110,30 @@ export function canViewGemeenteContact(user: SessionUser): boolean {
 export function canEditPagina(user: SessionUser): boolean {
   if (!user) return false;
   return user.role === "ADMIN";
+}
+
+/**
+ * Mag deze gebruiker het portfolio van een gemeente bewerken?
+ * - Admin: altijd
+ * - Gemeente beheerder: alleen eigen gemeente
+ */
+export function canEditGemeentePortfolio(user: SessionUser, gemeenteId: string): boolean {
+  if (!user) return false;
+  if (user.role === "ADMIN") return true;
+  if (user.role === "GEMEENTE" && user.isBeheerder && user.gemeenteId === gemeenteId) return true;
+  return false;
+}
+
+/**
+ * Mag deze gebruiker pakketten van een leverancier bewerken?
+ * - Admin: altijd
+ * - Leverancier: alleen eigen pakketten
+ */
+export function canEditLeverancierPakket(user: SessionUser, leverancierId: string): boolean {
+  if (!user) return false;
+  if (user.role === "ADMIN") return true;
+  if (user.role === "LEVERANCIER" && user.leverancierId === leverancierId) return true;
+  return false;
 }
 
 export function filterGemeentePakketten<
