@@ -1,0 +1,69 @@
+publiccodeYmlVersion: "0.4"
+
+name: VNG Voorzieningencatalogus
+url: "https://github.com/tschijv/vvc"
+releaseDate: "2026-03-25"
+developmentStatus: beta
+softwareType: standalone/web
+softwareVersion: "1.0.0"
+
+description:
+  nl:
+    shortDescription: "Catalogus voor gemeentelijke softwarepakketten, leveranciers en standaarden"
+    longDescription: >
+      De VNG Voorzieningencatalogus is een webapplicatie waarmee Nederlandse
+      gemeenten hun softwarepakketten, leveranciers, standaarden en koppelingen
+      kunnen beheren en vergelijken. Gebaseerd op het GEMMA-referentiemodel.
+      Bevat AI-advisering, compliancy-monitor, inkoopondersteuning, Linked Data
+      publicatie en een geautomatiseerde demo met spraaksynthese.
+    features:
+      - Pakketten- en leveranciersbeheer
+      - GEMMA-sync (referentiecomponenten, standaarden, applicatiefuncties)
+      - Compliancy-monitor (pakketten vs standaarden)
+      - AI-adviseur (Claude API)
+      - Gemeente-vergelijking (Jaccard-similariteit)
+      - Inkoopondersteuning
+      - REST API (OpenAPI 3.0)
+      - Linked Data (JSON-LD, Turtle, RDF/XML, DCAT)
+      - Marktverdeling scatterplot
+      - Dark mode, favorieten, notificaties
+      - Geautomatiseerde demo met Nederlandse spraaksynthese
+    documentation: "https://vng-vc.vercel.app/help"
+    apiDocumentation: "https://vng-vc.vercel.app/api/v1/docs"
+
+legal:
+  license: EUPL-1.2
+  repoOwner: ArchiXL
+
+maintenance:
+  type: internal
+  contacts:
+    - name: ArchiXL
+      email: info@archixl.nl
+
+platforms:
+  - web
+
+categories:
+  - it-asset-management
+  - data-analytics
+
+intendedAudience:
+  scope:
+    - government
+  countries:
+    - nl
+
+localisation:
+  localisationReady: false
+  availableLanguages:
+    - nl
+
+dependsOn:
+  open:
+    - name: Node.js
+      versionMin: "20"
+    - name: PostgreSQL
+      versionMin: "14"
+    - name: Next.js
+      versionMin: "16"
