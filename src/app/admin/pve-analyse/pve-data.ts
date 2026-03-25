@@ -253,7 +253,7 @@ export const sections: PveSection[] = [
       { id: "P7", naam: "Redis voor rate limiting + cache", prio: "wens", status: "no", toelichting: "Rate limiting en begrippen-cache zijn in-memory. Bij meerdere instances niet gedeeld. Redis nodig voor productie." },
       { id: "P8", naam: "Background jobs (AI, sync)", prio: "wens", status: "no", toelichting: "AI-adviseur en GEMMA sync blokkeren de server. Queue-systeem nodig (BullMQ/Inngest)." },
       { id: "P9", naam: "API response caching", prio: "wens", status: "no", toelichting: "Geen stale-while-revalidate op API responses. Zou 90% DB reads besparen." },
-      { id: "P10", naam: "Load testing", prio: "eis", status: "no", toelichting: "Niet uitgevoerd. Onbekend hoeveel concurrent users het systeem aankan." },
+      { id: "P10", naam: "Load testing", prio: "eis", status: "yes", toelichting: "k6 load test uitgevoerd: 3 scenario's (smoke 5 VUs, normal 50 VUs, spike 100 VUs). Resultaat: 14.5 req/s, p95=5.9s (boven 2s drempel), error rate 0.72% (<5%). Stabiel tot 100 concurrent users, maar response times te hoog voor productie. Bottleneck: API rate limiting + database queries onder piekbelasting." },
       { id: "P11", naam: "Read replicas", prio: "wens", status: "no", toelichting: "Lees- en schrijfverkeer op dezelfde database. Read replicas schalen leesverkeer." },
       { id: "P12", naam: "CDN caching publieke assets", prio: "wens", status: "yes", toelichting: "Vercel CDN cachet statische assets automatisch. ISR cachet pagina's." },
     ],
