@@ -91,20 +91,67 @@ export default function MimDiagram({
   const kkRows = Math.ceil(koppelklassen.length / 3);
   const totalH = kkStartY + kkRows * 50 + 40;
 
-  // Compute relation lines
-  const lines: { x1: number; y1: number; x2: number; y2: number; label?: string; cardVan?: string; cardNaar?: string }[] = [];
+  // Compute orthogonal relation lines with bendpoints
+  type Line = {
+    points: { x: number; y: number }[];
+    label?: string;
+    cardVan?: string;
+    cardNaar?: string;
+  };
+  const lines: Line[] = [];
+  const usedOffsets = new Map<string, number>(); // prevent overlapping lines
+
   for (const rel of relaties) {
     const from = boxPositions.get(rel.van);
     const to = boxPositions.get(rel.naar);
     if (!from || !to) continue;
 
-    // Connect from center-right/bottom of source to center-left/top of target
-    const x1 = from.x + from.w / 2;
-    const y1 = from.y + from.h;
-    const x2 = to.x + to.w / 2;
-    const y2 = to.y;
+    // Determine best connection sides
+    const key = `${rel.van}-${rel.naar}`;
+    const offset = (usedOffsets.get(key) || 0);
+    usedOffsets.set(key, offset + 12);
 
-    lines.push({ x1, y1, x2, y2, label: rel.label, cardVan: rel.cardVan, cardNaar: rel.cardNaar });
+    // Decide: connect bottom→top if target is below, else right→left
+    const fromCx = from.x + from.w / 2 + offset;
+    const fromCy = from.y + from.h / 2;
+    const toCx = to.x + to.w / 2 + offset;
+    const toCy = to.y + to.h / 2;
+
+    const dx = Math.abs(fromCx - toCx);
+    const dy = Math.abs(fromCy - toCy);
+
+    let points: { x: number; y: number }[];
+
+    if (dy > dx * 0.5) {
+      // Vertical: exit bottom, enter top (orthogonal with horizontal segment)
+      const x1 = fromCx;
+      const y1 = from.y + from.h;
+      const x2 = toCx;
+      const y2 = to.y;
+      const midY = (y1 + y2) / 2;
+      points = [
+        { x: x1, y: y1 },
+        { x: x1, y: midY },
+        { x: x2, y: midY },
+        { x: x2, y: y2 },
+      ];
+    } else {
+      // Horizontal: exit right, enter left (orthogonal with vertical segment)
+      const goRight = toCx > fromCx;
+      const x1 = goRight ? from.x + from.w : from.x;
+      const y1 = fromCy;
+      const x2 = goRight ? to.x : to.x + to.w;
+      const y2 = toCy;
+      const midX = (x1 + x2) / 2;
+      points = [
+        { x: x1, y: y1 },
+        { x: midX, y: y1 },
+        { x: midX, y: y2 },
+        { x: x2, y: y2 },
+      ];
+    }
+
+    lines.push({ points, label: rel.label, cardVan: rel.cardVan, cardNaar: rel.cardNaar });
   }
 
   return (
@@ -115,8 +162,8 @@ export default function MimDiagram({
       style={{ minWidth: 900 }}
     >
       <defs>
-        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#94a3b8" />
+        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#475569" />
         </marker>
         <marker id="diamond" markerWidth="10" markerHeight="8" refX="0" refY="4" orient="auto">
           <polygon points="5 0, 10 4, 5 8, 0 4" fill="white" stroke="#94a3b8" strokeWidth="1" />
@@ -129,36 +176,56 @@ export default function MimDiagram({
         .box-title { font-size: 10px; font-weight: 600; fill: white; }
         .box-attr { font-size: 9px; fill: #475569; }
         .box-stereo { font-size: 8px; fill: #94a3b8; font-style: italic; }
-        .rel-label { font-size: 8px; fill: #64748b; }
-        .rel-card { font-size: 8px; fill: #1a6ca8; font-weight: 600; }
+        .rel-label { font-size: 9px; fill: #334155; font-weight: 500; }
+        .rel-card { font-size: 9px; fill: #1a6ca8; font-weight: 700; }
         .kk-box-title { font-size: 9px; font-weight: 600; fill: #5b2d8e; }
         .kk-box-sub { font-size: 8px; fill: #94a3b8; }
       `}</style>
 
       <rect width={totalW} height={totalH} fill="#fafafa" rx="8" />
 
-      {/* Relation lines (behind boxes) */}
+      {/* Relation lines (behind boxes) — orthogonal with bendpoints */}
       {lines.map((l, i) => {
-        const midY = (l.y1 + l.y2) / 2;
+        const pts = l.points;
+        const pathD = pts.map((p, j) => `${j === 0 ? "M" : "L"} ${p.x} ${p.y}`).join(" ");
+        const first = pts[0];
+        const last = pts[pts.length - 1];
+        // Label at midpoint of middle segment
+        const mid1 = pts[Math.floor(pts.length / 2) - 1];
+        const mid2 = pts[Math.floor(pts.length / 2)];
+        const labelX = (mid1.x + mid2.x) / 2;
+        const labelY = (mid1.y + mid2.y) / 2;
+
         return (
           <g key={`rel-${i}`}>
             <path
-              d={`M ${l.x1} ${l.y1} C ${l.x1} ${midY}, ${l.x2} ${midY}, ${l.x2} ${l.y2}`}
+              d={pathD}
               fill="none"
-              stroke="#cbd5e1"
-              strokeWidth="1"
+              stroke="#64748b"
+              strokeWidth="1.5"
               markerEnd="url(#arrowhead)"
             />
             {l.label && (
-              <text x={(l.x1 + l.x2) / 2} y={midY - 4} textAnchor="middle" className="rel-label">
-                {l.label}
-              </text>
+              <>
+                <rect
+                  x={labelX - l.label.length * 2.8 - 4}
+                  y={labelY - 10}
+                  width={l.label.length * 5.6 + 8}
+                  height={14}
+                  rx="3"
+                  fill="white"
+                  fillOpacity="0.9"
+                />
+                <text x={labelX} y={labelY} textAnchor="middle" className="rel-label">
+                  {l.label}
+                </text>
+              </>
             )}
             {l.cardVan && (
-              <text x={l.x1 + 6} y={l.y1 + 12} className="rel-card">{l.cardVan}</text>
+              <text x={first.x + 8} y={first.y + 14} className="rel-card">{l.cardVan}</text>
             )}
             {l.cardNaar && (
-              <text x={l.x2 + 6} y={l.y2 - 6} className="rel-card">{l.cardNaar}</text>
+              <text x={last.x + 8} y={last.y - 8} className="rel-card">{l.cardNaar}</text>
             )}
           </g>
         );
