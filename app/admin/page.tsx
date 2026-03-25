@@ -185,6 +185,14 @@ export default async function AdminPage() {
         </div>
         <ApiDocPanel />
         <NpmHealthPanel />
+        <div className="bg-white border border-gray-200 rounded-lg divide-y divide-gray-100 mt-4">
+          <AdminRow
+            label="Dependency-analyse"
+            description="Overzicht van alle npm packages: veiligheid, licenties, doel en grootte"
+            href="/admin/dependencies"
+            linkText="Analyseren →"
+          />
+        </div>
         {process.env.NODE_ENV === "development" && <DeployPanel />}
       </div>
     </div>
