@@ -3,6 +3,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
+import { aantalEntiteiten } from "@/app/admin/datamodel/datamodel-data";
 
 export const metadata: Metadata = {
   title: "Technische Handleiding — Beheer",
@@ -150,7 +151,7 @@ export default async function HandleidingPage() {
 
         <Section id="datamodel" title="Datamodel" link="/admin/datamodel" linkLabel="Bekijk Datamodel (MIM)">
           <p>
-            Het datamodel bevat 30 objecttypen verdeeld over de domeinen Software (Pakket, Pakketversie, Leverancier,
+            Het datamodel bevat {aantalEntiteiten} objecttypen verdeeld over de domeinen Software (Pakket, Pakketversie, Leverancier,
             PakketContact, ExternPakket, Testrapport, Addendum), Gemeenten (Gemeente, GemeentePakket, Koppeling, Samenwerking),
             GEMMA (Referentiecomponent, Standaard, Standaardversie, Applicatiefunctie, GemmaView),
             Koppeltabellen (PvReferentiecomponent, PvStandaard, PvApplicatiefunctie, PvTechnologie) en

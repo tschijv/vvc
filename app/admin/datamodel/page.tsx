@@ -3,97 +3,16 @@ import { getSessionUser } from "@/lib/auth-helpers";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import MimDiagram from "./MimDiagram";
-
-const domeinen = [
-  {
-    naam: "Pakketdomein",
-    kleur: "bg-blue-50 border-blue-200",
-    objecttypen: [
-      { naam: "Leverancier", attrs: "naam, slug, contactpersoon, email, website, convenant, ..." },
-      { naam: "Pakket", attrs: "naam, slug, beschrijving, urlProductpagina, aantalOrganisaties" },
-      { naam: "Pakketversie", attrs: "naam, status, startOntwikkeling/Test/Distributie, aantalOrganisaties" },
-      { naam: "PakketContact", attrs: "naam, email, telefoon, rol", stereotype: "Gegevensgroeptype" },
-      { naam: "ExternPakket", attrs: "naam, leverancierNaam, versie, beschrijving" },
-      { naam: "Testrapport", attrs: "naam, status, resultaat, datum, pakketversieId" },
-    ],
-  },
-  {
-    naam: "GEMMA-domein",
-    kleur: "bg-blue-50 border-blue-200",
-    objecttypen: [
-      { naam: "Referentiecomponent", attrs: "naam, guid, beschrijving, status" },
-      { naam: "Standaard", attrs: "naam, guid, beschrijving" },
-      { naam: "Standaardversie", attrs: "naam, guid, status, compliancyMonitor" },
-      { naam: "Applicatiefunctie", attrs: "naam, guid, beschrijving" },
-      { naam: "GemmaView", attrs: "objectId, titel, domein, laag, modelId, volgorde, actief" },
-    ],
-  },
-  {
-    naam: "Organisatiedomein",
-    kleur: "bg-green-50 border-green-200",
-    objecttypen: [
-      { naam: "Organisatie", attrs: "naam, cbsCode, contactpersoon, email, website, voortgang", stereotype: "@@map(\"Gemeente\")" },
-      { naam: "Samenwerking", attrs: "naam, type, contactpersoon, email" },
-      { naam: "SamenwerkingOrganisatie", attrs: "samenwerkingId, organisatieId", stereotype: "Koppelklasse, @@map(\"SamenwerkingGemeente\")" },
-    ],
-  },
-  {
-    naam: "Integratiedomein",
-    kleur: "bg-amber-50 border-amber-200",
-    objecttypen: [
-      { naam: "Koppeling", attrs: "richting, buitengemeentelijk, status, standaard, transportprotocol" },
-      { naam: "Addendum", attrs: "naam, beschrijving, url" },
-    ],
-  },
-  {
-    naam: "Gebruikersdomein",
-    kleur: "bg-purple-50 border-purple-200",
-    objecttypen: [
-      { naam: "Gebruiker", attrs: "email, naam, actief, rollen[], registratieBron, organisatieType" },
-      { naam: "WachtwoordResetToken", attrs: "token, verlooptOp, gebruiktOp", stereotype: "Gegevensgroeptype" },
-      { naam: "Notificatie", attrs: "type, titel, bericht, gelezen, userId, link" },
-      { naam: "Favoriet", attrs: "userId, entiteitType, entiteitId" },
-    ],
-  },
-  {
-    naam: "Contentdomein",
-    kleur: "bg-teal-50 border-teal-200",
-    objecttypen: [
-      { naam: "Pagina", attrs: "slug, titel, inhoud" },
-      { naam: "Begrip", attrs: "term, definitie, uri, toelichting, synoniemen[], vocabulaire, status" },
-    ],
-  },
-  {
-    naam: "Auditdomein",
-    kleur: "bg-gray-50 border-gray-200",
-    objecttypen: [
-      { naam: "AuditLogRegel", attrs: "actie, entiteit, entiteitId, details, ipAdres" },
-    ],
-  },
-  {
-    naam: "Configuratiedomein",
-    kleur: "bg-orange-50 border-orange-200",
-    objecttypen: [
-      { naam: "AppSetting", attrs: "key (PK), value, updatedAt — applicatieconfiguratie (bijv. SKOSMOS vocabulaires)" },
-    ],
-  },
-];
-
-const koppelklassen = [
-  { naam: "OrganisatiePakket", tussen: "Organisatie ↔ Pakketversie", attrs: "status, datumIngangStatus, technologie, licentievorm, aantalGebruikers" },
-  { naam: "PakketReferentiecomponent", tussen: "Pakket ↔ Referentiecomponent", attrs: "type, aantalOrganisaties" },
-  { naam: "PakketStandaard", tussen: "Pakket ↔ Standaardversie", attrs: "compliancy, testrapportUrl" },
-  { naam: "PakketApplicatiefunctie", tussen: "Pakket ↔ Applicatiefunctie", attrs: "ondersteund" },
-  { naam: "PakketTechnologie", tussen: "Pakket ↔ technologie", attrs: "technologie" },
-  { naam: "LeverancierAddendum", tussen: "Leverancier ↔ Addendum", attrs: "—" },
-];
-
-const enumeraties = [
-  { naam: "Rol", waarden: "GEVERIFIEERD, GEMEENTE_RAADPLEGER, GEMEENTE_BEHEERDER, SAMENWERKING_BEHEERDER, LEVERANCIER, REDACTEUR, KING_RAADPLEGER, KING_BEHEERDER, ADMIN, API_USER" },
-  { naam: "Koppelrichting", waarden: "heen, weer, beide" },
-  { naam: "Versie-status", waarden: "in ontwikkeling, in test, in distributie, uit distributie" },
-  { naam: "Begrip-status", waarden: "actief, inactief, concept" },
-];
+import {
+  domeinen,
+  koppelklassen,
+  enumeraties,
+  aantalObjecttypen,
+  aantalKoppelklassen,
+  aantalEnumeraties,
+  aantalAttributen,
+  aantalRelaties,
+} from "./datamodel-data";
 
 export default async function DatamodelPage() {
   const user = await getSessionUser();
@@ -211,11 +130,11 @@ export default async function DatamodelPage() {
         <h2 className="text-lg font-semibold text-gray-800 mb-3">Kerncijfers</h2>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           {[
-            { label: "Objecttypen", waarde: "30" },
-            { label: "Koppelklassen", waarde: "6" },
-            { label: "Enumeraties", waarde: "4" },
-            { label: "Attributen", waarde: "~140" },
-            { label: "Relaties", waarde: "~30" },
+            { label: "Objecttypen", waarde: String(aantalObjecttypen) },
+            { label: "Koppelklassen", waarde: String(aantalKoppelklassen) },
+            { label: "Enumeraties", waarde: String(aantalEnumeraties) },
+            { label: "Attributen", waarde: `~${aantalAttributen}` },
+            { label: "Relaties", waarde: `~${aantalRelaties}` },
           ].map((k) => (
             <div key={k.label} className="text-center">
               <div className="text-2xl font-bold text-[#1a6ca8]">{k.waarde}</div>

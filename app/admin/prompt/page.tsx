@@ -3,6 +3,7 @@ import { getSessionUser } from "@/lib/auth-helpers";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import CopyButton from "./CopyButton";
+import { aantalEntiteiten } from "@/app/admin/datamodel/datamodel-data";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -64,7 +65,7 @@ Bouw een Voorzieningencatalogus voor de Nederlandse gemeentelijke sector. Dit is
 - Tests: Vitest + Playwright (26 E2E tests)
 - Demo: Playwright script + in-app DemoPlayer met spraaksynthese
 
-## Datamodel — 30 entiteiten
+## Datamodel — ${aantalEntiteiten} entiteiten
 
 ### Kern-entiteiten
 1. Leverancier — contactgegevens, convenant-status, logo, support/documentatie URLs
@@ -314,7 +315,7 @@ API v1: /api/v1/gemeenten, /api/v1/leveranciers, /api/v1/referentiecomponenten, 
           </div>
         </Section>
 
-        <Section title="Datamodel (30 entiteiten)">
+        <Section title={`Datamodel (${aantalEntiteiten} entiteiten)`}>
           {[
             {
               groep: "Kern-entiteiten",
