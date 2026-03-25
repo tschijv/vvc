@@ -10,8 +10,8 @@ const domeinen = [
     kleur: "bg-blue-50 border-blue-200",
     objecttypen: [
       { naam: "Leverancier", attrs: "naam, slug, contactpersoon, email, website, convenant, ..." },
-      { naam: "Pakket", attrs: "naam, slug, beschrijving, urlProductpagina, aantalGemeenten" },
-      { naam: "Pakketversie", attrs: "naam, status, startOntwikkeling/Test/Distributie, aantalGemeenten" },
+      { naam: "Pakket", attrs: "naam, slug, beschrijving, urlProductpagina, aantalOrganisaties" },
+      { naam: "Pakketversie", attrs: "naam, status, startOntwikkeling/Test/Distributie, aantalOrganisaties" },
       { naam: "PakketContact", attrs: "naam, email, telefoon, rol", stereotype: "Gegevensgroeptype" },
       { naam: "ExternPakket", attrs: "naam, leverancierNaam, versie, beschrijving" },
       { naam: "Testrapport", attrs: "naam, status, resultaat, datum, pakketversieId" },
@@ -81,7 +81,7 @@ const domeinen = [
 
 const koppelklassen = [
   { naam: "OrganisatiePakket", tussen: "Organisatie ↔ Pakketversie", attrs: "status, datumIngangStatus, technologie, licentievorm, aantalGebruikers" },
-  { naam: "PakketReferentiecomponent", tussen: "Pakket ↔ Referentiecomponent", attrs: "type, aantalGemeenten" },
+  { naam: "PakketReferentiecomponent", tussen: "Pakket ↔ Referentiecomponent", attrs: "type, aantalOrganisaties" },
   { naam: "PakketStandaard", tussen: "Pakket ↔ Standaardversie", attrs: "compliancy, testrapportUrl" },
   { naam: "PakketApplicatiefunctie", tussen: "Pakket ↔ Applicatiefunctie", attrs: "ondersteund" },
   { naam: "PakketTechnologie", tussen: "Pakket ↔ technologie", attrs: "technologie" },
