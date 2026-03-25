@@ -187,6 +187,13 @@ export default async function PveAnalysePage() {
           <strong>Conclusie:</strong> Circa <strong>{stats.coveragePercent}%</strong> van alle eisen en wensen is geheel of gedeeltelijk gerealiseerd. Van de {stats.eisTotal} harde <strong>eisen</strong> is <strong>{eisYesOrPartialPercent}%</strong> ({eisYesOrPartial} van {stats.eisTotal}) geheel of deels gerealiseerd. <strong>{eisYesPercent}%</strong> van de eisen is volledig gerealiseerd. Van de {stats.wensTotal} <strong>wensen</strong> is <strong>{wensYesOrPartialPercent}%</strong> ({wensYesOrPartial} van {stats.wensTotal}) geheel of deels gerealiseerd, waarvan {stats.wensYes} volledig. Daarnaast zijn <strong>{extraCount} extra features</strong> gerealiseerd die niet in het oorspronkelijke PvE stonden.
         </div>
 
+        {/* ─── GOLDEN RULEBOOK ─── */}
+        <div className="conclusion-box" style={{ background: "linear-gradient(135deg, #f5f3ff, #eff6ff)", borderColor: "#7c3aed" }}>
+          <strong style={{ color: "#7c3aed" }}>Golden Rulebook (Common Ground):</strong>{" "}
+          <strong>{stats.grPercent}%</strong> compliant ({stats.grYes} volledig, {stats.grPartial} deels, {stats.grNo} niet van {stats.grTotal} regels).
+          Score wordt automatisch bijgewerkt bij codewijzigingen.
+        </div>
+
         {/* ─── LEGENDA ─── */}
         <div className="legend">
           <div className="legend-item">✅ <strong>Gerealiseerd</strong> — aanwezig en werkend</div>

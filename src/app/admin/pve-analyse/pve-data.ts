@@ -216,6 +216,30 @@ export const sections: PveSection[] = [
       { id: "E29", naam: "Demo audio (HD)", prio: "nvt", status: "extra", toelichting: "Pre-generated OpenAI TTS (nova stem) MP3-bestanden voor alle 22 demo-secties. DemoPlayer speelt MP3 af met fallback naar browser spraaksynthese.", link: "/admin/demo", linkTitle: "Demo draaiboek" },
     ],
   },
+  {
+    title: "Golden Rulebook Compliance",
+    subtitle: "Common Ground architectuurstandaarden",
+    rows: [
+      { id: "GR1", naam: "5-lagenmodel (Common Ground)", prio: "eis", status: "yes", toelichting: "src/ui, src/process, src/integration, src/service, src/data. Dependency direction strict downward." },
+      { id: "GR2", naam: "API-First (OpenAPI → types)", prio: "eis", status: "yes", toelichting: "OpenAPI 3.0 spec als bron, openapi-typescript genereert types, alle v1 routes gebruiken gegenereerde types." },
+      { id: "GR3", naam: "Dependency direction", prio: "eis", status: "yes", toelichting: "UI → Process → Integration → Service → Data. Nooit omhoog importeren." },
+      { id: "GR4", naam: "Portability (Docker + Helm + Haven)", prio: "eis", status: "yes", toelichting: "Dockerfile (multi-stage), Helm chart (deployment, service, ingress), publiccode.yml.", link: "/admin", linkTitle: "Beheer" },
+      { id: "GR5", naam: "Database migrations (versiebeheerd)", prio: "eis", status: "yes", toelichting: "Prisma migrations in prisma/migrations/. Geen db push in productie." },
+      { id: "GR6", naam: "Bestanden < 300 regels", prio: "eis", status: "yes", toelichting: "Grootste pagina gesplitst van 1339 naar 8 bestanden, alle < 300 regels." },
+      { id: "GR7", naam: "Barrel exports (index.ts)", prio: "wens", status: "yes", toelichting: "Index.ts bestanden per laag: service/, process/, integration/, ui/components/." },
+      { id: "GR8", naam: "Zod input validation", prio: "eis", status: "yes", toelichting: "Zod schemas op 10 API routes. Gedeelde schemas in process/validation.ts." },
+      { id: "GR9", naam: "Geen @ts-nocheck", prio: "eis", status: "yes", toelichting: "Verwijderd uit alle bestanden, type-errors opgelost." },
+      { id: "GR10", naam: "CSP security headers", prio: "eis", status: "yes", toelichting: "7 headers: X-XSS-Protection, X-Frame-Options, HSTS, CSP, Referrer-Policy, Permissions-Policy, X-Content-Type-Options." },
+      { id: "GR11", naam: "Rate limiting", prio: "eis", status: "yes", toelichting: "withRateLimit() op alle publieke API endpoints. 100/min API, 10/min auth, 30/min admin." },
+      { id: "GR12", naam: "Unit tests", prio: "eis", status: "partial", toelichting: "264 tests in 18 bestanden. Coverage ~50%, doel is >80%." },
+      { id: "GR13", naam: "E2E tests", prio: "wens", status: "partial", toelichting: "26 Playwright tests. Alleen happy paths, geen sad paths." },
+      { id: "GR14", naam: "WCAG 2.1 AA", prio: "eis", status: "yes", toelichting: "axe-core audit: 0 violations. Click-based dropdowns voor touch devices." },
+      { id: "GR15", naam: "License audit", prio: "wens", status: "yes", toelichting: "Dependency analysis pagina op /admin/dependencies met licentie-overzicht.", link: "/admin/dependencies", linkTitle: "Dependencies" },
+      { id: "GR16", naam: "No vendor lock-in", prio: "wens", status: "partial", toelichting: "Vercel-specifieke middleware en deploy. Docker + Helm beschikbaar als alternatief." },
+      { id: "GR17", naam: "NEN 7510 security audit", prio: "eis", status: "no", toelichting: "Externe audit nodig, niet technisch op te lossen." },
+      { id: "GR18", naam: "Feature-based directories", prio: "wens", status: "partial", toelichting: "Route-based (Next.js conventie). Feature-specifieke componenten co-located bij pagina's. Barrel exports aanwezig." },
+    ],
+  },
 ];
 
 /* ── Stats computation ── */
@@ -239,6 +263,12 @@ export interface PveStats {
   couldNo: number;
   /** Percentage of all requirements that are yes or partial (rounded, no decimals) */
   coveragePercent: number;
+  /** Golden Rulebook stats */
+  grTotal: number;
+  grYes: number;
+  grPartial: number;
+  grNo: number;
+  grPercent: number;
 }
 
 export function computePveStats(): PveStats {
@@ -269,6 +299,14 @@ export function computePveStats(): PveStats {
 
   const coveragePercent = total > 0 ? Math.round(((yes + partial) / total) * 100) : 0;
 
+  // Golden Rulebook stats (rows with id starting with "GR")
+  const grRows = allRows.filter((r) => r.id.startsWith("GR"));
+  const grTotal = grRows.length;
+  const grYes = grRows.filter((r) => r.status === "yes").length;
+  const grPartial = grRows.filter((r) => r.status === "partial").length;
+  const grNo = grRows.filter((r) => r.status === "no").length;
+  const grPercent = grTotal > 0 ? Math.round(((grYes + grPartial) / grTotal) * 100) : 0;
+
   return {
     total,
     yes,
@@ -288,5 +326,10 @@ export function computePveStats(): PveStats {
     couldPartial: couldStats.partial,
     couldNo: couldStats.no,
     coveragePercent,
+    grTotal,
+    grYes,
+    grPartial,
+    grNo,
+    grPercent,
   };
 }
