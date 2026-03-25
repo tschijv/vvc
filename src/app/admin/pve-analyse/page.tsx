@@ -261,6 +261,8 @@ export default async function PveAnalysePage() {
               <li><strong>Deploy naar productie</strong> — Eén-klik deploy met live terminal streaming</li>
               <li><strong>Wachtwoordbeveiliging</strong> — Basic Auth op Vercel met eenmalige login (cookie)</li>
               <li><strong>Responsiveness &amp; Dark mode</strong></li>
+              <li><strong>Geautomatiseerde tests</strong> — 264 unit tests (89.76% coverage) + 26+ E2E Playwright tests</li>
+              <li><strong>Golden Rulebook</strong> — 5-lagenmodel, API-First, CSP headers, Zod validation, Haven, Helm</li>
             </ol>
           </div>
           <div className="points-card gaps">
@@ -268,8 +270,8 @@ export default async function PveAnalysePage() {
             <ol>
               <li><strong>2FA/TOTP</strong> — Alleen email + wachtwoord</li>
               <li><strong>Multi-organisatie toegang</strong> — User = 1 organisatie</li>
-              <li><strong>Geautomatiseerde tests</strong> — Geen tests aanwezig</li>
               <li><strong>OTAP / CI/CD</strong> — Geen pipeline of omgevingen</li>
+              <li><strong>NEN 7510</strong> — Externe security audit nodig</li>
             </ol>
           </div>
         </div>
