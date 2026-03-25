@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth-helpers";
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
-import Image from "next/image";
+import MimDiagram from "./MimDiagram";
 
 const domeinen = [
   {
@@ -114,25 +114,11 @@ export default async function DatamodelPage() {
         </div>
       </div>
 
-      {/* MIM Diagram */}
+      {/* MIM Diagram — dynamisch gegenereerd uit data */}
       <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-3">UML-klassendiagram</h2>
         <div className="overflow-auto border border-gray-100 rounded bg-gray-50 p-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/mim-informatiemodel.svg"
-            alt="MIM Logisch Informatiemodel Voorzieningencatalogus"
-            className="max-w-none"
-            style={{ minWidth: 900 }}
-          />
-        </div>
-        <div className="flex gap-3 mt-3">
-          <a href="/mim-informatiemodel.svg" download className="text-sm text-[#1a6ca8] hover:underline">
-            ⬇ Download SVG
-          </a>
-          <a href="/mim-informatiemodel.png" download className="text-sm text-[#1a6ca8] hover:underline">
-            ⬇ Download PNG
-          </a>
+          <MimDiagram domeinen={domeinen} koppelklassen={koppelklassen} />
         </div>
       </div>
 
