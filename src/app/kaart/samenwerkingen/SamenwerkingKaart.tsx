@@ -10,7 +10,7 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
-import type { SamenwerkingKaartItem } from "@/service/samenwerking-kaart";
+import type { SamenwerkingKaartData } from "@/service/samenwerking-kaart";
 import Spinner from "@/ui/components/Spinner";
 import ErrorAlert from "@/ui/components/ErrorAlert";
 
@@ -23,13 +23,12 @@ interface GeoProperties {
 }
 
 interface SamenwerkingKaartProps {
-  samenwerkingen: SamenwerkingKaartItem[];
+  samenwerkingen: SamenwerkingKaartData[];
 }
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
-const MEMBER_COLOR = "#1a6ca8";
-const NON_MEMBER_COLOR = "#e5e7eb";
+const NON_MEMBER_COLOR = "#f3f4f6";
 const HOVER_COLOR = "#e35b10";
 
 const NL_BOUNDS: L.LatLngBoundsExpression = [
@@ -46,56 +45,70 @@ function cbsFromStatcode(statcode: string): string {
 
 // ─── Fit Bounds Component ───────────────────────────────────────────────────
 
-function FitBounds() {
+function FitBounds({ bounds }: { bounds?: L.LatLngBoundsExpression }) {
   const map = useMap();
   useEffect(() => {
-    map.fitBounds(NL_BOUNDS, { padding: [10, 10] });
-    setTimeout(() => {
-      const currentZoom = map.getZoom();
-      map.setZoom(currentZoom + 1);
-    }, 100);
-  }, [map]);
+    if (bounds) {
+      map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
+    } else {
+      map.fitBounds(NL_BOUNDS, { padding: [10, 10] });
+      setTimeout(() => {
+        const currentZoom = map.getZoom();
+        map.setZoom(currentZoom + 1);
+      }, 100);
+    }
+  }, [map, bounds]);
   return null;
 }
 
-// ─── Legend Component ───────────────────────────────────────────────────────
+// ─── Legend Item ─────────────────────────────────────────────────────────────
 
-function Legenda({
+function LegendItem({
   samenwerking,
+  isActive,
+  onClick,
 }: {
-  samenwerking: SamenwerkingKaartItem | null;
+  samenwerking: SamenwerkingKaartData;
+  isActive: boolean;
+  onClick: () => void;
 }) {
-  if (!samenwerking) return null;
-
   return (
-    <div className="absolute top-2.5 right-2.5 z-[400] bg-white dark:bg-gray-800 rounded-md px-3.5 py-2.5 shadow-md text-xs">
-      <div className="font-semibold text-gray-700 dark:text-gray-200 mb-1.5">
-        {samenwerking.naam}
-      </div>
-      {samenwerking.type && (
-        <div className="text-gray-500 dark:text-gray-400 mb-1">
-          Type: {samenwerking.type}
+    <button
+      onClick={onClick}
+      className={`w-full text-left p-3 rounded-lg border transition-all hover:shadow-sm ${
+        isActive
+          ? "border-[#1a6ca8] bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700"
+          : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+      }`}
+    >
+      <div className="flex items-start gap-2">
+        <span
+          className="inline-block w-3.5 h-3.5 rounded-full mt-0.5 shrink-0 border border-black/10"
+          style={{ backgroundColor: samenwerking.kleur }}
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
+              {samenwerking.naam}
+            </span>
+            {samenwerking.type && (
+              <span className="inline-block px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
+                {samenwerking.type}
+              </span>
+            )}
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            {samenwerking.stats.aantalLeden} leden
+            {" \u00b7 "}
+            {samenwerking.stats.totaalPakketten} pakketten
+            {" \u00b7 "}
+            {samenwerking.stats.totaalKoppelingen} koppelingen
+            {" \u00b7 "}
+            {samenwerking.stats.gemiddeldeVoortgang}% voortgang
+          </div>
         </div>
-      )}
-      <div className="text-gray-500 dark:text-gray-400 mb-2">
-        {samenwerking.organisaties.length} deelnemende gemeente
-        {samenwerking.organisaties.length !== 1 ? "n" : ""}
       </div>
-      <div className="flex items-center gap-1.5 mb-0.5">
-        <span
-          className="inline-block w-4 h-3 rounded-sm border border-black/10"
-          style={{ background: MEMBER_COLOR }}
-        />
-        <span className="text-gray-600 dark:text-gray-300">Deelnemer</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        <span
-          className="inline-block w-4 h-3 rounded-sm border border-black/10"
-          style={{ background: NON_MEMBER_COLOR }}
-        />
-        <span className="text-gray-400 dark:text-gray-500">Overig</span>
-      </div>
-    </div>
+    </button>
   );
 }
 
@@ -105,36 +118,49 @@ export default function SamenwerkingKaart({
   samenwerkingen,
 }: SamenwerkingKaartProps) {
   const [geojson, setGeojson] = useState<FeatureCollection | null>(null);
-  const [selectedId, setSelectedId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [focusedId, setFocusedId] = useState<string | null>(null);
+  const [fitBounds, setFitBounds] = useState<L.LatLngBoundsExpression | undefined>(undefined);
   const geoJsonRef = useRef<L.GeoJSON | null>(null);
 
   const setGeoJsonRef = useCallback((ref: L.GeoJSON | null) => {
     geoJsonRef.current = ref;
   }, []);
 
-  const selectedSamenwerking = useMemo(
-    () => samenwerkingen.find((s) => s.id === selectedId) ?? null,
-    [samenwerkingen, selectedId]
-  );
+  // Build lookup: cbsCode -> samenwerking color (first match wins)
+  // Also build: cbsCode -> list of samenwerkingen (for popups)
+  const { colorMap, membershipMap, nameToColorMap, nameToMembershipMap } = useMemo(() => {
+    const colorMap = new Map<string, string>();
+    const membershipMap = new Map<string, SamenwerkingKaartData[]>();
+    const nameToColorMap = new Map<string, string>();
+    const nameToMembershipMap = new Map<string, SamenwerkingKaartData[]>();
 
-  // Build a Set of CBS codes and names for the selected samenwerking
-  const memberCbsCodes = useMemo(() => {
-    if (!selectedSamenwerking) return new Set<string>();
-    return new Set(
-      selectedSamenwerking.organisaties
-        .filter((o) => o.cbsCode)
-        .map((o) => o.cbsCode!)
-    );
-  }, [selectedSamenwerking]);
+    for (const sw of samenwerkingen) {
+      for (const lid of sw.leden) {
+        if (lid.cbsCode) {
+          if (!colorMap.has(lid.cbsCode)) {
+            colorMap.set(lid.cbsCode, sw.kleur);
+          }
+          if (!membershipMap.has(lid.cbsCode)) {
+            membershipMap.set(lid.cbsCode, []);
+          }
+          membershipMap.get(lid.cbsCode)!.push(sw);
+        }
+        // Also map by lowercased name for fallback matching
+        const lowerNaam = lid.naam.toLowerCase();
+        if (!nameToColorMap.has(lowerNaam)) {
+          nameToColorMap.set(lowerNaam, sw.kleur);
+        }
+        if (!nameToMembershipMap.has(lowerNaam)) {
+          nameToMembershipMap.set(lowerNaam, []);
+        }
+        nameToMembershipMap.get(lowerNaam)!.push(sw);
+      }
+    }
 
-  const memberNames = useMemo(() => {
-    if (!selectedSamenwerking) return new Set<string>();
-    return new Set(
-      selectedSamenwerking.organisaties.map((o) => o.naam.toLowerCase())
-    );
-  }, [selectedSamenwerking]);
+    return { colorMap, membershipMap, nameToColorMap, nameToMembershipMap };
+  }, [samenwerkingen]);
 
   // Load GeoJSON
   useEffect(() => {
@@ -153,49 +179,79 @@ export default function SamenwerkingKaart({
     loadGeoJson();
   }, []);
 
-  /** Check if a GeoJSON feature is a member of the selected samenwerking. */
-  const isMember = useCallback(
-    (feature: Feature<Geometry, GeoProperties>): boolean => {
-      if (!selectedSamenwerking) return false;
+  /** Get color for a feature based on samenwerking membership. */
+  const getFeatureColor = useCallback(
+    (feature: Feature<Geometry, GeoProperties>): string => {
       const code = cbsFromStatcode(feature.properties.statcode);
-      if (memberCbsCodes.has(code)) return true;
+      if (colorMap.has(code)) return colorMap.get(code)!;
       const naam = feature.properties.statnaam?.toLowerCase();
-      if (naam && memberNames.has(naam)) return true;
-      return false;
+      if (naam && nameToColorMap.has(naam)) return nameToColorMap.get(naam)!;
+      return NON_MEMBER_COLOR;
     },
-    [selectedSamenwerking, memberCbsCodes, memberNames]
+    [colorMap, nameToColorMap]
+  );
+
+  /** Get samenwerkingen for a feature. */
+  const getFeatureMemberships = useCallback(
+    (feature: Feature<Geometry, GeoProperties>): SamenwerkingKaartData[] => {
+      const code = cbsFromStatcode(feature.properties.statcode);
+      if (membershipMap.has(code)) return membershipMap.get(code)!;
+      const naam = feature.properties.statnaam?.toLowerCase();
+      if (naam && nameToMembershipMap.has(naam))
+        return nameToMembershipMap.get(naam)!;
+      return [];
+    },
+    [membershipMap, nameToMembershipMap]
   );
 
   // Style each feature
   const style = useCallback(
     (feature: Feature<Geometry, GeoProperties> | undefined) => {
       if (!feature) return {};
-      const member = isMember(feature);
+      const color = getFeatureColor(feature);
+      const isMember = color !== NON_MEMBER_COLOR;
+
+      // If a samenwerking is focused, dim non-members of that samenwerking
+      let opacity = isMember ? 0.75 : 0.4;
+      if (focusedId) {
+        const memberships = getFeatureMemberships(feature);
+        const isFocusMember = memberships.some((m) => m.id === focusedId);
+        opacity = isFocusMember ? 0.9 : 0.2;
+      }
 
       return {
-        fillColor: selectedId ? (member ? MEMBER_COLOR : NON_MEMBER_COLOR) : NON_MEMBER_COLOR,
+        fillColor: color,
         weight: 1,
         opacity: 1,
         color: "white",
-        fillOpacity: member ? 0.85 : 0.5,
+        fillOpacity: opacity,
       };
     },
-    [selectedId, isMember]
+    [getFeatureColor, getFeatureMemberships, focusedId]
   );
 
   // Hover + click handlers
   const onEachFeature = useCallback(
     (feature: Feature<Geometry, GeoProperties>, layer: L.Layer) => {
       const naam = feature.properties.statnaam;
-      const member = isMember(feature);
       const code = cbsFromStatcode(feature.properties.statcode);
+      const memberships = getFeatureMemberships(feature);
 
-      // Popup with gemeente name and optional link
+      // Build popup content
+      const samenwerkingLines = memberships.length > 0
+        ? memberships
+            .map(
+              (sw) =>
+                `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${sw.kleur};margin-right:4px;"></span>${sw.naam}`
+            )
+            .join("<br/>")
+        : '<span style="color:#9ca3af;">Geen samenwerkingsverband</span>';
+
       const popupContent = `
-        <div style="font-size:13px;">
+        <div style="font-size:13px;max-width:250px;">
           <strong>${naam}</strong>
-          ${selectedId && member ? '<br/><span style="color:#1a6ca8;">Deelnemer</span>' : ""}
-          <br/><a href="/gemeenten/${code}" style="color:#1a6ca8;text-decoration:underline;font-size:12px;">Bekijk gemeente</a>
+          <div style="margin-top:4px;font-size:12px;line-height:1.6;">${samenwerkingLines}</div>
+          <a href="/gemeenten/${code}" style="color:#1a6ca8;text-decoration:underline;font-size:12px;display:inline-block;margin-top:4px;">Bekijk gemeente →</a>
         </div>
       `;
       layer.bindPopup(popupContent);
@@ -211,7 +267,45 @@ export default function SamenwerkingKaart({
         },
       });
     },
-    [selectedId, isMember]
+    [getFeatureMemberships]
+  );
+
+  /** Handle clicking a legend item: zoom to that samenwerking's area. */
+  const handleLegendClick = useCallback(
+    (sw: SamenwerkingKaartData) => {
+      if (!geojson) return;
+
+      // Toggle focus
+      if (focusedId === sw.id) {
+        setFocusedId(null);
+        setFitBounds(undefined);
+        return;
+      }
+
+      setFocusedId(sw.id);
+
+      // Find bounds for this samenwerking's member gemeenten
+      const cbsCodes = new Set(
+        sw.leden.filter((l) => l.cbsCode).map((l) => l.cbsCode!)
+      );
+      const names = new Set(sw.leden.map((l) => l.naam.toLowerCase()));
+
+      const bounds = L.latLngBounds([]);
+      for (const feature of geojson.features) {
+        const props = feature.properties as GeoProperties;
+        const code = cbsFromStatcode(props.statcode);
+        const naam = props.statnaam?.toLowerCase();
+        if (cbsCodes.has(code) || (naam && names.has(naam))) {
+          const layer = L.geoJSON(feature);
+          bounds.extend(layer.getBounds());
+        }
+      }
+
+      if (bounds.isValid()) {
+        setFitBounds(bounds);
+      }
+    },
+    [geojson, focusedId]
   );
 
   if (loading) {
@@ -226,80 +320,86 @@ export default function SamenwerkingKaart({
   if (!geojson) return null;
 
   return (
-    <div>
-      {/* Dropdown selector */}
-      <div className="mb-4">
-        <label
-          htmlFor="samenwerking-select"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          Selecteer een samenwerkingsverband
-        </label>
-        <select
-          id="samenwerking-select"
-          value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
-          className="w-full max-w-md border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#1a6ca8] focus:border-transparent"
-        >
-          <option value="">Kies een samenwerkingsverband...</option>
-          {samenwerkingen.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.naam}
-              {s.type ? ` (${s.type})` : ""}
-              {` — ${s.organisaties.length} gemeenten`}
-            </option>
-          ))}
-        </select>
-      </div>
-
+    <div className="flex flex-col lg:flex-row gap-4">
       {/* Map */}
-      <div className="relative z-0 h-[700px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-        <Legenda samenwerking={selectedSamenwerking} />
-        <MapContainer
-          center={NL_CENTER}
-          zoom={7}
-          style={{ height: "100%", width: "100%", background: "#f0f4f8" }}
-          scrollWheelZoom={true}
-          zoomControl={true}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-          />
-          <GeoJSON
-            key={selectedId || "none"}
-            ref={setGeoJsonRef}
-            data={geojson}
-            style={style as L.StyleFunction}
-            onEachFeature={
-              onEachFeature as (
-                feature: Feature<Geometry, Record<string, unknown>>,
-                layer: L.Layer
-              ) => void
-            }
-          />
-          <FitBounds />
-        </MapContainer>
+      <div className="flex-1 min-w-0">
+        <div className="relative z-0 h-[700px] rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+          <MapContainer
+            center={NL_CENTER}
+            zoom={7}
+            style={{ height: "100%", width: "100%", background: "#f0f4f8" }}
+            scrollWheelZoom={true}
+            zoomControl={true}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
+            />
+            <GeoJSON
+              key={focusedId || "all"}
+              ref={setGeoJsonRef}
+              data={geojson}
+              style={style as L.StyleFunction}
+              onEachFeature={
+                onEachFeature as (
+                  feature: Feature<Geometry, Record<string, unknown>>,
+                  layer: L.Layer
+                ) => void
+              }
+            />
+            <FitBounds bounds={fitBounds} />
+          </MapContainer>
+        </div>
       </div>
 
-      {/* Member list */}
-      {selectedSamenwerking && (
-        <div className="mt-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
-            Deelnemende gemeenten ({selectedSamenwerking.organisaties.length})
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {selectedSamenwerking.organisaties.map((o) => (
-              <span
-                key={o.naam}
-                className="inline-block px-2 py-0.5 text-xs bg-blue-50 dark:bg-blue-900/30 text-[#1a6ca8] dark:text-blue-300 border border-blue-200 dark:border-blue-800 rounded"
+      {/* Legend panel */}
+      <div className="w-full lg:w-80 xl:w-96 shrink-0">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+              Samenwerkingsverbanden ({samenwerkingen.length})
+            </h2>
+            {focusedId && (
+              <button
+                onClick={() => {
+                  setFocusedId(null);
+                  setFitBounds(undefined);
+                }}
+                className="text-xs text-[#1a6ca8] dark:text-blue-400 hover:underline mt-1"
               >
-                {o.naam}
-              </span>
+                Toon alles
+              </button>
+            )}
+          </div>
+          <div className="p-3 space-y-2 max-h-[620px] overflow-y-auto">
+            {samenwerkingen.map((sw) => (
+              <LegendItem
+                key={sw.id}
+                samenwerking={sw}
+                isActive={focusedId === sw.id}
+                onClick={() => handleLegendClick(sw)}
+              />
             ))}
+            {samenwerkingen.length === 0 && (
+              <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+                Geen samenwerkingsverbanden gevonden.
+              </p>
+            )}
+          </div>
+          {/* Color legend for non-members */}
+          <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-1.5">
+              <span
+                className="inline-block w-3.5 h-3 rounded-sm border border-black/10"
+                style={{ background: NON_MEMBER_COLOR }}
+              />
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                Geen samenwerkingsverband
+              </span>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
