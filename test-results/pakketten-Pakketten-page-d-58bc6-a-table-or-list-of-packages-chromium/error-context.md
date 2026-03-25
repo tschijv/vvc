@@ -1,0 +1,119 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Ga naar inhoud" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "VNG Voorzieningencatalogus" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: VNG Voorzieningencatalogus
+      - generic [ref=e7]: websites VNG Realisatie ▾
+  - navigation "Hoofdnavigatie" [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11] [cursor=pointer]:
+        - text: Hoe werkt de catalogus
+        - generic [ref=e12]: ▾
+      - generic [ref=e14] [cursor=pointer]:
+        - text: Wat is er te vinden
+        - generic [ref=e15]: ▾
+      - generic [ref=e17] [cursor=pointer]:
+        - text: Wie doet er mee
+        - generic [ref=e18]: ▾
+      - generic [ref=e20] [cursor=pointer]:
+        - text: Praktijkvoorbeelden
+        - generic [ref=e21]: ▾
+      - link "Gebruikersonderzoeken" [ref=e22] [cursor=pointer]:
+        - /url: /info/gebruikersonderzoeken
+      - generic [ref=e23]:
+        - link "Handleiding openen" [ref=e24] [cursor=pointer]:
+          - /url: /help
+          - text: "?"
+        - button "Donker thema" [ref=e25]:
+          - img [ref=e26]
+        - link "Inloggen" [ref=e28] [cursor=pointer]:
+          - /url: /auth/login
+  - main [ref=e29]:
+    - generic [ref=e30]:
+      - complementary [ref=e31]
+      - main [ref=e43]:
+        - table [ref=e49]:
+          - rowgroup [ref=e50]:
+            - row [ref=e51]:
+              - columnheader [ref=e52]
+              - columnheader [ref=e54]
+              - columnheader [ref=e56]
+          - rowgroup [ref=e58]:
+            - row [ref=e59]:
+              - cell [ref=e60]
+              - cell [ref=e62]
+              - cell [ref=e64]
+            - row [ref=e66]:
+              - cell [ref=e67]
+              - cell [ref=e69]
+              - cell [ref=e71]
+            - row [ref=e73]:
+              - cell [ref=e74]
+              - cell [ref=e76]
+              - cell [ref=e78]
+            - row [ref=e80]:
+              - cell [ref=e81]
+              - cell [ref=e83]
+              - cell [ref=e85]
+            - row [ref=e87]:
+              - cell [ref=e88]
+              - cell [ref=e90]
+              - cell [ref=e92]
+            - row [ref=e94]:
+              - cell [ref=e95]
+              - cell [ref=e97]
+              - cell [ref=e99]
+            - row [ref=e101]:
+              - cell [ref=e102]
+              - cell [ref=e104]
+              - cell [ref=e106]
+            - row [ref=e108]:
+              - cell [ref=e109]
+              - cell [ref=e111]
+              - cell [ref=e113]
+  - contentinfo "Footer" [ref=e115]:
+    - generic [ref=e116]:
+      - generic [ref=e117]:
+        - link "Onderwerpen VNG" [ref=e118] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacyverklaring" [ref=e119] [cursor=pointer]:
+          - /url: "#"
+        - link "Over VNG Realisatie" [ref=e120] [cursor=pointer]:
+          - /url: "#"
+        - link "Vacatures" [ref=e121] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e122]:
+        - link "Agenda VNG" [ref=e123] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuws" [ref=e124] [cursor=pointer]:
+          - /url: "#"
+        - link "Contact" [ref=e125] [cursor=pointer]:
+          - /url: "#"
+        - link "Meld aan VNG Realisatie" [ref=e126] [cursor=pointer]:
+          - /url: "#"
+        - link "Help" [ref=e127] [cursor=pointer]:
+          - /url: /help
+      - generic [ref=e128]:
+        - link "Twitter" [ref=e129] [cursor=pointer]:
+          - /url: "#"
+        - link "Linkedin" [ref=e130] [cursor=pointer]:
+          - /url: "#"
+        - link "Youtube" [ref=e131] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuwsbrief GEMMA" [ref=e132] [cursor=pointer]:
+          - /url: "#"
+        - link "RSS Feed" [ref=e133] [cursor=pointer]:
+          - /url: /api/feed
+          - img [ref=e134]
+          - text: RSS Feed
+    - generic [ref=e137]: Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
+  - button "Open Next.js Dev Tools" [ref=e143] [cursor=pointer]:
+    - img [ref=e144]
+  - alert [ref=e147]
+```

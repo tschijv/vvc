@@ -1,0 +1,535 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - link "Ga naar inhoud" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "VNG Voorzieningencatalogus" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: VNG Voorzieningencatalogus
+      - generic [ref=e7]: websites VNG Realisatie ▾
+  - navigation "Hoofdnavigatie" [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11] [cursor=pointer]:
+        - text: Hoe werkt de catalogus
+        - generic [ref=e12]: ▾
+      - generic [ref=e14] [cursor=pointer]:
+        - text: Wat is er te vinden
+        - generic [ref=e15]: ▾
+      - generic [ref=e17] [cursor=pointer]:
+        - text: Wie doet er mee
+        - generic [ref=e18]: ▾
+      - generic [ref=e20] [cursor=pointer]:
+        - text: Praktijkvoorbeelden
+        - generic [ref=e21]: ▾
+      - link "Gebruikersonderzoeken" [ref=e22] [cursor=pointer]:
+        - /url: /info/gebruikersonderzoeken
+      - generic [ref=e23]:
+        - link "Handleiding openen" [ref=e24] [cursor=pointer]:
+          - /url: /help
+          - text: "?"
+        - button "Donker thema" [ref=e25]:
+          - img [ref=e26]
+        - link "Inloggen" [ref=e28] [cursor=pointer]:
+          - /url: /auth/login
+  - main [ref=e29]:
+    - generic [ref=e30]:
+      - navigation "Breadcrumb" [ref=e31]:
+        - list [ref=e32]:
+          - listitem [ref=e33]:
+            - link "Home" [ref=e34] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e35]:
+            - generic [ref=e36]: ›
+            - generic [ref=e37]: Gemeenten
+      - generic [ref=e38]:
+        - heading "Gemeenten" [level=1] [ref=e39]
+        - generic [ref=e40]:
+          - link "Export to CSV" [active] [ref=e41] [cursor=pointer]:
+            - /url: /api/gemeenten/export?zoek=
+          - link "Vergelijken" [ref=e42] [cursor=pointer]:
+            - /url: /gemeenten/vergelijk
+            - img [ref=e43]
+            - text: Vergelijken
+      - generic [ref=e45]:
+        - generic [ref=e47]:
+          - heading "Pakket" [level=3] [ref=e48]
+          - generic [ref=e49]:
+            - generic [ref=e50] [cursor=pointer]:
+              - checkbox "Key2Datadistributie (1)" [ref=e51]
+              - link "Key2Datadistributie (1)" [ref=e52]:
+                - /url: /gemeenten?pakket=c8cef201-e0bd-4462-b283-a0569f8bc2d3
+            - generic [ref=e53] [cursor=pointer]:
+              - checkbox "Centric Objectregistratie / (Key2)BAG (1)" [ref=e54]
+              - link "Centric Objectregistratie / (Key2)BAG (1)" [ref=e55]:
+                - /url: /gemeenten?pakket=e145df6b-c807-4daf-ba43-f5e06aa0b7f5
+            - generic [ref=e56] [cursor=pointer]:
+              - checkbox "Centric Burgerzaken (1)" [ref=e57]
+              - link "Centric Burgerzaken (1)" [ref=e58]:
+                - /url: /gemeenten?pakket=a36545a1-bb77-443a-bd68-d89f2461ba40
+            - generic [ref=e59] [cursor=pointer]:
+              - checkbox "Key2VOA (1)" [ref=e60]
+              - link "Key2VOA (1)" [ref=e61]:
+                - /url: /gemeenten?pakket=34e61bc2-abe0-4b1e-923b-47d5a3497fb1
+            - generic [ref=e62] [cursor=pointer]:
+              - checkbox "Key2GBA-V (1)" [ref=e63]
+              - link "Key2GBA-V (1)" [ref=e64]:
+                - /url: /gemeenten?pakket=b78aec56-4892-4948-a961-a60ab093324c
+            - generic [ref=e65] [cursor=pointer]:
+              - checkbox "Centric Begraven (1)" [ref=e66]
+              - link "Centric Begraven (1)" [ref=e67]:
+                - /url: /gemeenten?pakket=9fa6d728-d9d0-4ecb-b8a3-ce9aa3778d55
+            - generic [ref=e68] [cursor=pointer]:
+              - checkbox "OpenTunnel (1)" [ref=e69]
+              - link "OpenTunnel (1)" [ref=e70]:
+                - /url: /gemeenten?pakket=9855d06b-6862-4a93-b909-3397019b696f
+            - generic [ref=e71] [cursor=pointer]:
+              - checkbox "I-Controler (1)" [ref=e72]
+              - link "I-Controler (1)" [ref=e73]:
+                - /url: /gemeenten?pakket=d9177185-da1a-40a3-bfc0-e0420ecc3ec0
+            - generic [ref=e74] [cursor=pointer]:
+              - checkbox "Governance Controller (1)" [ref=e75]
+              - link "Governance Controller (1)" [ref=e76]:
+                - /url: /gemeenten?pakket=e742cbed-ec61-4861-9d8f-608db63ed8a3
+            - generic [ref=e77] [cursor=pointer]:
+              - checkbox "Rx.Front (1)" [ref=e78]
+              - link "Rx.Front (1)" [ref=e79]:
+                - /url: /gemeenten?pakket=41a2d42c-abb8-4451-9c8e-cc48984780f2
+            - generic [ref=e80] [cursor=pointer]:
+              - checkbox "Roxit KCS (1)" [ref=e81]
+              - link "Roxit KCS (1)" [ref=e82]:
+                - /url: /gemeenten?pakket=63496c8e-77f6-4ee5-abc9-168d10e5b82a
+            - generic [ref=e83] [cursor=pointer]:
+              - checkbox "Onegov (1)" [ref=e84]
+              - link "Onegov (1)" [ref=e85]:
+                - /url: /gemeenten?pakket=308aedb0-adb2-4e2c-9628-e499d2f6f0c3
+            - generic [ref=e86] [cursor=pointer]:
+              - checkbox "Decos D5 (1)" [ref=e87]
+              - link "Decos D5 (1)" [ref=e88]:
+                - /url: /gemeenten?pakket=7ceb8f36-0798-465e-90b7-940e48a9ac49
+            - generic [ref=e89] [cursor=pointer]:
+              - checkbox "Decos KCS (1)" [ref=e90]
+              - link "Decos KCS (1)" [ref=e91]:
+                - /url: /gemeenten?pakket=61a4177a-6529-44d5-8906-17cb4557021a
+            - generic [ref=e92] [cursor=pointer]:
+              - checkbox "Enable-U Digikoppeling (1)" [ref=e93]
+              - link "Enable-U Digikoppeling (1)" [ref=e94]:
+                - /url: /gemeenten?pakket=425e8804-620c-41d4-8cf9-32fda8059ae2
+            - generic [ref=e95] [cursor=pointer]:
+              - checkbox "Enable-U 2Orchestrate (1)" [ref=e96]
+              - link "Enable-U 2Orchestrate (1)" [ref=e97]:
+                - /url: /gemeenten?pakket=447e5c23-a0f7-4249-bcf8-5d887df205ce
+            - generic [ref=e98] [cursor=pointer]:
+              - checkbox "Enable-U 2See (1)" [ref=e99]
+              - link "Enable-U 2See (1)" [ref=e100]:
+                - /url: /gemeenten?pakket=5487fb99-19d8-4b6b-9fe0-bf8e55b01398
+            - generic [ref=e101] [cursor=pointer]:
+              - checkbox "Enable-U 2Secure (1)" [ref=e102]
+              - link "Enable-U 2Secure (1)" [ref=e103]:
+                - /url: /gemeenten?pakket=89fb2bb8-5ad2-47b1-9962-6b68a9320f6b
+            - generic [ref=e104] [cursor=pointer]:
+              - checkbox "Enable-U Digimelding (1)" [ref=e105]
+              - link "Enable-U Digimelding (1)" [ref=e106]:
+                - /url: /gemeenten?pakket=9197057b-ad7a-4378-81af-5b44f21411c4
+            - generic [ref=e107] [cursor=pointer]:
+              - checkbox "TriplEforms® (1)" [ref=e108]
+              - link "TriplEforms® (1)" [ref=e109]:
+                - /url: /gemeenten?pakket=a04707e8-42ba-4c93-bfd6-dc4592f272c3
+        - generic [ref=e110]:
+          - search [ref=e111]:
+            - generic [ref=e112]:
+              - textbox "Zoek in gemeenten" [ref=e113]
+              - button [ref=e114]:
+                - img [ref=e115]
+          - paragraph [ref=e117]: 342 resultaten gevonden.
+          - table [ref=e119]:
+            - rowgroup [ref=e120]:
+              - row "Naam Voortgang" [ref=e121]:
+                - columnheader "Naam" [ref=e122]:
+                  - link "Naam" [ref=e123] [cursor=pointer]:
+                    - /url: /gemeenten?zoek=&pagina=1
+                - columnheader "Voortgang" [ref=e124]:
+                  - link "Voortgang" [ref=e125] [cursor=pointer]:
+                    - /url: /gemeenten?zoek=&pagina=1
+            - rowgroup [ref=e126]:
+              - row "'s-Gravenhage" [ref=e127]:
+                - cell "'s-Gravenhage" [ref=e128]:
+                  - link "'s-Gravenhage" [ref=e129] [cursor=pointer]:
+                    - /url: /gemeenten/1f41e9e0-ac4d-471d-850a-9c083103667d
+                - cell [ref=e130]:
+                  - generic [ref=e131]:
+                    - img [ref=e132]
+                    - img [ref=e134]
+                    - img [ref=e136]
+                    - img [ref=e138]
+                    - img [ref=e140]
+              - row "'s-Hertogenbosch" [ref=e142]:
+                - cell "'s-Hertogenbosch" [ref=e143]:
+                  - link "'s-Hertogenbosch" [ref=e144] [cursor=pointer]:
+                    - /url: /gemeenten/de9dcafb-afd6-4e1d-854e-02b92f676c76
+                - cell [ref=e145]:
+                  - generic [ref=e146]:
+                    - img [ref=e147]
+                    - img [ref=e149]
+                    - img [ref=e151]
+                    - img [ref=e153]
+                    - img [ref=e155]
+              - row "Aa en Hunze" [ref=e157]:
+                - cell "Aa en Hunze" [ref=e158]:
+                  - link "Aa en Hunze" [ref=e159] [cursor=pointer]:
+                    - /url: /gemeenten/1b023702-6c4d-4b3b-8196-294badcc889e
+                - cell [ref=e160]:
+                  - generic [ref=e161]:
+                    - img [ref=e162]
+                    - img [ref=e164]
+                    - img [ref=e166]
+                    - img [ref=e168]
+                    - img [ref=e170]
+              - row "Aalsmeer" [ref=e172]:
+                - cell "Aalsmeer" [ref=e173]:
+                  - link "Aalsmeer" [ref=e174] [cursor=pointer]:
+                    - /url: /gemeenten/ff1eed2d-cddc-438d-bc3a-53f374c51fa1
+                - cell [ref=e175]:
+                  - generic [ref=e176]:
+                    - img [ref=e177]
+                    - img [ref=e179]
+                    - img [ref=e181]
+                    - img [ref=e183]
+                    - img [ref=e185]
+              - row "Aalten" [ref=e187]:
+                - cell "Aalten" [ref=e188]:
+                  - link "Aalten" [ref=e189] [cursor=pointer]:
+                    - /url: /gemeenten/447331d4-776a-4c57-9aaa-80f66d895290
+                - cell [ref=e190]:
+                  - generic [ref=e191]:
+                    - img [ref=e192]
+                    - img [ref=e194]
+                    - img [ref=e196]
+                    - img [ref=e198]
+                    - img [ref=e200]
+              - row "Achtkarspelen" [ref=e202]:
+                - cell "Achtkarspelen" [ref=e203]:
+                  - link "Achtkarspelen" [ref=e204] [cursor=pointer]:
+                    - /url: /gemeenten/29641359-cb8f-4cf8-891a-03f068e21002
+                - cell [ref=e205]:
+                  - generic [ref=e206]:
+                    - img [ref=e207]
+                    - img [ref=e209]
+                    - img [ref=e211]
+                    - img [ref=e213]
+                    - img [ref=e215]
+              - row "Alblasserdam" [ref=e217]:
+                - cell "Alblasserdam" [ref=e218]:
+                  - link "Alblasserdam" [ref=e219] [cursor=pointer]:
+                    - /url: /gemeenten/cf52ddbe-d6da-441e-93f6-cbd60701ecb7
+                - cell [ref=e220]:
+                  - generic [ref=e221]:
+                    - img [ref=e222]
+                    - img [ref=e224]
+                    - img [ref=e226]
+                    - img [ref=e228]
+                    - img [ref=e230]
+              - row "Albrandswaard" [ref=e232]:
+                - cell "Albrandswaard" [ref=e233]:
+                  - link "Albrandswaard" [ref=e234] [cursor=pointer]:
+                    - /url: /gemeenten/d738fdab-1529-42c9-9aba-ac92e73298a5
+                - cell [ref=e235]:
+                  - generic [ref=e236]:
+                    - img [ref=e237]
+                    - img [ref=e239]
+                    - img [ref=e241]
+                    - img [ref=e243]
+                    - img [ref=e245]
+              - row "Alkmaar" [ref=e247]:
+                - cell "Alkmaar" [ref=e248]:
+                  - link "Alkmaar" [ref=e249] [cursor=pointer]:
+                    - /url: /gemeenten/c2310897-c63d-4c3d-9fee-96a61e494dd1
+                - cell [ref=e250]:
+                  - generic [ref=e251]:
+                    - img [ref=e252]
+                    - img [ref=e254]
+                    - img [ref=e256]
+                    - img [ref=e258]
+                    - img [ref=e260]
+              - row "Almelo" [ref=e262]:
+                - cell "Almelo" [ref=e263]:
+                  - link "Almelo" [ref=e264] [cursor=pointer]:
+                    - /url: /gemeenten/881c41d5-35a3-49cf-8376-c2b72abbc7c2
+                - cell [ref=e265]:
+                  - generic [ref=e266]:
+                    - img [ref=e267]
+                    - img [ref=e269]
+                    - img [ref=e271]
+                    - img [ref=e273]
+                    - img [ref=e275]
+              - row "Almere" [ref=e277]:
+                - cell "Almere" [ref=e278]:
+                  - link "Almere" [ref=e279] [cursor=pointer]:
+                    - /url: /gemeenten/36d240ab-26e5-48af-b531-4915874e9f47
+                - cell [ref=e280]:
+                  - generic [ref=e281]:
+                    - img [ref=e282]
+                    - img [ref=e284]
+                    - img [ref=e286]
+                    - img [ref=e288]
+                    - img [ref=e290]
+              - row "Alphen aan den Rijn" [ref=e292]:
+                - cell "Alphen aan den Rijn" [ref=e293]:
+                  - link "Alphen aan den Rijn" [ref=e294] [cursor=pointer]:
+                    - /url: /gemeenten/ae2250fc-a60e-42d2-9dd3-eb117e22650c
+                - cell [ref=e295]:
+                  - generic [ref=e296]:
+                    - img [ref=e297]
+                    - img [ref=e299]
+                    - img [ref=e301]
+                    - img [ref=e303]
+                    - img [ref=e305]
+              - row "Alphen-Chaam" [ref=e307]:
+                - cell "Alphen-Chaam" [ref=e308]:
+                  - link "Alphen-Chaam" [ref=e309] [cursor=pointer]:
+                    - /url: /gemeenten/eda1a07b-cd85-4acf-a918-6c773e0ac4a5
+                - cell [ref=e310]:
+                  - generic [ref=e311]:
+                    - img [ref=e312]
+                    - img [ref=e314]
+                    - img [ref=e316]
+                    - img [ref=e318]
+                    - img [ref=e320]
+              - row "Altena" [ref=e322]:
+                - cell "Altena" [ref=e323]:
+                  - link "Altena" [ref=e324] [cursor=pointer]:
+                    - /url: /gemeenten/ba1b2636-b699-4727-b3fa-12fd3e1a6705
+                - cell [ref=e325]:
+                  - generic [ref=e326]:
+                    - img [ref=e327]
+                    - img [ref=e329]
+                    - img [ref=e331]
+                    - img [ref=e333]
+                    - img [ref=e335]
+              - row "Ameland" [ref=e337]:
+                - cell "Ameland" [ref=e338]:
+                  - link "Ameland" [ref=e339] [cursor=pointer]:
+                    - /url: /gemeenten/1b654221-f15c-4677-be13-24c5ee28b52a
+                - cell [ref=e340]:
+                  - generic [ref=e341]:
+                    - img [ref=e342]
+                    - img [ref=e344]
+                    - img [ref=e346]
+                    - img [ref=e348]
+                    - img [ref=e350]
+              - row "Amersfoort" [ref=e352]:
+                - cell "Amersfoort" [ref=e353]:
+                  - link "Amersfoort" [ref=e354] [cursor=pointer]:
+                    - /url: /gemeenten/504fa592-b314-4528-b566-906c2f034571
+                - cell [ref=e355]:
+                  - generic [ref=e356]:
+                    - img [ref=e357]
+                    - img [ref=e359]
+                    - img [ref=e361]
+                    - img [ref=e363]
+                    - img [ref=e365]
+              - row "Amstelveen" [ref=e367]:
+                - cell "Amstelveen" [ref=e368]:
+                  - link "Amstelveen" [ref=e369] [cursor=pointer]:
+                    - /url: /gemeenten/6a9d2388-cd64-45aa-8fef-1b6b1f1ed45e
+                - cell [ref=e370]:
+                  - generic [ref=e371]:
+                    - img [ref=e372]
+                    - img [ref=e374]
+                    - img [ref=e376]
+                    - img [ref=e378]
+                    - img [ref=e380]
+              - row "Amsterdam" [ref=e382]:
+                - cell "Amsterdam" [ref=e383]:
+                  - link "Amsterdam" [ref=e384] [cursor=pointer]:
+                    - /url: /gemeenten/9524d26f-c554-4179-9b1f-9f0fb4edcddb
+                - cell [ref=e385]:
+                  - generic [ref=e386]:
+                    - img [ref=e387]
+                    - img [ref=e389]
+                    - img [ref=e391]
+                    - img [ref=e393]
+                    - img [ref=e395]
+              - row "Apeldoorn" [ref=e397]:
+                - cell "Apeldoorn" [ref=e398]:
+                  - link "Apeldoorn" [ref=e399] [cursor=pointer]:
+                    - /url: /gemeenten/d1be6109-b75e-4910-a6b4-9ea7be567f90
+                - cell [ref=e400]:
+                  - generic [ref=e401]:
+                    - img [ref=e402]
+                    - img [ref=e404]
+                    - img [ref=e406]
+                    - img [ref=e408]
+                    - img [ref=e410]
+              - row "Arnhem" [ref=e412]:
+                - cell "Arnhem" [ref=e413]:
+                  - link "Arnhem" [ref=e414] [cursor=pointer]:
+                    - /url: /gemeenten/86bce966-77d0-4b68-b9a3-8c638c1561bd
+                - cell [ref=e415]:
+                  - generic [ref=e416]:
+                    - img [ref=e417]
+                    - img [ref=e419]
+                    - img [ref=e421]
+                    - img [ref=e423]
+                    - img [ref=e425]
+              - row "Assen" [ref=e427]:
+                - cell "Assen" [ref=e428]:
+                  - link "Assen" [ref=e429] [cursor=pointer]:
+                    - /url: /gemeenten/ac3fd5b6-78fb-445e-8dbf-28c2574f9166
+                - cell [ref=e430]:
+                  - generic [ref=e431]:
+                    - img [ref=e432]
+                    - img [ref=e434]
+                    - img [ref=e436]
+                    - img [ref=e438]
+                    - img [ref=e440]
+              - row "Asten" [ref=e442]:
+                - cell "Asten" [ref=e443]:
+                  - link "Asten" [ref=e444] [cursor=pointer]:
+                    - /url: /gemeenten/093a321f-7c50-4abd-be4c-20b9d8a3eb41
+                - cell [ref=e445]:
+                  - generic [ref=e446]:
+                    - img [ref=e447]
+                    - img [ref=e449]
+                    - img [ref=e451]
+                    - img [ref=e453]
+                    - img [ref=e455]
+              - row "Baarle-Nassau" [ref=e457]:
+                - cell "Baarle-Nassau" [ref=e458]:
+                  - link "Baarle-Nassau" [ref=e459] [cursor=pointer]:
+                    - /url: /gemeenten/ed8aaa6b-0912-45e7-84c7-7fa45b8b642d
+                - cell [ref=e460]:
+                  - generic [ref=e461]:
+                    - img [ref=e462]
+                    - img [ref=e464]
+                    - img [ref=e466]
+                    - img [ref=e468]
+                    - img [ref=e470]
+              - row "Baarn" [ref=e472]:
+                - cell "Baarn" [ref=e473]:
+                  - link "Baarn" [ref=e474] [cursor=pointer]:
+                    - /url: /gemeenten/fe0553b1-2cdf-4fe0-85e5-2b1b984907f0
+                - cell [ref=e475]:
+                  - generic [ref=e476]:
+                    - img [ref=e477]
+                    - img [ref=e479]
+                    - img [ref=e481]
+                    - img [ref=e483]
+                    - img [ref=e485]
+              - row "Barendrecht" [ref=e487]:
+                - cell "Barendrecht" [ref=e488]:
+                  - link "Barendrecht" [ref=e489] [cursor=pointer]:
+                    - /url: /gemeenten/58fef0a4-b5db-4e68-83d6-95438465beb3
+                - cell [ref=e490]:
+                  - generic [ref=e491]:
+                    - img [ref=e492]
+                    - img [ref=e494]
+                    - img [ref=e496]
+                    - img [ref=e498]
+                    - img [ref=e500]
+              - row "Barneveld" [ref=e502]:
+                - cell "Barneveld" [ref=e503]:
+                  - link "Barneveld" [ref=e504] [cursor=pointer]:
+                    - /url: /gemeenten/85a79cba-156a-406c-bce8-a7e7501d3c2b
+                - cell [ref=e505]:
+                  - generic [ref=e506]:
+                    - img [ref=e507]
+                    - img [ref=e509]
+                    - img [ref=e511]
+                    - img [ref=e513]
+                    - img [ref=e515]
+              - row "Beek" [ref=e517]:
+                - cell "Beek" [ref=e518]:
+                  - link "Beek" [ref=e519] [cursor=pointer]:
+                    - /url: /gemeenten/3c3845c1-4bda-49e6-88a8-6383bed12e07
+                - cell [ref=e520]:
+                  - generic [ref=e521]:
+                    - img [ref=e522]
+                    - img [ref=e524]
+                    - img [ref=e526]
+                    - img [ref=e528]
+                    - img [ref=e530]
+              - row "Beekdaelen" [ref=e532]:
+                - cell "Beekdaelen" [ref=e533]:
+                  - link "Beekdaelen" [ref=e534] [cursor=pointer]:
+                    - /url: /gemeenten/965e9ce6-619a-4175-866d-0c1486a6cdb8
+                - cell [ref=e535]:
+                  - generic [ref=e536]:
+                    - img [ref=e537]
+                    - img [ref=e539]
+                    - img [ref=e541]
+                    - img [ref=e543]
+                    - img [ref=e545]
+              - row "Beesel" [ref=e547]:
+                - cell "Beesel" [ref=e548]:
+                  - link "Beesel" [ref=e549] [cursor=pointer]:
+                    - /url: /gemeenten/9f00d3e0-5b23-4301-8a94-6f25bb790108
+                - cell [ref=e550]:
+                  - generic [ref=e551]:
+                    - img [ref=e552]
+                    - img [ref=e554]
+                    - img [ref=e556]
+                    - img [ref=e558]
+                    - img [ref=e560]
+              - row "Berg en Dal" [ref=e562]:
+                - cell "Berg en Dal" [ref=e563]:
+                  - link "Berg en Dal" [ref=e564] [cursor=pointer]:
+                    - /url: /gemeenten/2307fd0a-657b-4dd8-b78d-8054d95be151
+                - cell [ref=e565]:
+                  - generic [ref=e566]:
+                    - img [ref=e567]
+                    - img [ref=e569]
+                    - img [ref=e571]
+                    - img [ref=e573]
+                    - img [ref=e575]
+          - generic [ref=e577]:
+            - generic [ref=e578]: Pagina 1 van 12
+            - link "Volgende →" [ref=e579] [cursor=pointer]:
+              - /url: /gemeenten?zoek=&pagina=2
+  - contentinfo "Footer" [ref=e580]:
+    - generic [ref=e581]:
+      - generic [ref=e582]:
+        - link "Onderwerpen VNG" [ref=e583] [cursor=pointer]:
+          - /url: "#"
+        - link "Privacyverklaring" [ref=e584] [cursor=pointer]:
+          - /url: "#"
+        - link "Over VNG Realisatie" [ref=e585] [cursor=pointer]:
+          - /url: "#"
+        - link "Vacatures" [ref=e586] [cursor=pointer]:
+          - /url: "#"
+      - generic [ref=e587]:
+        - link "Agenda VNG" [ref=e588] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuws" [ref=e589] [cursor=pointer]:
+          - /url: "#"
+        - link "Contact" [ref=e590] [cursor=pointer]:
+          - /url: "#"
+        - link "Meld aan VNG Realisatie" [ref=e591] [cursor=pointer]:
+          - /url: "#"
+        - link "Help" [ref=e592] [cursor=pointer]:
+          - /url: /help
+      - generic [ref=e593]:
+        - link "Twitter" [ref=e594] [cursor=pointer]:
+          - /url: "#"
+        - link "Linkedin" [ref=e595] [cursor=pointer]:
+          - /url: "#"
+        - link "Youtube" [ref=e596] [cursor=pointer]:
+          - /url: "#"
+        - link "Nieuwsbrief GEMMA" [ref=e597] [cursor=pointer]:
+          - /url: "#"
+        - link "RSS Feed" [ref=e598] [cursor=pointer]:
+          - /url: /api/feed
+          - img [ref=e599]
+          - text: RSS Feed
+    - generic [ref=e602]: Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
+  - button "Open Next.js Dev Tools" [ref=e608] [cursor=pointer]:
+    - generic [ref=e611]:
+      - text: Rendering
+      - generic [ref=e612]:
+        - generic [ref=e613]: .
+        - generic [ref=e614]: .
+        - generic [ref=e615]: .
+  - alert [ref=e616]
+```

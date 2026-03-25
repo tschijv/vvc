@@ -185,6 +185,8 @@ model Pakket {
   standaarden           PakketStandaard[]
   applicatiefuncties    PakketApplicatiefunctie[]
   technologieen         PakketTechnologie[]
+  dienstverleners       DienstverlenerPakket[]
+  cloudproviders        CloudproviderPakket[]
   createdAt             DateTime                     @default(now())
   updatedAt             DateTime                     @updatedAt
 
@@ -305,6 +307,7 @@ model Organisatie {
   samenwerkingen        SamenwerkingOrganisatie[]
   koppelingen           Koppeling[]
   users                 User[]
+  dienstverleners       DienstverlenerOrganisatie[]
   createdAt             DateTime                  @default(now())
   updatedAt             DateTime                  @updatedAt
 
@@ -483,4 +486,68 @@ model Favoriet {
 
   @@unique([userId, entityType, entityId])
   @@index([userId])
+}
+
+// ─── Dienstverleners ─────────────────────────────────────────────────────────
+
+model Dienstverlener {
+  id              String   @id @default(cuid())
+  naam            String
+  slug            String   @unique
+  beschrijving    String?
+  type            String   @default("Advies") // Implementatie, Beheer, Advies, Hosting, Training
+  specialisaties  String?  // Comma-separated
+  contactpersoon  String?
+  email           String?
+  telefoon        String?
+  website         String?
+  regio           String?  // Landelijk, Regionaal, Lokaal
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  pakketten       DienstverlenerPakket[]
+  organisaties    DienstverlenerOrganisatie[]
+}
+
+model DienstverlenerPakket {
+  dienstverlener   Dienstverlener @relation(fields: [dienstverlenerId], references: [id])
+  dienstverlenerId String
+  pakket           Pakket @relation(fields: [pakketId], references: [id])
+  pakketId         String
+  @@id([dienstverlenerId, pakketId])
+}
+
+model DienstverlenerOrganisatie {
+  dienstverlener   Dienstverlener @relation(fields: [dienstverlenerId], references: [id])
+  dienstverlenerId String
+  organisatie      Organisatie @relation(fields: [organisatieId], references: [id])
+  organisatieId    String      @map("gemeenteId")
+  @@id([dienstverlenerId, organisatieId])
+  @@map("DienstverlenerOrganisatie")
+}
+
+// ─── Cloud-providers ─────────────────────────────────────────────────────────
+
+model Cloudprovider {
+  id                  String   @id @default(cuid())
+  naam                String
+  slug                String   @unique
+  beschrijving        String?
+  type                String   @default("SaaS") // IaaS, PaaS, SaaS, Hosting
+  certificeringen     String?  // Comma-separated: ISO 27001, SOC 2, BIO, NEN 7510
+  datacenterLocatie   String?  // Nederland, EU, Internationaal
+  contactpersoon      String?
+  email               String?
+  telefoon            String?
+  website             String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  pakketten           CloudproviderPakket[]
+}
+
+model CloudproviderPakket {
+  cloudprovider   Cloudprovider @relation(fields: [cloudproviderId], references: [id])
+  cloudproviderId String
+  pakket          Pakket @relation(fields: [pakketId], references: [id])
+  pakketId        String
+  @@id([cloudproviderId, pakketId])
 }

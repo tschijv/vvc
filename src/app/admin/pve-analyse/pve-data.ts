@@ -37,8 +37,8 @@ export const sections: PveSection[] = [
     title: "",
     subtitle: "Wensen",
     rows: [
-      { id: "7", naam: "Registreren dienstverleners", prio: "wens", status: "no", toelichting: "Placeholder-pagina aanwezig. Nog niet geimplementeerd.", link: "/dienstverleners", linkTitle: "Dienstverleners (placeholder)" },
-      { id: "8", naam: "Registreren cloud-providers", prio: "wens", status: "no", toelichting: "Placeholder-pagina aanwezig. Nog niet geimplementeerd.", link: "/cloudproviders", linkTitle: "Cloud-providers (placeholder)" },
+      { id: "7", naam: "Registreren dienstverleners", prio: "wens", status: "yes", toelichting: "Volledige CRUD met overzicht, detail, zoeken, type-filter, paginering. Gekoppeld aan pakketten en organisaties.", link: "/dienstverleners", linkTitle: "Dienstverleners" },
+      { id: "8", naam: "Registreren cloud-providers", prio: "wens", status: "yes", toelichting: "Volledige CRUD met overzicht, detail, zoeken, type-filter, certificeringen-badges. Gekoppeld aan pakketten.", link: "/cloudproviders", linkTitle: "Cloud-providers" },
       { id: "9", naam: "Raadplegen review scores", prio: "wens", status: "no", toelichting: "Geen review/score-systeem voor pakketten." },
     ],
   },

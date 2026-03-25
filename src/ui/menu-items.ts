@@ -27,6 +27,8 @@ export const menuItems: MenuGroup[] = [
       { label: "Alle standaarden", href: "/standaarden" },
       { label: "Alle referentiecomponenten", href: "/referentiecomponenten" },
       { label: "Alle applicatiefuncties", href: "/applicatiefuncties" },
+      { label: "Alle dienstverleners", href: "/dienstverleners" },
+      { label: "Alle cloud-providers", href: "/cloudproviders" },
       { label: "Marktscan Digikoppeling", href: "/info/marktscan-digikoppeling" },
       { label: "Inkoopondersteuning", href: "/info/inkoopondersteuning" },
       { label: "Monitor digitoegankelijke pakketten", href: "/info/monitor-digitoegankelijkheid" },
