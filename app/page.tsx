@@ -264,6 +264,7 @@ export default async function HomePage() {
 
   return (
     <div className="-mt-6">
+      <h1 className="sr-only">VNG Voorzieningencatalogus</h1>
       {/* Orange tile navigation */}
       <div className="bg-[#e35b10] -mx-4 px-2 sm:px-6 py-5 mb-8">
         <div className="flex flex-wrap gap-0 justify-center max-w-5xl mx-auto">
@@ -279,7 +280,7 @@ export default async function HomePage() {
               className="bg-white rounded shadow hover:shadow-md transition w-[calc(33.33%-8px)] sm:w-[140px] py-3 sm:py-4 px-1 sm:px-2 flex flex-col items-center gap-1.5 sm:gap-2 text-center m-1"
             >
               <tile.Icon />
-              <span className="text-xs font-semibold text-[#e35b10] leading-tight whitespace-pre-line">
+              <span className="text-xs font-semibold text-[#c44b0a] leading-tight whitespace-pre-line">
                 {tile.label}
               </span>
             </Link>
@@ -318,7 +319,7 @@ export default async function HomePage() {
               className="bg-white rounded shadow hover:shadow-md transition w-[calc(33.33%-8px)] sm:w-[140px] py-3 sm:py-4 px-1 sm:px-2 flex flex-col items-center gap-1.5 sm:gap-2 text-center m-1"
             >
               <tile.Icon />
-              <span className="text-xs font-semibold text-[#059669] leading-tight whitespace-pre-line">
+              <span className="text-xs font-semibold text-[#047857] leading-tight whitespace-pre-line">
                 {tile.label}
               </span>
             </Link>
@@ -347,7 +348,7 @@ export default async function HomePage() {
         {/* Nieuws */}
         <div>
           <div className="flex items-center justify-between border-b border-gray-200 pb-2 mb-3">
-            <h2 className="text-base font-bold text-[#e35b10]">Nieuws</h2>
+            <h2 className="text-base font-bold text-[#c44b0a]">Nieuws</h2>
             {magBewerken && (
               <Link href="/info/homepage-nieuws/bewerken" className="text-gray-400 hover:text-[#e35b10]" title="Bewerken">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -368,7 +369,7 @@ export default async function HomePage() {
         {/* Doel */}
         <div>
           <div className="flex items-center justify-between border-b border-gray-200 pb-2 mb-3">
-            <h2 className="text-base font-bold text-[#e35b10]">Doel van de voorzieningencatalogus</h2>
+            <h2 className="text-base font-bold text-[#c44b0a]">Doel van de voorzieningencatalogus</h2>
             {magBewerken && (
               <Link href="/info/homepage-doel/bewerken" className="text-gray-400 hover:text-[#e35b10]" title="Bewerken">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -389,7 +390,7 @@ export default async function HomePage() {
         {/* Voortgang gemeenten */}
         <div>
           <div className="flex items-center border-b border-gray-200 pb-2 mb-3">
-            <h2 className="text-base font-bold text-[#e35b10]">Voortgang gemeenten</h2>
+            <h2 className="text-base font-bold text-[#c44b0a]">Voortgang gemeenten</h2>
           </div>
           <div className="space-y-2 mb-4">
             {sterVerdeling.map(({ ster, count }) => (
@@ -419,7 +420,7 @@ export default async function HomePage() {
       {recenteWijzigingen.length > 0 && (
         <div className="mt-10 max-w-7xl">
           <div className="border-b border-gray-200 pb-2 mb-4">
-            <h2 className="text-base font-bold text-[#e35b10]">Laatste wijzigingen</h2>
+            <h2 className="text-base font-bold text-[#c44b0a]">Laatste wijzigingen</h2>
           </div>
           <ul className="divide-y divide-gray-100 dark:divide-slate-700">
             {recenteWijzigingen.map((log) => (

@@ -71,7 +71,7 @@ export default function RootLayout({
         <ImpersonationBanner />
 
         {/* Top bar */}
-        <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 py-3 px-4">
+        <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 py-3 px-4">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <Link href="/" className="text-lg sm:text-2xl font-light text-gray-800 dark:text-slate-200 tracking-wide flex items-center gap-2">
               <Image src="/logo.svg" alt="" width={28} height={28} className="inline-block" />
@@ -80,7 +80,7 @@ export default function RootLayout({
             </Link>
             <span className="text-sm text-gray-500 dark:text-slate-400 hidden sm:inline">websites VNG Realisatie ▾</span>
           </div>
-        </div>
+        </header>
 
         {/* Blue nav bar with dropdowns */}
         <nav aria-label="Hoofdnavigatie" className="bg-[#1a6ca8] dark:bg-[#0f4c75] text-white text-sm relative z-[1000]">
@@ -162,7 +162,7 @@ export default function RootLayout({
               </a>
             </div>
           </div>
-          <div className="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-white/20 text-xs opacity-70">
+          <div className="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-white/20 text-xs opacity-90">
             Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
           </div>
         </footer>
