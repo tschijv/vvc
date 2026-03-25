@@ -223,7 +223,7 @@ export default function SamenwerkingKaart({
         fillColor: color,
         weight: 1,
         opacity: 1,
-        color: "white",
+        color: "#000000",
         fillOpacity: opacity,
       };
     },
