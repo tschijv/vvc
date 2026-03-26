@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getUserById, updateUser, deleteUser } from "@/service/user";
 import { parseBody } from "@/process/validation";
+import { getSessionUser } from "@/process/auth-helpers";
 
 const updateUserSchema = z.object({
   naam: z.string().optional(),
@@ -17,28 +18,38 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Geen toegang" }, { status: 403 });
+  }
+
   const { id } = await params;
-  const user = await getUserById(id);
-  if (!user) {
+  const targetUser = await getUserById(id);
+  if (!targetUser) {
     return NextResponse.json(
       { error: "Gebruiker niet gevonden" },
       { status: 404 }
     );
   }
-  return NextResponse.json(user);
+  return NextResponse.json(targetUser);
 }
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Geen toegang" }, { status: 403 });
+  }
+
   const { id } = await params;
   try {
     const parsed = await parseBody(request, updateUserSchema);
     if ("error" in parsed) return parsed.error;
     const { naam, email, wachtwoord, actief, rollen, organisatieId, leverancierId } = parsed.data;
 
-    const user = await updateUser(id, {
+    const updatedUser = await updateUser(id, {
       ...(naam !== undefined && { naam }),
       ...(email !== undefined && { email }),
       ...(wachtwoord && { wachtwoord }),
@@ -48,11 +59,10 @@ export async function PUT(
       ...(leverancierId !== undefined && { leverancierId }),
     });
 
-    return NextResponse.json(user);
+    return NextResponse.json(updatedUser);
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Onbekende fout";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }
 
@@ -60,13 +70,17 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "ADMIN") {
+    return NextResponse.json({ error: "Geen toegang" }, { status: 403 });
+  }
+
   const { id } = await params;
   try {
     await deleteUser(id);
     return NextResponse.json({ ok: true });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : "Onbekende fout";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

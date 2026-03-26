@@ -48,13 +48,7 @@ export async function GET(request: NextRequest) {
         { status: error.statusCode }
       );
     }
-    console.error("Kaart generatie fout:", error);
-    return NextResponse.json(
-      {
-        error: "Fout bij genereren kaart",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

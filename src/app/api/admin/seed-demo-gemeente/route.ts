@@ -175,10 +175,7 @@ export async function POST(request: Request) {
       voortgang: progress,
     });
   } catch (error) {
-    console.error("Seed demo-gemeente error:", error);
-    return NextResponse.json(
-      { error: "Fout bij seeden", details: String(error) },
-      { status: 500 },
-    );
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

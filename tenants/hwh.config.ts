@@ -1,0 +1,90 @@
+import type { TenantConfig } from "@/process/tenant-config";
+
+export const config: TenantConfig = {
+  id: "hwh",
+  naam: "HWH Voorzieningencatalogus",
+  korteNaam: "HWH VC",
+  organisatie: "Het Waterschapshuis",
+
+  organisatieType: {
+    enkelvoud: "waterschap",
+    meervoud: "waterschappen",
+    capitaal: "Waterschap",
+    meervoudCapitaal: "Waterschappen",
+  },
+
+  routes: {
+    organisaties: "/waterschappen",
+  },
+
+  roles: {
+    beheerder: "WATERSCHAP_BEHEERDER",
+    raadpleger: "WATERSCHAP_RAADPLEGER",
+    primary: "WATERSCHAP",
+  },
+
+  architectuur: {
+    naam: "WILMA",
+    apiUrl: "https://www.wilmaonline.nl/api.php",
+    modelId: "",
+    wikiBaseUrl: "https://www.wilmaonline.nl/wiki/WILMA",
+    nieuwsbriefNaam: "WILMA",
+  },
+
+  branding: {
+    primaryColor: "#1a6ca8",
+    accentColor: "#e35b10",
+    contactEmail: "voorzieningencatalogus@hetwaterschapshuis.nl",
+  },
+
+  menuItems: [
+    {
+      label: "Hoe werkt de catalogus",
+      items: [
+        { label: "Voor waterschappen", href: "/info/voor-waterschappen" },
+        { label: "Voor leveranciers", href: "/info/voor-leveranciers" },
+      ],
+    },
+    {
+      label: "Wat is er te vinden",
+      items: [
+        { label: "Alle pakketten", href: "/pakketten" },
+        { label: "Alle pakketversies", href: "/pakketversies" },
+        { label: "Alle leveranciers", href: "/leveranciers" },
+        { label: "Alle dienstverleners", href: "/dienstverleners" },
+        { label: "Alle cloud-providers", href: "/cloudproviders" },
+        { label: "Alle addenda en ondertekening", href: "/addenda" },
+        { label: "Alle standaarden", href: "/standaarden" },
+        { label: "Alle referentiecomponenten", href: "/referentiecomponenten" },
+        { label: "Alle applicatiefuncties", href: "/applicatiefuncties" },
+        { label: "Inkoopondersteuning", href: "/info/inkoopondersteuning" },
+      ],
+    },
+    {
+      label: "Wie doet er mee",
+      items: [
+        { label: "Gebruik Voorzieningencatalogus (kaart)", href: "/kaart/nederland" },
+        { label: "Hoe meld ik mij aan als waterschap", href: "/info/aanmelden-waterschap" },
+        { label: "Welke leveranciers doen mee", href: "/leveranciers" },
+        { label: "Hoe meld ik mij aan als leverancier", href: "/info/aanmelden-leverancier" },
+        { label: "Nieuws", href: "/info/nieuws" },
+      ],
+    },
+    {
+      label: "Praktijkvoorbeelden",
+      items: [
+        { label: "Hoogheemraadschap Hollands Noorderkwartier", href: "/info/praktijkvoorbeeld-hhnk" },
+        { label: "Waterschap Rivierenland", href: "/info/praktijkvoorbeeld-rivierenland" },
+      ],
+    },
+  ],
+
+  footer: {
+    copyright: "Het Waterschapshuis",
+    links: [
+      { label: "Over Het Waterschapshuis", href: "https://www.hetwaterschapshuis.nl" },
+      { label: "Privacyverklaring", href: "/info/privacy" },
+      { label: "Toegankelijkheidsverklaring", href: "/info/toegankelijkheid" },
+    ],
+  },
+};

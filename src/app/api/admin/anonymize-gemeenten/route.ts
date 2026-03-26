@@ -119,13 +119,7 @@ export async function POST() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Anonymisatie fout:", error);
-    return NextResponse.json(
-      {
-        error: "Anonymisatie mislukt",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

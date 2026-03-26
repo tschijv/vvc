@@ -20,6 +20,11 @@ export async function PUT(request: NextRequest) {
   try {
     const parsed = await parseBody(request, updateAddendumSchema);
     if ("error" in parsed) return parsed.error;
+
+    if (user.role === "LEVERANCIER" && user.leverancierId !== parsed.data.leverancierId) {
+      return NextResponse.json({ error: "Geen toegang tot deze leverancier" }, { status: 403 });
+    }
+
     const { leverancierId, addendumId, deadline, datumGereed } = parsed.data;
 
     const updated = await prisma.leverancierAddendum.update({

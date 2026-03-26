@@ -49,13 +49,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof UploadValidationError) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
-    console.error("Upload leverancier pakketten fout:", error);
-    return NextResponse.json(
-      {
-        error: "Er is een fout opgetreden bij het verwerken van de upload.",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

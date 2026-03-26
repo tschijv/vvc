@@ -1,5 +1,6 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/data/prisma";
+import { getSessionUser } from "@/process/auth-helpers";
 
 function escapeCsv(value: string): string {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
@@ -18,6 +19,11 @@ function formatDate(date: Date | null): string {
 }
 
 export async function GET(request: NextRequest) {
+  const user = await getSessionUser();
+  if (!user) {
+    return NextResponse.json({ error: "Niet ingelogd" }, { status: 401 });
+  }
+
   const { searchParams } = request.nextUrl;
   const zoek = searchParams.get("zoek") || undefined;
   const type = searchParams.get("type") || undefined;

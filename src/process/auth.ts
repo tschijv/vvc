@@ -69,9 +69,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!isValid) return null;
 
-        // Check TOTP for non-ADMIN users with 2FA enabled
-        const isAdmin = user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER");
-        if (user.totpEnabled && !isAdmin) {
+        // Check TOTP for all users with 2FA enabled
+        if (user.totpEnabled) {
           const totpToken = credentials.totpToken as string | undefined;
           if (!totpToken) {
             throw new TotpRequiredError();

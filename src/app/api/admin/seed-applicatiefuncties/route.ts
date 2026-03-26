@@ -52,7 +52,7 @@ export async function POST() {
       total: APPLICATIEFUNCTIES.length,
     });
   } catch (error) {
-    console.error("Seed applicatiefuncties error:", error);
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

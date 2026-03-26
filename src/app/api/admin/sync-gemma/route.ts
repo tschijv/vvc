@@ -18,13 +18,7 @@ export async function POST() {
       viewSync,
     });
   } catch (error) {
-    console.error("GEMMA sync fout:", error);
-    return NextResponse.json(
-      {
-        error: "Synchronisatie mislukt",
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 }
-    );
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

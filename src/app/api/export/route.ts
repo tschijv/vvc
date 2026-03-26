@@ -92,9 +92,7 @@ export async function GET(request: NextRequest) {
         );
     }
   } catch (error) {
-    console.error("Export fout:", error);
-    const message =
-      error instanceof Error ? error.message : "Onbekende fout bij export";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

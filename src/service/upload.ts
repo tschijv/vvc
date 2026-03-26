@@ -91,6 +91,15 @@ export class UploadValidationError extends Error {
 export async function parseUploadFile(
   file: File
 ): Promise<Record<string, string>[]> {
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error("Bestand is te groot (max 10MB)");
+  }
+  const ALLOWED_MIMES = ["text/csv", "application/json", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+  if (file.type && !ALLOWED_MIMES.includes(file.type)) {
+    throw new Error("Ongeldig bestandstype");
+  }
+
   const name = file.name.toLowerCase();
   const buffer = Buffer.from(await file.arrayBuffer());
 

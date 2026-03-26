@@ -67,7 +67,8 @@ function TotpInput({
 function LoginForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const raw = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/";
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showTotp, setShowTotp] = useState(false);

@@ -95,7 +95,7 @@ export async function disableTotp(userId: string): Promise<void> {
 
 /**
  * Check if TOTP verification is required for a user.
- * ADMIN users are always exempt from TOTP.
+ * All users with TOTP enabled must verify, including admins.
  * @param user - Object with role and totpEnabled fields
  * @returns true if TOTP is required at login
  */
@@ -103,6 +103,5 @@ export function isTotpRequired(user: {
   role: string;
   totpEnabled: boolean;
 }): boolean {
-  if (user.role === "ADMIN") return false;
   return user.totpEnabled;
 }

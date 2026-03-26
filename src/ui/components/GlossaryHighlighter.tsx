@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useRef, useCallback } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { useGlossary, type GlossaryTermInfo } from "./GlossaryProvider";
 
 interface GlossaryHighlighterProps {
@@ -39,7 +40,7 @@ export default function GlossaryHighlighter({
 
   if (!loaded || !regex) {
     if (html) {
-      return <div dangerouslySetInnerHTML={{ __html: html }} />;
+      return <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }} />;
     }
     return <>{children}</>;
   }
@@ -268,7 +269,7 @@ function GlossaryHtmlWrapper({ html }: { html: string }) {
           }
         }}
         onMouseLeave={hideTooltip}
-        dangerouslySetInnerHTML={{ __html: html }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(html) }}
       />
       {tooltip && (
         <div

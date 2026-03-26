@@ -9,7 +9,12 @@ export function middleware(request: NextRequest) {
   const pass = process.env.BASIC_AUTH_PASS;
   // Skip basic auth if credentials are not configured (local development)
   if (!user || !pass) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("X-Frame-Options", "DENY");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    return response;
   }
   const authHeader = request.headers.get("authorization");
   if (authHeader) {
@@ -22,7 +27,12 @@ export function middleware(request: NextRequest) {
         const u = decoded.substring(0, colonIndex);
         const p = decoded.substring(colonIndex + 1);
         if (u === user && p === pass) {
-          return NextResponse.next();
+          const response = NextResponse.next();
+          response.headers.set("X-Frame-Options", "DENY");
+          response.headers.set("X-Content-Type-Options", "nosniff");
+          response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+          response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+          return response;
         }
       }
     }

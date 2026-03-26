@@ -60,7 +60,7 @@ export async function POST() {
 
     return NextResponse.json({ success: true, count, message: `${count} addenda aangemaakt voor ${Math.min(leveranciers.length, 45)} leveranciers` });
   } catch (error) {
-    console.error("Seed addenda error:", error);
-    return NextResponse.json({ error: String(error) }, { status: 500 });
+    console.error("Internal error:", error);
+    return NextResponse.json({ error: "Interne serverfout" }, { status: 500 });
   }
 }

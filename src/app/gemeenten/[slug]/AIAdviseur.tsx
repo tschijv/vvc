@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import DOMPurify from "isomorphic-dompurify";
 import { getAIAdvies } from "./actions";
 
 const SUGGESTIES = [
@@ -226,7 +227,7 @@ export default function AIAdviseur({
             </div>
             <div
               className="ai-advies-content p-5 text-sm text-gray-700 leading-relaxed dark:bg-gray-800 dark:text-gray-200"
-              dangerouslySetInnerHTML={{ __html: antwoord }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(antwoord) }}
             />
           </div>
           <div className="flex items-center gap-3 mt-3">

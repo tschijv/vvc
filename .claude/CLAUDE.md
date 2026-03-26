@@ -107,22 +107,69 @@
 - Vermijd N+1 queries — gebruik Prisma `include` of batch queries
 
 ## Security
-- Authenticatie: check `getSessionUser()` aan het begin van elke beschermde pagina en API route
-- Autorisatie: check `user.role` voor rolgebonden functionaliteit (ADMIN, GEMEENTE, LEVERANCIER)
-- API routes: altijd auth check + input validatie vóór database operaties
-- Rate limiting: pas `withRateLimit()` toe op alle publieke API endpoints
-  - `/api/v1/*`: 100 requests/min
-  - `/api/auth/*`: 10 requests/min
-  - `/api/admin/*`: 30 requests/min
-- SQL injection: gebruik altijd Prisma parameterized queries, nooit raw SQL met string concatenation
-- XSS: geen `dangerouslySetInnerHTML` tenzij content is gesanitized (DOMPurify)
+
+### Verplichte checks bij ELKE API route
+- **Auth check EERSTE regel**: `const user = await getSessionUser(); if (!user) return 401;`
+- **Admin routes**: extra check `if (user.role !== "ADMIN") return 403;`
+- **Ownership check**: bij mutaties ALTIJD verifiëren dat user eigenaar is van de resource
+- **Rate limiting**: `withRateLimit()` op ELKE publieke endpoint, geen uitzonderingen
+- **Input validatie**: Zod schema VOOR de handler, geen `{...req.body}` direct naar database
+- **Error responses**: NOOIT `error.message` naar client — altijd generiek: `"Interne serverfout"`
+
+### XSS preventie (KRITIEK)
+- **NOOIT** `dangerouslySetInnerHTML` zonder DOMPurify sanitisatie
+- AI-adviseur output: `DOMPurify.sanitize(html)`
+- SVG content: `DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true } })`
+- GlossaryHighlighter: sanitize de `html` prop
+- Externe API responses altijd sanitizen voor rendering
+
+### Security headers (middleware)
+- `X-Frame-Options: DENY`
+- `X-Content-Type-Options: nosniff`
+- `Referrer-Policy: strict-origin-when-cross-origin`
+- `Content-Security-Policy` met restrictieve policy
+- `Permissions-Policy` om browser-features uit te schakelen
+- `Cache-Control: no-store` op responses met persoonsgegevens
+
+### Overige security regels
+- Authenticatie: `getSessionUser()` aan begin van elke beschermde pagina en API route
+- Rate limiting presets: `/api/v1/*`: 100/min, `/api/auth/*`: 10/min, `/api/admin/*`: 30/min
+- SQL injection: altijd Prisma parameterized queries, nooit raw SQL met string concatenation
 - CSRF: NextAuth handelt dit af via tokens
 - Secrets: nooit in code, altijd via `.env` / Vercel environment variables
 - Wachtwoorden: altijd gehasht opslaan (bcrypt via NextAuth)
-- CORS: standaard restrictief, alleen eigen domein
-- HTTP headers: Vercel voegt standaard security headers toe (X-Frame-Options, etc.)
-- Foutmeldingen: toon nooit stack traces of interne details aan eindgebruikers
-- Dependency updates: controleer regelmatig op bekende kwetsbaarheden (`npm audit`)
+- CORS: standaard restrictief, alleen eigen domein — geen wildcard met credentials
+- Open redirects: valideer `callbackUrl` — moet starten met `/` en niet met `//`
+- File uploads: MIME type check + max filesize (10MB) + extensie whitelist
+- CSV export: sanitize waarden die beginnen met `=`, `+`, `-`, `@` (CSV injection)
+- Timing-safe vergelijking voor wachtwoorden/tokens: `crypto.timingSafeEqual()`
+- 2FA/TOTP: verplicht voor ALLE rollen, inclusief admin
+- Audit logging: ELKE mutatie loggen via `logAudit()`
+- Dependencies: `npm audit` met 0 high vulnerabilities
+
+### Security audit bevindingen (2026-03-26)
+- CVE-001 CRITICAL: Auth ontbreekt op admin user routes → GEFIXED/TODO
+- CVE-002 CRITICAL: Auth ontbreekt op CSV export routes → GEFIXED/TODO
+- CVE-003 HIGH: Auth ontbreekt op addenda export → GEFIXED/TODO
+- CVE-004 HIGH: XSS via AI-adviseur (geen DOMPurify) → GEFIXED/TODO
+- CVE-005 HIGH: XSS via GlossaryHighlighter → GEFIXED/TODO
+- CVE-006 HIGH: XSS via SVG KaartViewer → GEFIXED/TODO
+- CVE-007 HIGH: Geen ownership check op addendum updates → GEFIXED/TODO
+- CVE-008 HIGH: Error messages lekken interne details → GEFIXED/TODO
+- CVE-009 HIGH: 2FA bypass voor admins → GEFIXED/TODO
+- CVE-010 MEDIUM: In-memory rate limiting nutteloos op serverless → TODO
+- CVE-011 MEDIUM: Open redirect via callbackUrl → GEFIXED/TODO
+- CVE-012 MEDIUM: Rate limiting ontbreekt op 53/65 routes → TODO
+- CVE-013 MEDIUM: Geen file size limit op uploads → GEFIXED/TODO
+- CVE-014 MEDIUM: Geen MIME type validatie → GEFIXED/TODO
+- CVE-015 MEDIUM: CSV injection → GEFIXED/TODO
+- CVE-016 MEDIUM: Timing-unsafe Basic Auth → GEFIXED/TODO
+- CVE-017 MEDIUM: Middleware sluit API uit van Basic Auth → TODO
+- CVE-018 LOW: CORS wildcard op RDF → ACCEPTED
+- CVE-019 LOW: Silently swallowed errors → GEFIXED/TODO
+- CVE-020 LOW: Kwetsbare transitive deps → TODO
+- CVE-021 LOW: Ontbrekende audit logging → GEFIXED/TODO
+- CVE-022 LOW: Geen security headers → GEFIXED/TODO
 
 ## Schaalbaarheid & Onderhoudbaarheid
 - Gelaagde architectuur: Pages → Services → Prisma (nooit pages direct naar database)
