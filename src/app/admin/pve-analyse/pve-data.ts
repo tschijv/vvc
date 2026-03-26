@@ -379,3 +379,50 @@ export function computePveStats(): PveStats {
     grPercent,
   };
 }
+
+/* ── Tab categorization ── */
+export type PveTab = "samenvatting" | "pve-eisen" | "extra" | "golden-rules" | "performance" | "security" | "conclusies";
+
+/** Returns sections belonging to "PvE Eisen" tab (original requirements, sections 1-12) */
+export function getPveEisenSections(): PveSection[] {
+  return sections.filter((s) => {
+    const t = s.title;
+    return (
+      /^\d+\./.test(t) || // Numbered sections like "1. Aanbod..."
+      (t === "" && (s.subtitle === "Wensen" || s.subtitle === "Eisen")) // Subtitle-only sub-sections
+    );
+  });
+}
+
+/** Returns the "Extra gerealiseerde functionaliteit" section */
+export function getExtraSections(): PveSection[] {
+  return sections.filter((s) => s.title === "Extra gerealiseerde functionaliteit");
+}
+
+/** Returns the "Golden Rulebook Compliance" section */
+export function getGoldenRulesSections(): PveSection[] {
+  return sections.filter((s) => s.title === "Golden Rulebook Compliance");
+}
+
+/** Returns the "Performance & Schaalbaarheid" section */
+export function getPerformanceSections(): PveSection[] {
+  return sections.filter((s) => s.title.startsWith("Performance"));
+}
+
+/** Returns the "Security Audit" section */
+export function getSecuritySections(): PveSection[] {
+  return sections.filter((s) => s.title.startsWith("Security Audit"));
+}
+
+/** Returns row counts per tab category */
+export function getTabCounts(): Record<PveTab, number> {
+  return {
+    samenvatting: 0,
+    "pve-eisen": getPveEisenSections().reduce((n, s) => n + s.rows.length, 0),
+    extra: getExtraSections().reduce((n, s) => n + s.rows.length, 0),
+    "golden-rules": getGoldenRulesSections().reduce((n, s) => n + s.rows.length, 0),
+    performance: getPerformanceSections().reduce((n, s) => n + s.rows.length, 0),
+    security: getSecuritySections().reduce((n, s) => n + s.rows.length, 0),
+    conclusies: 0,
+  };
+}

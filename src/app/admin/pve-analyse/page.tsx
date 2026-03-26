@@ -1,10 +1,18 @@
-import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/process/auth-helpers";
 import type { Metadata } from "next";
 import PveDetailTables from "./PveDetailTables";
-import { computePveStats } from "./pve-data";
+import PveTabs from "./PveTabs";
+import {
+  computePveStats,
+  getTabCounts,
+  getPveEisenSections,
+  getExtraSections,
+  getGoldenRulesSections,
+  getPerformanceSections,
+  getSecuritySections,
+} from "./pve-data";
 
 export const metadata: Metadata = {
   title: "PvE-analyse",
@@ -17,6 +25,7 @@ export default async function PveAnalysePage() {
   }
 
   const stats = computePveStats();
+  const tabCounts = getTabCounts();
   const yesPercent = stats.total > 0 ? Math.round((stats.yes / stats.total) * 100) : 0;
   const partialPercent = stats.total > 0 ? Math.round((stats.partial / stats.total) * 100) : 0;
   const noPercent = stats.total > 0 ? Math.round((stats.no / stats.total) * 100) : 0;
@@ -26,6 +35,16 @@ export default async function PveAnalysePage() {
   const eisYesPercent = stats.eisTotal > 0 ? Math.round((stats.eisYes / stats.eisTotal) * 100) : 0;
   const wensYesOrPartial = stats.wensYes + stats.wensPartial;
   const wensYesOrPartialPercent = stats.wensTotal > 0 ? Math.round((wensYesOrPartial / stats.wensTotal) * 100) : 0;
+
+  const tabs = [
+    { key: "samenvatting" as const, label: "Samenvatting" },
+    { key: "pve-eisen" as const, label: "PvE Eisen", count: tabCounts["pve-eisen"] },
+    { key: "extra" as const, label: "Extra Features", count: tabCounts.extra },
+    { key: "golden-rules" as const, label: "Golden Rules", count: tabCounts["golden-rules"] },
+    { key: "performance" as const, label: "Performance", count: tabCounts.performance },
+    { key: "security" as const, label: "Security", count: tabCounts.security },
+    { key: "conclusies" as const, label: "Conclusies" },
+  ];
 
   return (
     <>
@@ -142,156 +161,187 @@ export default async function PveAnalysePage() {
           <strong className="text-gray-500">Vergeleken met:</strong> Huidige applicatie (Next.js / Prisma / PostgreSQL)
         </p>
 
-        {/* ─── SAMENVATTING ─── */}
-        <h2 className="section-title">Samenvatting</h2>
+        <PveTabs tabs={tabs}>
+          {{
+            /* ─── SAMENVATTING TAB ─── */
+            samenvatting: (
+              <>
+                <h2 className="section-title">Samenvatting</h2>
 
-        <div className="summary-grid">
-          <div className="summary-card blue">
-            <div className="label">Totaal eisen &amp; wensen</div>
-            <div className="value">{stats.total}</div>
-            <div className="detail">{stats.eisTotal} eisen &middot; {stats.wensTotal} wensen &middot; {stats.couldTotal} could have</div>
-          </div>
-          <div className="summary-card green">
-            <div className="label">Gerealiseerd ✅</div>
-            <div className="value">{stats.yes}</div>
-            <div className="detail">{yesPercent}% van totaal</div>
-          </div>
-          <div className="summary-card amber">
-            <div className="label">Deels gerealiseerd ⚠</div>
-            <div className="value">{stats.partial}</div>
-            <div className="detail">{partialPercent}% van totaal</div>
-          </div>
-          <div className="summary-card red">
-            <div className="label">Niet gerealiseerd ❌</div>
-            <div className="value">{stats.no}</div>
-            <div className="detail">{noPercent}% van totaal</div>
-          </div>
-          <div className="summary-card purple">
-            <div className="label">Extra gerealiseerd 🚀</div>
-            <div className="value">{extraCount}</div>
-            <div className="detail">Niet in PvE</div>
-          </div>
-        </div>
+                <div className="summary-grid">
+                  <div className="summary-card blue">
+                    <div className="label">Totaal eisen &amp; wensen</div>
+                    <div className="value">{stats.total}</div>
+                    <div className="detail">{stats.eisTotal} eisen &middot; {stats.wensTotal} wensen &middot; {stats.couldTotal} could have</div>
+                  </div>
+                  <div className="summary-card green">
+                    <div className="label">Gerealiseerd ✅</div>
+                    <div className="value">{stats.yes}</div>
+                    <div className="detail">{yesPercent}% van totaal</div>
+                  </div>
+                  <div className="summary-card amber">
+                    <div className="label">Deels gerealiseerd ⚠</div>
+                    <div className="value">{stats.partial}</div>
+                    <div className="detail">{partialPercent}% van totaal</div>
+                  </div>
+                  <div className="summary-card red">
+                    <div className="label">Niet gerealiseerd ❌</div>
+                    <div className="value">{stats.no}</div>
+                    <div className="detail">{noPercent}% van totaal</div>
+                  </div>
+                  <div className="summary-card purple">
+                    <div className="label">Extra gerealiseerd 🚀</div>
+                    <div className="value">{extraCount}</div>
+                    <div className="detail">Niet in PvE</div>
+                  </div>
+                </div>
 
-        <table className="summary-table">
-          <thead><tr><th>Categorie</th><th>Aantal</th><th>✅ Gerealiseerd</th><th>⚠ Deels</th><th>❌ Niet</th></tr></thead>
-          <tbody>
-            <tr><td>Eisen (must have)</td><td>{stats.eisTotal}</td><td>{stats.eisYes}</td><td>{stats.eisPartial}</td><td>{stats.eisNo}</td></tr>
-            <tr><td>Wensen (nice to have)</td><td>{stats.wensTotal}</td><td>{stats.wensYes}</td><td>{stats.wensPartial}</td><td>{stats.wensNo}</td></tr>
-            <tr><td>Could have</td><td>{stats.couldTotal}</td><td>{stats.couldYes}</td><td>{stats.couldPartial}</td><td>{stats.couldNo}</td></tr>
-            <tr><td>Totaal</td><td>{stats.total}</td><td>{stats.yes} ({yesPercent}%)</td><td>{stats.partial} ({partialPercent}%)</td><td>{stats.no} ({noPercent}%)</td></tr>
-          </tbody>
-        </table>
+                <table className="summary-table">
+                  <thead><tr><th>Categorie</th><th>Aantal</th><th>✅ Gerealiseerd</th><th>⚠ Deels</th><th>❌ Niet</th></tr></thead>
+                  <tbody>
+                    <tr><td>Eisen (must have)</td><td>{stats.eisTotal}</td><td>{stats.eisYes}</td><td>{stats.eisPartial}</td><td>{stats.eisNo}</td></tr>
+                    <tr><td>Wensen (nice to have)</td><td>{stats.wensTotal}</td><td>{stats.wensYes}</td><td>{stats.wensPartial}</td><td>{stats.wensNo}</td></tr>
+                    <tr><td>Could have</td><td>{stats.couldTotal}</td><td>{stats.couldYes}</td><td>{stats.couldPartial}</td><td>{stats.couldNo}</td></tr>
+                    <tr><td>Totaal</td><td>{stats.total}</td><td>{stats.yes} ({yesPercent}%)</td><td>{stats.partial} ({partialPercent}%)</td><td>{stats.no} ({noPercent}%)</td></tr>
+                  </tbody>
+                </table>
 
-        <div className="conclusion-box">
-          <strong>Conclusie:</strong> Circa <strong>{stats.coveragePercent}%</strong> van alle eisen en wensen is geheel of gedeeltelijk gerealiseerd. Van de {stats.eisTotal} harde <strong>eisen</strong> is <strong>{eisYesOrPartialPercent}%</strong> ({eisYesOrPartial} van {stats.eisTotal}) geheel of deels gerealiseerd. <strong>{eisYesPercent}%</strong> van de eisen is volledig gerealiseerd. Van de {stats.wensTotal} <strong>wensen</strong> is <strong>{wensYesOrPartialPercent}%</strong> ({wensYesOrPartial} van {stats.wensTotal}) geheel of deels gerealiseerd, waarvan {stats.wensYes} volledig. Daarnaast zijn <strong>{extraCount} extra features</strong> gerealiseerd die niet in het oorspronkelijke PvE stonden.
-        </div>
+                <div className="conclusion-box">
+                  <strong>Conclusie:</strong> Circa <strong>{stats.coveragePercent}%</strong> van alle eisen en wensen is geheel of gedeeltelijk gerealiseerd. Van de {stats.eisTotal} harde <strong>eisen</strong> is <strong>{eisYesOrPartialPercent}%</strong> ({eisYesOrPartial} van {stats.eisTotal}) geheel of deels gerealiseerd. <strong>{eisYesPercent}%</strong> van de eisen is volledig gerealiseerd. Van de {stats.wensTotal} <strong>wensen</strong> is <strong>{wensYesOrPartialPercent}%</strong> ({wensYesOrPartial} van {stats.wensTotal}) geheel of deels gerealiseerd, waarvan {stats.wensYes} volledig. Daarnaast zijn <strong>{extraCount} extra features</strong> gerealiseerd die niet in het oorspronkelijke PvE stonden.
+                </div>
 
-        {/* ─── GOLDEN RULEBOOK ─── */}
-        <div className="conclusion-box" style={{ background: "linear-gradient(135deg, #f5f3ff, #eff6ff)", borderColor: "#7c3aed" }}>
-          <strong style={{ color: "#7c3aed" }}>Golden Rulebook (Common Ground):</strong>{" "}
-          <strong>{stats.grPercent}%</strong> compliant ({stats.grYes} volledig, {stats.grPartial} deels, {stats.grNo} niet van {stats.grTotal} regels).
-          Score wordt automatisch bijgewerkt bij codewijzigingen.
-        </div>
+                <div className="conclusion-box" style={{ background: "linear-gradient(135deg, #f5f3ff, #eff6ff)", borderColor: "#7c3aed" }}>
+                  <strong style={{ color: "#7c3aed" }}>Golden Rulebook (Common Ground):</strong>{" "}
+                  <strong>{stats.grPercent}%</strong> compliant ({stats.grYes} volledig, {stats.grPartial} deels, {stats.grNo} niet van {stats.grTotal} regels).
+                  Score wordt automatisch bijgewerkt bij codewijzigingen.
+                </div>
 
-        {/* ─── LEGENDA ─── */}
-        <div className="legend">
-          <div className="legend-item">✅ <strong>Gerealiseerd</strong> — aanwezig en werkend</div>
-          <div className="legend-item">⚠ <strong>Deels</strong> — basis aanwezig, niet volledig</div>
-          <div className="legend-item">❌ <strong>Niet gerealiseerd</strong> — ontbreekt</div>
-          <div className="legend-item">🚀 <strong>Extra</strong> — niet in PvE, wel gebouwd</div>
-          <div className="legend-item">📌 <strong>Opmerking Peter</strong> — context uit mail</div>
-        </div>
+                <div className="legend">
+                  <div className="legend-item">✅ <strong>Gerealiseerd</strong> — aanwezig en werkend</div>
+                  <div className="legend-item">⚠ <strong>Deels</strong> — basis aanwezig, niet volledig</div>
+                  <div className="legend-item">❌ <strong>Niet gerealiseerd</strong> — ontbreekt</div>
+                  <div className="legend-item">🚀 <strong>Extra</strong> — niet in PvE, wel gebouwd</div>
+                  <div className="legend-item">📌 <strong>Opmerking Peter</strong> — context uit mail</div>
+                </div>
+              </>
+            ),
 
-        {/* ═══ DETAIL TABELLEN ═══ */}
-        <PveDetailTables />
+            /* ─── PVE EISEN TAB ─── */
+            "pve-eisen": (
+              <PveDetailTables sections={getPveEisenSections()} />
+            ),
 
-        {/* ═══ OPMERKINGEN PETER ═══ */}
-        <h2 className="section-title">Opmerkingen n.a.v. mail Peter Makkes</h2>
+            /* ─── EXTRA FEATURES TAB ─── */
+            extra: (
+              <PveDetailTables sections={getExtraSections()} />
+            ),
 
-        <div className="opmerking-card">
-          <h4>1. Naamswijziging</h4>
-          <p>De applicatie heet nu &quot;GEMMA Softwarecatalogus&quot; en moet hernoemd worden naar <strong>&quot;Voorzieningencatalogus&quot;</strong>. Dit raakt layout, metadata, OG-image, en alle referenties in de code.</p>
-        </div>
-        <div className="opmerking-card">
-          <h4>2. Rollenmodel</h4>
-          <p>Peter beschrijft drie hoofdrollen:</p>
-          <ul style={{ margin: "0.5rem 0 0 1.25rem", fontSize: "0.9rem", color: "#475569" }}>
-            <li><strong>Aanbod-beheerder</strong> (leveranciers) — geïmplementeerd als LEVERANCIER rol</li>
-            <li><strong>Gebruik-beheerder</strong> (gemeenten/samenwerkingen) — geïmplementeerd als GEMEENTE_BEHEERDER</li>
-            <li><strong>Gebruik-raadpleger</strong> — geïmplementeerd als GEMEENTE_RAADPLEGER</li>
-          </ul>
-          <p style={{ marginTop: "0.5rem" }}>De huidige implementatie matcht redelijk maar mist het zelf-registratie en fiatteringsproces.</p>
-        </div>
-        <div className="opmerking-card">
-          <h4>3. Autorisatie</h4>
-          <ul style={{ margin: "0.5rem 0 0 1.25rem", fontSize: "0.9rem", color: "#475569" }}>
-            <li><span style={{ color: "#16a34a" }}>✅</span> Gemeenten zien alles inclusief elkaars landschappen</li>
-            <li><span style={{ color: "#16a34a" }}>✅</span> Leveranciers zien alleen hun eigen aanbod en gebruik</li>
-            <li><span style={{ color: "#16a34a" }}>✅</span> Bezoekers zien alleen openbare info</li>
-          </ul>
-        </div>
-        <div className="opmerking-card">
-          <h4>4. Suite-concept</h4>
-          <p>Peter geeft aan dat het suite-concept voorlopig is losgelaten. Geen actie nodig.</p>
-        </div>
-        <div className="opmerking-card">
-          <h4>5. GEMMA Views</h4>
-          <p>Peter verwijst naar <a href="https://vng-realisatie.github.io/Over-GEMMA-Archi-repository/?view=id-26040" target="_blank" rel="noopener noreferrer" style={{ color: "#1a6ca8" }}>GEMMA Archi repository view</a>. De kaart-functionaliteit (/kaart) biedt al GEMMA views, maar de specifieke view-structuur zou gevalideerd moeten worden.</p>
-        </div>
+            /* ─── GOLDEN RULES TAB ─── */
+            "golden-rules": (
+              <PveDetailTables sections={getGoldenRulesSections()} />
+            ),
 
-        {/* ═══ CONCLUSIES ═══ */}
-        <h2 className="section-title">Conclusies</h2>
+            /* ─── PERFORMANCE TAB ─── */
+            performance: (
+              <PveDetailTables sections={getPerformanceSections()} />
+            ),
 
-        <div className="points-grid">
-          <div className="points-card">
-            <h3 style={{ color: "#16a34a" }}>✅ Sterke punten</h3>
-            <ol>
-              <li><strong>Kernfunctionaliteit aanbod &amp; gebruik</strong> — Pakketten, leveranciers, gemeenten, standaarden volledig uitgewerkt</li>
-              <li><strong>GEMMA-integratie</strong> — Views, glossary, AMEFF export/import</li>
-              <li><strong>Autorisatiemodel</strong> — 10 rollen, correct filteren per rol</li>
-              <li><strong>Zelf-registratie &amp; fiattering</strong> — Concept-registratie, admin-goedkeuring workflow</li>
-              <li><strong>E-mailfunctionaliteit</strong> — Registratie-notificaties, goedkeuring/afwijzing, wachtwoord-reset (Resend)</li>
-              <li><strong>Organisatie-informatie</strong> — Contactpersonen per pakket, diensten-omschrijving, support/documentatie/kennisbank-links</li>
-              <li><strong>API</strong> — Publieke REST API met OpenAPI docs</li>
-              <li><strong>Vergelijkfunctie</strong> — Side-by-side gemeente-vergelijking</li>
-              <li><strong>Fuzzy search</strong> — Typfouten-tolerant (pg_trgm)</li>
-              <li><strong>AI-adviseur</strong> — Eigen tabblad in dashboard + gemeentepagina, HTML-output, 5 suggestievragen</li>
-              <li><strong>Suggesties-tabblad</strong> — Nieuwe pakketten, versies en buitengemeentelijke koppelingen (conform softwarecatalogus.nl)</li>
-              <li><strong>Deploy naar productie</strong> — Eén-klik deploy met live terminal streaming</li>
-              <li><strong>Wachtwoordbeveiliging</strong> — Basic Auth op Vercel met eenmalige login (cookie)</li>
-              <li><strong>Responsiveness &amp; Dark mode</strong></li>
-              <li><strong>Geautomatiseerde tests</strong> — 264 unit tests (89.76% coverage) + 26+ E2E Playwright tests</li>
-              <li><strong>Golden Rulebook</strong> — 5-lagenmodel, API-First, CSP headers, Zod validation, Haven, Helm</li>
-            </ol>
-          </div>
-          <div className="points-card gaps">
-            <h3 style={{ color: "#dc2626" }}>❌ Belangrijkste gaps</h3>
-            <ol>
-              <li><strong>2FA/TOTP</strong> — Alleen email + wachtwoord</li>
-              <li><strong>Multi-organisatie toegang</strong> — User = 1 organisatie</li>
-              <li><strong>OTAP / CI/CD</strong> — Geen pipeline of omgevingen</li>
-              <li><strong>NEN 7510</strong> — Externe security audit nodig</li>
-            </ol>
-          </div>
-        </div>
+            /* ─── SECURITY TAB ─── */
+            security: (
+              <PveDetailTables sections={getSecuritySections()} />
+            ),
 
-        <div className="conclusion-box" style={{ background: "linear-gradient(135deg, #fef3c7, #fff7ed)", borderColor: "#f59e0b" }}>
-          <strong style={{ color: "#92400e" }}>IBD-wensen: volledig open terrein</strong><br />
-          Alle IBD-gerelateerde wensen (BIO compliance, DPIA, pen-tests, DigiD, kwetsbaarheden, register van verwerkingen) zijn niet gerealiseerd. Dit is een groot functioneel domein dat aanzienlijke ontwikkeltijd vergt en deels afhankelijk is van GEMMA-uitbreidingen.
-        </div>
+            /* ─── CONCLUSIES TAB ─── */
+            conclusies: (
+              <>
+                <h2 className="section-title">Opmerkingen n.a.v. mail Peter Makkes</h2>
 
-        <div className="aanbeveling">
-          <h3>Aanbeveling prioritering</h3>
-          <p style={{ marginBottom: "0.75rem", opacity: 0.9 }}>De huidige applicatie dekt de kernfunctionaliteit goed af. Zelf-registratie, fiattering en e-mailfunctionaliteit zijn inmiddels gerealiseerd. De grootste resterende gaps zitten in:</p>
-          <ol>
-            <li><strong>Gebruikersbeheer-uitbreidingen</strong> — multi-organisatie toegang, zelf-beheer collega-accounts</li>
-            <li><strong>Beveiligingseisen</strong> — 2FA/TOTP, audit logging</li>
-            <li><strong>DevOps</strong> — testen, CI/CD, OTAP</li>
-            <li><strong>IBD/compliance domein</strong> — volledig nieuw te bouwen</li>
-          </ol>
-          <p style={{ marginTop: "0.75rem", opacity: 0.85, fontSize: "0.85rem" }}>Prioritering zou moeten liggen bij de harde eisen die nog niet gerealiseerd zijn, met name de beveiligingseisen en DevOps-vereisten, aangezien deze randvoorwaardelijk zijn voor productie-gebruik.</p>
-        </div>
+                <div className="opmerking-card">
+                  <h4>1. Naamswijziging</h4>
+                  <p>De applicatie heet nu &quot;GEMMA Softwarecatalogus&quot; en moet hernoemd worden naar <strong>&quot;Voorzieningencatalogus&quot;</strong>. Dit raakt layout, metadata, OG-image, en alle referenties in de code.</p>
+                </div>
+                <div className="opmerking-card">
+                  <h4>2. Rollenmodel</h4>
+                  <p>Peter beschrijft drie hoofdrollen:</p>
+                  <ul style={{ margin: "0.5rem 0 0 1.25rem", fontSize: "0.9rem", color: "#475569" }}>
+                    <li><strong>Aanbod-beheerder</strong> (leveranciers) — geïmplementeerd als LEVERANCIER rol</li>
+                    <li><strong>Gebruik-beheerder</strong> (gemeenten/samenwerkingen) — geïmplementeerd als GEMEENTE_BEHEERDER</li>
+                    <li><strong>Gebruik-raadpleger</strong> — geïmplementeerd als GEMEENTE_RAADPLEGER</li>
+                  </ul>
+                  <p style={{ marginTop: "0.5rem" }}>De huidige implementatie matcht redelijk maar mist het zelf-registratie en fiatteringsproces.</p>
+                </div>
+                <div className="opmerking-card">
+                  <h4>3. Autorisatie</h4>
+                  <ul style={{ margin: "0.5rem 0 0 1.25rem", fontSize: "0.9rem", color: "#475569" }}>
+                    <li><span style={{ color: "#16a34a" }}>✅</span> Gemeenten zien alles inclusief elkaars landschappen</li>
+                    <li><span style={{ color: "#16a34a" }}>✅</span> Leveranciers zien alleen hun eigen aanbod en gebruik</li>
+                    <li><span style={{ color: "#16a34a" }}>✅</span> Bezoekers zien alleen openbare info</li>
+                  </ul>
+                </div>
+                <div className="opmerking-card">
+                  <h4>4. Suite-concept</h4>
+                  <p>Peter geeft aan dat het suite-concept voorlopig is losgelaten. Geen actie nodig.</p>
+                </div>
+                <div className="opmerking-card">
+                  <h4>5. GEMMA Views</h4>
+                  <p>Peter verwijst naar <a href="https://vng-realisatie.github.io/Over-GEMMA-Archi-repository/?view=id-26040" target="_blank" rel="noopener noreferrer" style={{ color: "#1a6ca8" }}>GEMMA Archi repository view</a>. De kaart-functionaliteit (/kaart) biedt al GEMMA views, maar de specifieke view-structuur zou gevalideerd moeten worden.</p>
+                </div>
+
+                <h2 className="section-title">Conclusies</h2>
+
+                <div className="points-grid">
+                  <div className="points-card">
+                    <h3 style={{ color: "#16a34a" }}>✅ Sterke punten</h3>
+                    <ol>
+                      <li><strong>Kernfunctionaliteit aanbod &amp; gebruik</strong> — Pakketten, leveranciers, gemeenten, standaarden volledig uitgewerkt</li>
+                      <li><strong>GEMMA-integratie</strong> — Views, glossary, AMEFF export/import</li>
+                      <li><strong>Autorisatiemodel</strong> — 10 rollen, correct filteren per rol</li>
+                      <li><strong>Zelf-registratie &amp; fiattering</strong> — Concept-registratie, admin-goedkeuring workflow</li>
+                      <li><strong>E-mailfunctionaliteit</strong> — Registratie-notificaties, goedkeuring/afwijzing, wachtwoord-reset (Resend)</li>
+                      <li><strong>Organisatie-informatie</strong> — Contactpersonen per pakket, diensten-omschrijving, support/documentatie/kennisbank-links</li>
+                      <li><strong>API</strong> — Publieke REST API met OpenAPI docs</li>
+                      <li><strong>Vergelijkfunctie</strong> — Side-by-side gemeente-vergelijking</li>
+                      <li><strong>Fuzzy search</strong> — Typfouten-tolerant (pg_trgm)</li>
+                      <li><strong>AI-adviseur</strong> — Eigen tabblad in dashboard + gemeentepagina, HTML-output, 5 suggestievragen</li>
+                      <li><strong>Suggesties-tabblad</strong> — Nieuwe pakketten, versies en buitengemeentelijke koppelingen (conform softwarecatalogus.nl)</li>
+                      <li><strong>Deploy naar productie</strong> — Eén-klik deploy met live terminal streaming</li>
+                      <li><strong>Wachtwoordbeveiliging</strong> — Basic Auth op Vercel met eenmalige login (cookie)</li>
+                      <li><strong>Responsiveness &amp; Dark mode</strong></li>
+                      <li><strong>Geautomatiseerde tests</strong> — 264 unit tests (89.76% coverage) + 26+ E2E Playwright tests</li>
+                      <li><strong>Golden Rulebook</strong> — 5-lagenmodel, API-First, CSP headers, Zod validation, Haven, Helm</li>
+                    </ol>
+                  </div>
+                  <div className="points-card gaps">
+                    <h3 style={{ color: "#dc2626" }}>❌ Belangrijkste gaps</h3>
+                    <ol>
+                      <li><strong>2FA/TOTP</strong> — Alleen email + wachtwoord</li>
+                      <li><strong>Multi-organisatie toegang</strong> — User = 1 organisatie</li>
+                      <li><strong>OTAP / CI/CD</strong> — Geen pipeline of omgevingen</li>
+                      <li><strong>NEN 7510</strong> — Externe security audit nodig</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div className="conclusion-box" style={{ background: "linear-gradient(135deg, #fef3c7, #fff7ed)", borderColor: "#f59e0b" }}>
+                  <strong style={{ color: "#92400e" }}>IBD-wensen: volledig open terrein</strong><br />
+                  Alle IBD-gerelateerde wensen (BIO compliance, DPIA, pen-tests, DigiD, kwetsbaarheden, register van verwerkingen) zijn niet gerealiseerd. Dit is een groot functioneel domein dat aanzienlijke ontwikkeltijd vergt en deels afhankelijk is van GEMMA-uitbreidingen.
+                </div>
+
+                <div className="aanbeveling">
+                  <h3>Aanbeveling prioritering</h3>
+                  <p style={{ marginBottom: "0.75rem", opacity: 0.9 }}>De huidige applicatie dekt de kernfunctionaliteit goed af. Zelf-registratie, fiattering en e-mailfunctionaliteit zijn inmiddels gerealiseerd. De grootste resterende gaps zitten in:</p>
+                  <ol>
+                    <li><strong>Gebruikersbeheer-uitbreidingen</strong> — multi-organisatie toegang, zelf-beheer collega-accounts</li>
+                    <li><strong>Beveiligingseisen</strong> — 2FA/TOTP, audit logging</li>
+                    <li><strong>DevOps</strong> — testen, CI/CD, OTAP</li>
+                    <li><strong>IBD/compliance domein</strong> — volledig nieuw te bouwen</li>
+                  </ol>
+                  <p style={{ marginTop: "0.75rem", opacity: 0.85, fontSize: "0.85rem" }}>Prioritering zou moeten liggen bij de harde eisen die nog niet gerealiseerd zijn, met name de beveiligingseisen en DevOps-vereisten, aangezien deze randvoorwaardelijk zijn voor productie-gebruik.</p>
+                </div>
+              </>
+            ),
+          }}
+        </PveTabs>
       </div>
     </>
   );

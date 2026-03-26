@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { sections, type PveRow, type Prio, type Status } from "./pve-data";
+import { sections as allSections, type PveSection, type PveRow, type Prio, type Status } from "./pve-data";
 
 /* ── Link-icoon SVG ── */
 function DemoLink({ href, title }: { href: string; title?: string }) {
@@ -66,7 +66,8 @@ function PveTable({ rows, header }: { rows: PveRow[]; header?: string }) {
   );
 }
 
-export default function PveDetailTables() {
+export default function PveDetailTables({ sections: sectionsProp }: { sections?: PveSection[] }) {
+  const sections = sectionsProp ?? allSections;
   return (
     <>
       {sections.map((s, i) => (
