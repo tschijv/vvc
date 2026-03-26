@@ -7,7 +7,8 @@ import AuthButton from "@/ui/components/AuthButton";
 import GlossaryProvider from "@/ui/components/GlossaryProvider";
 import MobileNav from "@/ui/components/MobileNav";
 import ThemeToggle from "@/ui/components/ThemeToggle";
-import { menuItems } from "@/ui/menu-items";
+// Menu items from tenant config (not from static menu-items.ts)
+const menuItems = tenant.menuItems;
 import ImpersonationBanner from "@/ui/components/ImpersonationBanner";
 import KeyboardShortcuts from "@/ui/components/KeyboardShortcuts";
 import NotificatieBel from "@/ui/components/NotificatieBel";

@@ -23,7 +23,7 @@ const TENANT_CONFIGS: Record<string, TenantConfig> = {
 
 // Load tenant config based on TENANT env var
 function loadTenantConfig(): TenantConfig {
-  const tenantId = process.env.TENANT || "vvc";
+  const tenantId = process.env.NEXT_PUBLIC_TENANT || process.env.TENANT || "vvc";
   return TENANT_CONFIGS[tenantId] || TENANT_CONFIGS.vvc;
 }
 
