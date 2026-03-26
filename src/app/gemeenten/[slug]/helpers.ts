@@ -102,7 +102,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
   const populairePakketten = await prisma.pakket.findMany({
     where: {
       id: { notIn: Array.from(heeftPakketIds) },
-      aantalGemeenten: { gte: 10 },
+      aantalOrganisaties: { gte: 10 },
     },
     select: {
       naam: true, slug: true, mutatiedatum: true,
@@ -112,7 +112,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
         select: { naam: true }, orderBy: { createdAt: "desc" }, take: 1,
       },
     },
-    orderBy: { aantalGemeenten: "desc" }, take: 20,
+    orderBy: { aantalOrganisaties: "desc" }, take: 20,
   });
 
   const nieuwePakketten = populairePakketten

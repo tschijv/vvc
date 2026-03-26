@@ -200,7 +200,7 @@ model Pakket {
   slug                  String                       @unique
   beschrijving          String?
   urlProductpagina      String?
-  aantalGemeenten       Int                          @default(0)
+  aantalOrganisaties  Int @map("aantalGemeenten")                          @default(0)
   mutatiedatum          DateTime?
   leverancier           Leverancier                  @relation(fields: [leverancierId], references: [id])
   leverancierId         String
@@ -240,7 +240,7 @@ model Pakketversie {
   startOntwikkeling     DateTime?
   startTest             DateTime?
   startDistributie      DateTime?
-  aantalGemeenten       Int            @default(0)
+  aantalOrganisaties  Int @map("aantalGemeenten")            @default(0)
   mutatiedatum          DateTime?
   pakket                Pakket         @relation(fields: [pakketId], references: [id])
   pakketId              String
@@ -281,7 +281,7 @@ model PakketReferentiecomponent {
   referentiecomponent   Referentiecomponent @relation(fields: [referentiecomponentId], references: [id])
   referentiecomponentId String
   type                  String              // leverancier | gemeente
-  aantalGemeenten       Int                 @default(0)
+  aantalOrganisaties  Int @map("aantalGemeenten")                 @default(0)
 
   @@id([pakketId, referentiecomponentId, type])
   @@index([referentiecomponentId])

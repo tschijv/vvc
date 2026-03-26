@@ -119,7 +119,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
   // Referentiecomponenten are now directly on pakket
   const refComps = pakket.referentiecomponenten.map((prc) => ({
     naam: prc.referentiecomponent.naam,
-    aantalGemeenten: prc.aantalGemeenten,
+    aantalOrganisaties: prc.aantalOrganisaties,
   }));
 
   return (
@@ -304,7 +304,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
         {/* Referentiecomponenten */}
         <div>
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Pakket geschikt voor (GEMMA 2) — Ingevuld door {pakket.aantalGemeenten} gemeenten
+            Pakket geschikt voor (GEMMA 2) — Ingevuld door {pakket.aantalOrganisaties} gemeenten
           </h3>
           <table className="w-full text-sm border-collapse">
             <tbody>
@@ -312,7 +312,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
                 <tr key={rc.naam} className="border-b border-gray-100">
                   <td className="py-1.5 pr-3">{rc.naam}</td>
                   <td className="py-1.5 text-gray-500">
-                    {rc.aantalGemeenten > 0 ? `${rc.aantalGemeenten} gemeenten` : ""}
+                    {rc.aantalOrganisaties > 0 ? `${rc.aantalOrganisaties} gemeenten` : ""}
                   </td>
                 </tr>
               ))}

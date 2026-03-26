@@ -14,7 +14,7 @@ export default async function StatistiekenPage() {
   if (!user || user.role !== "ADMIN") redirect("/");
 
   const [
-    aantalGemeenten,
+    aantalOrganisaties,
     aantalLeveranciers,
     aantalPakketten,
     aantalPakketversies,
@@ -37,8 +37,8 @@ export default async function StatistiekenPage() {
     prisma.samenwerking.count(),
     prisma.user.count({ where: { actief: true } }),
     prisma.pakket.findMany({
-      select: { naam: true, slug: true, aantalGemeenten: true, leverancier: { select: { naam: true } } },
-      orderBy: { aantalGemeenten: "desc" },
+      select: { naam: true, slug: true, aantalOrganisaties: true, leverancier: { select: { naam: true } } },
+      orderBy: { aantalOrganisaties: "desc" },
       take: 10,
     }),
     prisma.leverancier.findMany({
@@ -55,7 +55,7 @@ export default async function StatistiekenPage() {
   ]);
 
   const stats = [
-    { label: "Gemeenten", value: aantalGemeenten },
+    { label: "Gemeenten", value: aantalOrganisaties },
     { label: "Leveranciers", value: aantalLeveranciers },
     { label: "Pakketten", value: aantalPakketten },
     { label: "Pakketversies", value: aantalPakketversies },
@@ -107,7 +107,7 @@ export default async function StatistiekenPage() {
                     <Link href={`/pakketten/${p.slug}`} className="text-[#1a6ca8] hover:underline">{p.naam}</Link>
                   </td>
                   <td className="py-1.5 text-gray-600 dark:text-slate-400">{p.leverancier.naam}</td>
-                  <td className="py-1.5 text-right font-medium">{p.aantalGemeenten}</td>
+                  <td className="py-1.5 text-right font-medium">{p.aantalOrganisaties}</td>
                 </tr>
               ))}
             </tbody>

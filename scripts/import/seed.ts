@@ -287,7 +287,7 @@ async function importPakketten() {
         slug,
         beschrijving: row["Software Description"]?.replace(/"/g, "").trim() || null,
         urlProductpagina: row["Software Url"]?.replace(/"/g, "").trim() || null,
-        aantalGemeenten: detail ? parseInt(detail["Pakket aantal gemeenten"] || "0") || 0 : 0,
+        aantalOrganisaties: detail ? parseInt(detail["Pakket aantal gemeenten"] || "0") || 0 : 0,
         mutatiedatum: detail ? parseDate(detail["Mutatiedatum pakket"]) || null : null,
         leverancierId,
       },
@@ -308,7 +308,7 @@ async function importPakketten() {
           naam: versieNaam,
           status: detail?.["Pakketversie Status"] || "Onbekend",
           startDistributie: detail ? parseDate(detail["Start distributie"]) || null : null,
-          aantalGemeenten: detail ? parseInt(detail["Pakketversie aantal gemeenten"] || "0") || 0 : 0,
+          aantalOrganisaties: detail ? parseInt(detail["Pakketversie aantal gemeenten"] || "0") || 0 : 0,
           pakketId,
         },
       }));

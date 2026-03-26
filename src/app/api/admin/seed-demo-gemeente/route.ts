@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     // Get all pakketversies, ordered by popularity then random
     const allPakketversies = await prisma.pakketversie.findMany({
-      orderBy: { aantalGemeenten: "desc" },
+      orderBy: { aantalOrganisaties: "desc" },
       take: gewenstAantal + 50, // extra margin
       select: {
         id: true,

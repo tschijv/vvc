@@ -16,7 +16,7 @@ function sterren(progress: number): string[] {
   return sterrenDisplay(progress).map((s) => (s === "★" ? "filled" : "empty"));
 }
 
-function PakketFilterList({ pakkettenMetTellingen, pakketFilter, zoek }: { pakkettenMetTellingen: { id: string; naam: string; aantalGemeenten: number }[]; pakketFilter: string; zoek: string }) {
+function PakketFilterList({ pakkettenMetTellingen, pakketFilter, zoek }: { pakkettenMetTellingen: { id: string; naam: string; aantalOrganisaties: number }[]; pakketFilter: string; zoek: string }) {
   return (
     <div className="bg-gray-50 rounded p-4">
       <h3 className="font-semibold text-sm mb-3">Pakket</h3>
@@ -33,7 +33,7 @@ function PakketFilterList({ pakkettenMetTellingen, pakketFilter, zoek }: { pakke
               href={`/gemeenten?pakket=${pakketFilter === p.id ? "" : p.id}${zoek ? `&zoek=${zoek}` : ""}`}
               className="hover:underline"
             >
-              {p.naam} ({p.aantalGemeenten})
+              {p.naam} ({p.aantalOrganisaties})
             </Link>
           </label>
         ))}

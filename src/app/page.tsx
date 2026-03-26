@@ -8,7 +8,7 @@ export const revalidate = 3600; // ISR: regenerate every hour
 
 const getHomepageStats = unstable_cache(
   async () => {
-    const [aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang] = await Promise.all([
+    const [aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang] = await Promise.all([
       prisma.pakket.count(),
       prisma.pakketversie.count(),
       prisma.leverancier.count(),
@@ -19,7 +19,7 @@ const getHomepageStats = unstable_cache(
       prisma.applicatiefunctie.count(),
       prisma.organisatie.findMany({ select: { progress: true } }),
     ]);
-    return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang };
+    return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang };
   },
   ["homepage-stats"],
   { revalidate: 300 }, // 5 minutes
@@ -244,7 +244,7 @@ export default async function HomePage() {
       take: 10,
     }),
   ]);
-  const { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalGemeenten, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang } = stats;
+  const { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang } = stats;
 
   const magBewerken = canEditPagina(user);
 
@@ -259,9 +259,9 @@ export default async function HomePage() {
 
   const ingelogdPerJaar = [
     { jaar: 2026, n: 69 },
-    { jaar: 2025, n: aantalGemeenten },
-    { jaar: 2024, n: Math.round(aantalGemeenten * 0.97) },
-    { jaar: 2023, n: Math.round(aantalGemeenten * 0.93) },
+    { jaar: 2025, n: aantalOrganisaties },
+    { jaar: 2024, n: Math.round(aantalOrganisaties * 0.97) },
+    { jaar: 2023, n: Math.round(aantalOrganisaties * 0.93) },
   ];
 
   return (
@@ -293,7 +293,7 @@ export default async function HomePage() {
             { href: "/pakketversies", label: "Pakket\nversies", count: aantalPakketversies, Icon: IconPakketversies },
             { href: "/leveranciers", label: "Leveranciers", count: aantalLeveranciers, Icon: IconLeveranciers },
             { href: "/addenda", label: "Addenda", count: aantalAddenda, Icon: IconAddenda },
-            { href: "/gemeenten", label: "Gemeenten", count: aantalGemeenten, Icon: IconGemeenten },
+            { href: "/gemeenten", label: "Gemeenten", count: aantalOrganisaties, Icon: IconGemeenten },
             { href: "/standaarden", label: "Standaarden", count: aantalStandaarden, Icon: IconStandaarden },
             { href: "/referentiecomponenten", label: "Referentie\ncomponenten", count: aantalRefComps, Icon: IconReferentie },
             { href: "/applicatiefuncties", label: "Applicatie\nfuncties", count: aantalAppFuncties, Icon: IconApplicatiefuncties },

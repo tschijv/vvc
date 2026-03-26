@@ -319,10 +319,10 @@ export async function getPakkettenMetTellingen() {
     select: {
       id: true,
       naam: true,
-      aantalGemeenten: true,
+      aantalOrganisaties: true,
     },
-    where: { aantalGemeenten: { gt: 0 } },
-    orderBy: { aantalGemeenten: "desc" },
+    where: { aantalOrganisaties: { gt: 0 } },
+    orderBy: { aantalOrganisaties: "desc" },
     take: 20,
   });
 }
@@ -462,7 +462,7 @@ export async function mergeOrganisaties(bronId: string, doelId: string) {
     // 5. Bronorganisatie verwijderen
     await tx.organisatie.delete({ where: { id: bronId } });
 
-    // 6. Herbereken aantalGemeenten
+    // 6. Herbereken aantalOrganisaties
     const pakketTellingen = await tx.organisatiePakket.groupBy({
       by: ["pakketversieId"],
       _count: true,
@@ -471,28 +471,28 @@ export async function mergeOrganisaties(bronId: string, doelId: string) {
     const versieMap = new Map(pakketTellingen.map((p) => [p.pakketversieId, p._count]));
 
     const alleVersies = await tx.pakketversie.findMany({
-      select: { id: true, pakketId: true, aantalGemeenten: true },
+      select: { id: true, pakketId: true, aantalOrganisaties: true },
     });
 
     for (const v of alleVersies) {
       const nieuwAantal = versieMap.get(v.id) || 0;
-      if (v.aantalGemeenten !== nieuwAantal) {
+      if (v.aantalOrganisaties !== nieuwAantal) {
         await tx.pakketversie.update({
           where: { id: v.id },
-          data: { aantalGemeenten: nieuwAantal },
+          data: { aantalOrganisaties: nieuwAantal },
         });
       }
     }
 
     const pakketAantallen = await tx.pakketversie.groupBy({
       by: ["pakketId"],
-      _sum: { aantalGemeenten: true },
+      _sum: { aantalOrganisaties: true },
     });
 
     for (const p of pakketAantallen) {
       await tx.pakket.update({
         where: { id: p.pakketId },
-        data: { aantalGemeenten: p._sum.aantalGemeenten || 0 },
+        data: { aantalOrganisaties: p._sum.aantalOrganisaties || 0 },
       });
     }
 
