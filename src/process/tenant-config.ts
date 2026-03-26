@@ -8,68 +8,23 @@
  * Default: vvc
  */
 
-export type TenantConfig = {
-  id: string;
-  naam: string;
-  korteNaam: string;
-  organisatie: string;
+// Re-export type from tenants/types.ts (single source of truth)
+export type { TenantConfig } from "../../tenants/types";
 
-  organisatieType: {
-    enkelvoud: string; // "gemeente" | "waterschap"
-    meervoud: string; // "gemeenten" | "waterschappen"
-    capitaal: string; // "Gemeente" | "Waterschap"
-    meervoudCapitaal: string; // "Gemeenten" | "Waterschappen"
-  };
+// Import all tenant configs statically (tree-shaking removes unused)
+import type { TenantConfig } from "../../tenants/types";
+import { config as vvcConfig } from "../../tenants/vvc.config";
+import { config as hwhConfig } from "../../tenants/hwh.config";
 
-  routes: {
-    organisaties: string; // "/gemeenten" | "/waterschappen"
-  };
-
-  roles: {
-    beheerder: string; // "GEMEENTE_BEHEERDER" | "WATERSCHAP_BEHEERDER"
-    raadpleger: string; // "GEMEENTE_RAADPLEGER" | "WATERSCHAP_RAADPLEGER"
-    primary: string; // "GEMEENTE" | "WATERSCHAP"
-  };
-
-  architectuur: {
-    naam: string; // "GEMMA" | "WILMA"
-    apiUrl: string;
-    modelId: string;
-    wikiBaseUrl: string;
-    nieuwsbriefNaam: string;
-  };
-
-  branding: {
-    primaryColor: string;
-    accentColor: string;
-    contactEmail: string;
-  };
-
-  menuItems: {
-    label: string;
-    items: { label: string; href: string }[];
-  }[];
-
-  footer: {
-    copyright: string;
-    links: { label: string; href: string }[];
-  };
+const TENANT_CONFIGS: Record<string, TenantConfig> = {
+  vvc: vvcConfig,
+  hwh: hwhConfig,
 };
 
 // Load tenant config based on TENANT env var
 function loadTenantConfig(): TenantConfig {
   const tenantId = process.env.TENANT || "vvc";
-
-  // Dynamic import won't work in edge runtime, so we use a switch
-  switch (tenantId) {
-    case "hwh":
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      return require("../../tenants/hwh.config").config;
-    case "vvc":
-    default:
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      return require("../../tenants/vvc.config").config;
-  }
+  return TENANT_CONFIGS[tenantId] || TENANT_CONFIGS.vvc;
 }
 
 /** The active tenant configuration */

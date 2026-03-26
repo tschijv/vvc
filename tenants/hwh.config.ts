@@ -1,4 +1,4 @@
-import type { TenantConfig } from "@/process/tenant-config";
+import type { TenantConfig } from "./types";
 
 export const config: TenantConfig = {
   id: "hwh",
