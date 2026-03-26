@@ -40,7 +40,7 @@ export default function RegistratieApprovalForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           actie: "goedkeuren",
-          rollen: isLeverancier ? ["LEVERANCIER"] : ["GEMEENTE_BEHEERDER"],
+          rollen: isLeverancier ? ["LEVERANCIER"] : ["BEHEERDER"],
           ...(isLeverancier
             ? { leverancierId: orgId }
             : { organisatieId: orgId }),

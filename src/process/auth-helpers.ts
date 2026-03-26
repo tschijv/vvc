@@ -2,6 +2,7 @@ import { auth } from "./auth";
 import type { UserOrganisatieInfo } from "./auth";
 import { cookies } from "next/headers";
 import { prisma } from "@/data/prisma";
+import { tenant } from "@/process/tenant-config";
 
 export const IMPERSONATE_COOKIE = "impersonate-user-id";
 
@@ -52,8 +53,8 @@ export async function getSessionUser(): Promise<SessionUser> {
           ? "ADMIN"
           : target.rollen.includes("KING_BEHEERDER")
             ? "ADMIN"
-            : target.rollen.includes("GEMEENTE_BEHEERDER") || target.rollen.includes("GEMEENTE_RAADPLEGER")
-              ? "GEMEENTE"
+            : target.rollen.includes("BEHEERDER") || target.rollen.includes("RAADPLEGER")
+              ? tenant.roles.primary
               : target.rollen.includes("LEVERANCIER")
                 ? "LEVERANCIER"
                 : target.rollen.includes("API_USER")
@@ -67,7 +68,7 @@ export async function getSessionUser(): Promise<SessionUser> {
           role: primaryRole,
           organisatieId: target.organisatieId,
           leverancierId: target.leverancierId,
-          isBeheerder: target.rollen.includes("GEMEENTE_BEHEERDER") || target.rollen.includes("ADMIN") || target.rollen.includes("KING_BEHEERDER"),
+          isBeheerder: target.rollen.includes("BEHEERDER") || target.rollen.includes("ADMIN") || target.rollen.includes("KING_BEHEERDER"),
           isImpersonating: true,
           realUser: { id: realUser.id, naam: realUser.naam },
         };

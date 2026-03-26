@@ -218,8 +218,8 @@ export default function UserEditForm({
   }
 
   const isGemeenteUser =
-    rollen.includes("GEMEENTE_RAADPLEGER") ||
-    rollen.includes("GEMEENTE_BEHEERDER");
+    rollen.includes("RAADPLEGER") ||
+    rollen.includes("BEHEERDER");
 
   return (
     <form onSubmit={handleSave} className="space-y-6">

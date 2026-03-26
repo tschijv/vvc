@@ -11,8 +11,8 @@ import { prisma } from "@/data/prisma";
 
 const ALLOWED_ROLES = [
   "ADMIN",
-  "GEMEENTE_BEHEERDER",
-  "GEMEENTE_RAADPLEGER",
+  "BEHEERDER",
+  "RAADPLEGER",
   "KING_BEHEERDER",
   "KING_RAADPLEGER",
 ];

@@ -108,7 +108,7 @@ export const koppelklassen: Koppelklasse[] = [
 ];
 
 export const enumeraties: Enumeratie[] = [
-  { naam: "Rol", waarden: "GEVERIFIEERD, GEMEENTE_RAADPLEGER, GEMEENTE_BEHEERDER, SAMENWERKING_BEHEERDER, LEVERANCIER, REDACTEUR, KING_RAADPLEGER, KING_BEHEERDER, ADMIN, API_USER" },
+  { naam: "Rol", waarden: "GEVERIFIEERD, RAADPLEGER, BEHEERDER, SAMENWERKING_BEHEERDER, LEVERANCIER, REDACTEUR, KING_RAADPLEGER, KING_BEHEERDER, ADMIN, API_USER" },
   { naam: "Koppelrichting", waarden: "heen, weer, beide" },
   { naam: "Versie-status", waarden: "in ontwikkeling, in test, in distributie, uit distributie" },
   { naam: "Begrip-status", waarden: "actief, inactief, concept" },

@@ -181,17 +181,17 @@ export async function deleteUser(id: string) {
 
 // ─── Rollen helper ──────────────────────────────────────────────────────────────
 
-export const ROLLEN_LABELS: Record<Role, string> = {
-  GEVERIFIEERD: "Geverifieerde gebruiker",
-  GEMEENTE_RAADPLEGER: "Gemeente raadpleger",
-  GEMEENTE_BEHEERDER: "Gemeente beheerder",
-  SAMENWERKING_BEHEERDER: "Samenwerking beheerder",
-  LEVERANCIER: "Leverancier",
-  REDACTEUR: "Redacteur",
-  KING_RAADPLEGER: "KING raadpleger",
-  KING_BEHEERDER: "KING beheerder",
+export const ROLLEN_LABELS: Record<string, string> = {
   ADMIN: "Administrator",
-  API_USER: "API user",
+  BEHEERDER: "Beheerder",
+  RAADPLEGER: "Raadpleger",
+  LEVERANCIER: "Leverancier",
+  API_USER: "API-gebruiker",
+  GEVERIFIEERD: "Geverifieerd",
+  SAMENWERKING_BEHEERDER: "Samenwerking-beheerder",
+  REDACTEUR: "Redacteur",
+  KING_BEHEERDER: "KING-beheerder",
+  KING_RAADPLEGER: "KING-raadpleger",
 };
 
 export const ALL_ROLES = Object.keys(ROLLEN_LABELS) as string[];

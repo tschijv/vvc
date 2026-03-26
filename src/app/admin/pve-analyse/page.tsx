@@ -265,8 +265,8 @@ export default async function PveAnalysePage() {
                   <p>Peter beschrijft drie hoofdrollen:</p>
                   <ul style={{ margin: "0.5rem 0 0 1.25rem", fontSize: "0.9rem", color: "#475569" }}>
                     <li><strong>Aanbod-beheerder</strong> (leveranciers) — geïmplementeerd als LEVERANCIER rol</li>
-                    <li><strong>Gebruik-beheerder</strong> (gemeenten/samenwerkingen) — geïmplementeerd als GEMEENTE_BEHEERDER</li>
-                    <li><strong>Gebruik-raadpleger</strong> — geïmplementeerd als GEMEENTE_RAADPLEGER</li>
+                    <li><strong>Gebruik-beheerder</strong> (gemeenten/samenwerkingen) — geïmplementeerd als BEHEERDER</li>
+                    <li><strong>Gebruik-raadpleger</strong> — geïmplementeerd als RAADPLEGER</li>
                   </ul>
                   <p style={{ marginTop: "0.5rem" }}>De huidige implementatie matcht redelijk maar mist het zelf-registratie en fiatteringsproces.</p>
                 </div>

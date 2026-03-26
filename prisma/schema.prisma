@@ -75,7 +75,7 @@ model GemmaView {
 
 // Rollen als String[] i.p.v. enum — flexibel per tenant
 // Standaard rollen: GEVERIFIEERD, ADMIN, LEVERANCIER, API_USER, REDACTEUR
-// Tenant-specifiek: GEMEENTE_BEHEERDER, WATERSCHAP_BEHEERDER, etc. (via tenant config)
+// Generiek: BEHEERDER, RAADPLEGER, SAMENWERKING_BEHEERDER, KING_BEHEERDER, KING_RAADPLEGER
 
 model User {
   id            String       @id @default(uuid())

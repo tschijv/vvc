@@ -4,6 +4,7 @@ import { compare } from "bcryptjs";
 import { prisma } from "@/data/prisma";
 import { logAudit } from "@/service/audit";
 import { verifyTotpToken } from "@/service/totp";
+import { tenant } from "@/process/tenant-config";
 
 class TotpRequiredError extends CredentialsSignin {
   code = "TOTP_REQUIRED";
@@ -110,8 +111,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           ? "ADMIN"
           : user.rollen.includes("KING_BEHEERDER")
             ? "ADMIN"
-            : user.rollen.includes("GEMEENTE_BEHEERDER") || user.rollen.includes("GEMEENTE_RAADPLEGER")
-              ? "GEMEENTE"
+            : user.rollen.includes("BEHEERDER") || user.rollen.includes("RAADPLEGER")
+              ? tenant.roles.primary
               : user.rollen.includes("LEVERANCIER")
                 ? "LEVERANCIER"
                 : user.rollen.includes("API_USER")
@@ -125,7 +126,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           role: primaryRole,
           organisatieId: user.organisatieId,
           leverancierId: user.leverancierId,
-          isBeheerder: user.rollen.includes("GEMEENTE_BEHEERDER") || user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER"),
+          isBeheerder: user.rollen.includes("BEHEERDER") || user.rollen.includes("ADMIN") || user.rollen.includes("KING_BEHEERDER"),
           organisaties: userOrganisaties,
         };
       },

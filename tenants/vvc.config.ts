@@ -18,8 +18,8 @@ export const config: TenantConfig = {
   },
 
   roles: {
-    beheerder: "GEMEENTE_BEHEERDER",
-    raadpleger: "GEMEENTE_RAADPLEGER",
+    beheerder: "BEHEERDER",
+    raadpleger: "RAADPLEGER",
     primary: "GEMEENTE",
   },
 

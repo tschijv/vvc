@@ -28,8 +28,8 @@ type ProfielFormProps = {
 
 const rolLabels: Record<string, string> = {
   GEVERIFIEERD: "Geverifieerd",
-  GEMEENTE_RAADPLEGER: "Raadpleger",
-  GEMEENTE_BEHEERDER: "Beheerder",
+  RAADPLEGER: "Raadpleger",
+  BEHEERDER: "Beheerder",
   SAMENWERKING_BEHEERDER: "Samenwerking beheerder",
   LEVERANCIER: "Leverancier",
   REDACTEUR: "Redacteur",

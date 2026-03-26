@@ -134,7 +134,7 @@ export const sections: PveSection[] = [
     subtitle: "Eisen",
     rows: [
       { id: "75", naam: "Collega's toegang geven (beheerder)", prio: "eis", status: "partial", toelichting: "Admin kan gebruikers aanmaken. Organisatie-beheerders kunnen dit niet zelf.", link: "/admin/gebruikers", linkTitle: "Gebruikersbeheer" },
-      { id: "76", naam: "Meerdere gebruikersrollen met rechten", prio: "eis", status: "yes", toelichting: "10 rollen gedefinieerd (ADMIN, LEVERANCIER, GEMEENTE_BEHEERDER, etc.). Rolgebaseerde toegangscontrole.", link: "/admin/gebruikers", linkTitle: "Gebruikersbeheer" },
+      { id: "76", naam: "Meerdere gebruikersrollen met rechten", prio: "eis", status: "yes", toelichting: "10 rollen gedefinieerd (ADMIN, LEVERANCIER, BEHEERDER, etc.). Rolgebaseerde toegangscontrole.", link: "/admin/gebruikers", linkTitle: "Gebruikersbeheer" },
       { id: "77", naam: "Eerste account aanmaken/fiatteren", prio: "eis", status: "yes", toelichting: "Admin maakt eerste account aan voor organisatie.", link: "/admin/gebruikers", linkTitle: "Gebruikersbeheer" },
       { id: "78", naam: "Gebruiker gekoppeld aan organisatie", prio: "eis", status: "yes", toelichting: "User model heeft gemeenteId en leverancierId. Ongekoppelde gebruiker = bezoeker.", link: "/admin/gebruikers", linkTitle: "Gebruikersbeheer" },
       { id: "79", naam: "Nieuwe gebruikers aanmelden bij organisatie", prio: "eis", status: "no", toelichting: "Geen zelf-aanmeldflow met fiatteringsproces." },
@@ -211,7 +211,7 @@ export const sections: PveSection[] = [
       { id: "E24", naam: "Wachtwoordbeveiliging (Basic Auth)", prio: "nvt", status: "extra", toelichting: "Optionele Basic Auth op Vercel met eenmalige login via cookie. Beschermt de gehele applicatie tijdens ontwikkeling.", link: "/admin", linkTitle: "Beheer" },
       { id: "E25", naam: "Marktverdeling", prio: "nvt", status: "extra", toelichting: "Scatterplot van leveranciers: verticaal klanten, horizontaal referentiecomponenten, bolgrootte = aantal pakketten. Pure SVG, geen externe libraries.", link: "/marktverdeling", linkTitle: "Marktverdeling" },
       { id: "E26", naam: "Npm-health panel", prio: "nvt", status: "extra", toelichting: "Admin-panel voor npm audit (kwetsbaarheden), ongebruikte packages detectie en npm fix functionaliteit.", link: "/admin", linkTitle: "Beheer (Npm Health)" },
-      { id: "E27", naam: "Inline bewerken gemeente", prio: "nvt", status: "extra", toelichting: "Contactgegevens van een gemeente inline bewerkbaar via edit-knop. Alleen voor GEMEENTE_BEHEERDER en ADMIN.", link: "/gemeenten", linkTitle: "Gemeente detail" },
+      { id: "E27", naam: "Inline bewerken gemeente", prio: "nvt", status: "extra", toelichting: "Contactgegevens van een gemeente inline bewerkbaar via edit-knop. Alleen voor BEHEERDER en ADMIN.", link: "/gemeenten", linkTitle: "Gemeente detail" },
       { id: "E28", naam: "Zoeken multi-filter", prio: "nvt", status: "extra", toelichting: "Zoekpagina ondersteunt meerdere type-filters tegelijk. Counts per type altijd zichtbaar, toggle-gedrag.", link: "/zoeken", linkTitle: "Zoeken" },
       { id: "E29", naam: "Demo audio (HD)", prio: "nvt", status: "extra", toelichting: "Pre-generated OpenAI TTS (nova stem) MP3-bestanden voor alle 22 demo-secties. DemoPlayer speelt MP3 af met fallback naar browser spraaksynthese.", link: "/admin/demo", linkTitle: "Demo draaiboek" },
     ],

@@ -37,7 +37,7 @@ async function main() {
     if (!user.organisatieId) continue;
 
     // Determine the rol based on existing rollen
-    const rol = user.rollen.includes("GEMEENTE_BEHEERDER") ? "BEHEERDER" : "RAADPLEGER";
+    const rol = user.rollen.includes("BEHEERDER") ? "BEHEERDER" : "RAADPLEGER";
 
     try {
       await prisma.userOrganisatie.upsert({

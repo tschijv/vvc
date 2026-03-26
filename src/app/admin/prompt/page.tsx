@@ -178,7 +178,7 @@ API v1: /api/v1/gemeenten, /api/v1/leveranciers, /api/v1/referentiecomponenten, 
 - E2E tests: 26 Playwright tests
 - Marktverdeling: scatterplot van leveranciers (klanten vs referentiecomponenten vs pakketten), pure SVG
 - Npm-health panel: admin pagina voor npm audit, ongebruikte packages, kwetsbaarheden fixen
-- Inline bewerken: gemeente contactgegevens bewerkbaar via edit-knop (GEMEENTE_BEHEERDER/ADMIN)
+- Inline bewerken: gemeente contactgegevens bewerkbaar via edit-knop (BEHEERDER/ADMIN)
 - Zoeken multi-filter: meerdere type-filters tegelijk selecteren, counts per type altijd zichtbaar
 - Pre-generated demo audio: OpenAI TTS (HD) MP3's met fallback naar browser spraaksynthese
 
