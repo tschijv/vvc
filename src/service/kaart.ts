@@ -1,6 +1,7 @@
 import { prisma } from "@/data/prisma";
+import { tenant } from "@/process/tenant-config";
 
-const GEMMA_API = "https://www.gemmaonline.nl/api.php";
+const GEMMA_API = tenant.architectuur.apiUrl;
 
 /**
  * Genereer een SVG kaart van het applicatielandschap van een organisatie
@@ -35,11 +36,11 @@ export async function genereerKaartSvg(
           pakket: {
             include: {
               leverancier: true,
-            },
-          },
-          referentiecomponenten: {
-            include: {
-              referentiecomponent: true,
+              referentiecomponenten: {
+                include: {
+                  referentiecomponent: true,
+                },
+              },
             },
           },
         },
@@ -54,11 +55,11 @@ export async function genereerKaartSvg(
       const pakket = pv.pakket;
       const leverancier = pakket.leverancier;
 
-      const refComps = pv.referentiecomponenten
+      const refComps = (pakket.referentiecomponenten || [])
         .filter((rc) => rc.referentiecomponent.guid)
         .map((rc) => ({
           ReferentiecomponentID: rc.referentiecomponent.guid!,
-          ReferentiecomponentURL: `https://www.gemmaonline.nl/wiki/GEMMA/id-${rc.referentiecomponent.guid}`,
+          ReferentiecomponentURL: `${tenant.architectuur.wikiBaseUrl}/id-${rc.referentiecomponent.guid}`,
         }));
 
       if (refComps.length === 0) return null;
