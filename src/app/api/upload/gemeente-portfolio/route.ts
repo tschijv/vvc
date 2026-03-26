@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     } else {
       if (!orgId) {
         return NextResponse.json(
-          { error: "gemeenteId is verplicht voor admins." },
+          { error: "organisatieId is verplicht voor admins." },
           { status: 400 }
         );
       }

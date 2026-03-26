@@ -15,12 +15,12 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = request.nextUrl;
   const type = searchParams.get("type"); // "csv" | "ibd" | "ameff"
-  const gemeenteId = searchParams.get("gemeenteId");
+  const organisatieId = searchParams.get("organisatieId") || searchParams.get("gemeenteId");
   const viewId = searchParams.get("viewId"); // alleen voor ameff
 
-  if (!type || !gemeenteId) {
+  if (!type || !organisatieId) {
     return NextResponse.json(
-      { error: "Parameters type en gemeenteId zijn verplicht" },
+      { error: "Parameters type en organisatieId zijn verplicht" },
       { status: 400 }
     );
   }
@@ -29,10 +29,10 @@ export async function GET(request: NextRequest) {
     switch (type) {
       case "csv": {
         const { csv, organisatieNaam } =
-          await generatePakketoverzichtCsv(gemeenteId);
+          await generatePakketoverzichtCsv(organisatieId);
         const now = new Date();
         const dateStr = now.toISOString().replace(/[:.]/g, "-").substring(0, 19);
-        const filename = `Applicatieportfolio_Gemeente_${organisatieNaam}_${dateStr}.csv`;
+        const filename = `Applicatieportfolio_${organisatieNaam}_${dateStr}.csv`;
 
         return new Response(csv, {
           headers: {
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       }
 
       case "ibd": {
-        const { csv, organisatieNaam } = await generateIbdFotoCsv(gemeenteId);
+        const { csv, organisatieNaam } = await generateIbdFotoCsv(organisatieId);
         const now = new Date();
         const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
         // Sanitize gemeente naam for filename
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
         }
 
         const { xml, organisatieNaam, viewTitel } = await generateAmeffExport(
-          gemeenteId,
+          organisatieId,
           viewId
         );
         const now = new Date();
