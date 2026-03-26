@@ -279,7 +279,7 @@ export async function processLeverancierUpload(
           tx.pakketStandaard.deleteMany({ where: { pakketId: { in: pakketIds } } }),
           tx.pakketApplicatiefunctie.deleteMany({ where: { pakketId: { in: pakketIds } } }),
           tx.pakketTechnologie.deleteMany({ where: { pakketId: { in: pakketIds } } }),
-          ...(versieIds.length > 0 ? [tx.gemeentePakket.deleteMany({ where: { pakketversieId: { in: versieIds } } })] : []),
+          ...(versieIds.length > 0 ? [tx.organisatiePakket.deleteMany({ where: { pakketversieId: { in: versieIds } } })] : []),
         ]);
         await tx.pakketversie.deleteMany({
           where: { pakketId: { in: pakketIds } },
@@ -549,7 +549,7 @@ export async function processOrganisatieUpload(
     if (existing > 0) {
       logAudit({
         actie: "portfolio_replace",
-        entiteit: "GemeentePakket",
+        entiteit: "OrganisatiePakket",
         entiteitId: organisatieId,
         details: `Portfolio vervangen: ${existing} pakketten verwijderd voor nieuwe import`,
       });
@@ -606,7 +606,7 @@ export async function processOrganisatieUpload(
     if (updated > 0) parts.push(`${updated} bijgewerkt`);
     logAudit({
       actie: "portfolio_upload",
-      entiteit: "GemeentePakket",
+      entiteit: "OrganisatiePakket",
       entiteitId: organisatieId,
       details: `Portfolio-import (${mode}): ${parts.join(", ")}`,
     });

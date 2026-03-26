@@ -65,7 +65,7 @@ export async function smwQuery(
 
     const res = await fetch(`${GEMMA_API}?${params}`);
     if (!res.ok) {
-      throw new Error(`GEMMA API fout: ${res.status} ${res.statusText}`);
+      throw new Error(`${tenant.architectuur.naam} API fout: ${res.status} ${res.statusText}`);
     }
 
     const data = await res.json();

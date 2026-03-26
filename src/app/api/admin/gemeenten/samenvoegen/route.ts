@@ -4,6 +4,7 @@ import { getSessionUser } from "@/process/auth-helpers";
 import { mergeGemeenten } from "@/service/gemeente";
 import { logAudit } from "@/service/audit";
 import { parseBody, idSchema } from "@/process/validation";
+import { tenant } from "@/process/tenant-config";
 
 const samenvoegSchema = z.object({
   bronGemeenteId: idSchema,
@@ -29,13 +30,13 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       userEmail: user.email,
       actie: "merge",
-      entiteit: "Gemeente",
+      entiteit: "Organisatie",
       entiteitId: doelGemeenteId,
-      details: `Brongemeente ${bronGemeenteId} samengevoegd naar doelgemeente ${doelGemeenteId}`,
+      details: `Bron ${tenant.organisatieType.enkelvoud} ${bronGemeenteId} samengevoegd naar doel ${tenant.organisatieType.enkelvoud} ${doelGemeenteId}`,
     });
 
     return NextResponse.json({
-      message: "Gemeenten succesvol samengevoegd.",
+      message: `${tenant.organisatieType.meervoudCapitaal} succesvol samengevoegd.`,
     });
   } catch {
     return NextResponse.json(

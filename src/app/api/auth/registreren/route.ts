@@ -6,13 +6,14 @@ import { sendEmail } from "@/integration/email";
 import { registratieOntvangenEmail } from "@/integration/email-templates";
 import { withRateLimit, RATE_LIMITS } from "@/process/rate-limit";
 import { parseBody, emailSchema, wachtwoordSchema, naamSchema } from "@/process/validation";
+import { tenant } from "@/process/tenant-config";
 
 const registratieSchema = z.object({
   naam: naamSchema,
   email: emailSchema,
   wachtwoord: wachtwoordSchema,
   organisatieType: z.enum(["leverancier", "gemeente"], {
-    errorMap: () => ({ message: "Kies leverancier of gemeente" }),
+    errorMap: () => ({ message: `Kies leverancier of ${tenant.organisatieType.enkelvoud}` }),
   }),
   organisatieNaam: z.string().min(1, "Organisatienaam is verplicht").max(300),
 });

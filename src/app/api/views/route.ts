@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/process/auth-helpers";
 import { prisma } from "@/data/prisma";
+import { tenant } from "@/process/tenant-config";
 
 /**
  * GET /api/views
- * Retourneert alle actieve GEMMA views, gegroepeerd op domein.
+ * Retourneert alle actieve architectuur views, gegroepeerd op domein.
  */
 export async function GET() {
   const user = await getSessionUser();

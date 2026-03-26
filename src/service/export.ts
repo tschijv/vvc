@@ -1,7 +1,8 @@
 import { prisma } from "@/data/prisma";
 import { createHash } from "crypto";
+import { tenant } from "@/process/tenant-config";
 
-const GEMMA_API = "https://www.gemmaonline.nl/api.php";
+const ARCH_API = tenant.architectuur.apiUrl;
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -39,7 +40,7 @@ export async function generatePakketoverzichtCsv(
     "Pakketversie Naam",
     "Omschrijving",
     "Omschrijving gebruik",
-    "Referentiecomponenten gemeente",
+    `Referentiecomponenten ${tenant.organisatieType.enkelvoud}`,
     "Status",
     "Datum ingang status",
     "Gebruikte technologiën",
@@ -119,7 +120,7 @@ export async function generateIbdFotoCsv(
       csvQuoteSemicolon(p.leverancier),
       csvQuoteSemicolon(p.product),
       csvQuoteSemicolon(""),
-      csvQuoteSemicolon("Gemeentelijke applicatie (VC)"),
+      csvQuoteSemicolon(`${tenant.organisatieType.capitaal} applicatie (VC)`),
     ].join(";")
   );
 
@@ -172,7 +173,7 @@ export async function generateAmeffExport(
       return { xml, organisatieNaam: organisatie.naam, viewTitel: view.titel };
     }
   } catch (error) {
-    console.warn("GEMMA AMEFF API niet beschikbaar, gebruik lokale generator:", error);
+    console.warn(`${tenant.architectuur.naam} AMEFF API niet beschikbaar, gebruik lokale generator:`, error);
   }
 
   // Fallback: genereer zelf een standaard-conforme AMEFF XML
@@ -180,7 +181,7 @@ export async function generateAmeffExport(
   return { xml, organisatieNaam: organisatie.naam, viewTitel: view.titel };
 }
 
-// ─── GEMMA API poging ─────────────────────────────────────────────────────────
+// ─── Architecture API poging ──────────────────────────────────────────────────
 
 async function tryGemmaAmeffApi(
   view: { objectId: string; modelId: string; titel: string },
@@ -189,7 +190,7 @@ async function tryGemmaAmeffApi(
 ): Promise<string | null> {
   const pakketData = buildSwcqueryPayload(view, organisatie, organisatiePakketten);
 
-  const gemmaParams = new URLSearchParams({
+  const archParams = new URLSearchParams({
     action: "swcquery",
     output: "ameff",
     view: view.objectId,
@@ -197,31 +198,31 @@ async function tryGemmaAmeffApi(
     format: "json",
   });
 
-  const gemmaRes = await fetch(`${GEMMA_API}?${gemmaParams}`, {
+  const archRes = await fetch(`${ARCH_API}?${archParams}`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `json=${encodeURIComponent(JSON.stringify(pakketData))}`,
     signal: AbortSignal.timeout(15000),
   });
 
-  if (!gemmaRes.ok) return null;
+  if (!archRes.ok) return null;
 
-  const gemmaData = await gemmaRes.json();
+  const archData = await archRes.json();
 
   // De API kan base64-encoded XML of een URL retourneren
   const base64Xml =
-    gemmaData?.ameff?.item?.base64 ||
-    gemmaData?.ameff?.base64 ||
-    gemmaData?.item?.base64;
+    archData?.ameff?.item?.base64 ||
+    archData?.ameff?.base64 ||
+    archData?.item?.base64;
 
   if (base64Xml) {
     return Buffer.from(base64Xml, "base64").toString("utf-8");
   }
 
   const ameffUrl =
-    gemmaData?.ameff?.item?.url ||
-    gemmaData?.ameff?.url ||
-    gemmaData?.item?.url;
+    archData?.ameff?.item?.url ||
+    archData?.ameff?.url ||
+    archData?.item?.url;
 
   if (ameffUrl) {
     const xmlRes = await fetch(ameffUrl);
@@ -434,7 +435,7 @@ function buildSwcqueryPayload(
         .filter((rc) => rc.referentiecomponent.guid)
         .map((rc) => ({
           ReferentiecomponentID: rc.referentiecomponent.guid!,
-          ReferentiecomponentURL: `https://www.gemmaonline.nl/wiki/GEMMA/id-${rc.referentiecomponent.guid}`,
+          ReferentiecomponentURL: `${tenant.architectuur.wikiBaseUrl}/id-${rc.referentiecomponent.guid}`,
         }));
 
       if (refComps.length === 0) return null;

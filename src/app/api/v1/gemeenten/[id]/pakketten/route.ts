@@ -6,6 +6,7 @@ import { prisma } from "@/data/prisma";
 import { parseBody } from "@/process/validation";
 import { withRateLimit, RATE_LIMITS } from "@/process/rate-limit";
 import { logAudit } from "@/service/audit";
+import { tenant } from "@/process/tenant-config";
 import type { components } from "@/integration/api-types";
 
 type GemeentePakket = components["schemas"]["GemeentePakket"];
@@ -25,7 +26,7 @@ export async function GET(
 
     if (!gemeente) {
       return NextResponse.json(
-        { error: "Gemeente niet gevonden" },
+        { error: `${tenant.organisatieType.capitaal} niet gevonden` },
         { status: 404 }
       );
     }
@@ -100,7 +101,7 @@ export async function POST(
     session.user.organisatieId !== organisatieId
   ) {
     return NextResponse.json(
-      { error: "Onvoldoende rechten voor deze gemeente" },
+      { error: `Onvoldoende rechten voor deze ${tenant.organisatieType.enkelvoud}` },
       { status: 403 },
     );
   }
@@ -118,7 +119,7 @@ export async function POST(
 
     if (!gemeente) {
       return NextResponse.json(
-        { error: "Gemeente niet gevonden" },
+        { error: `${tenant.organisatieType.capitaal} niet gevonden` },
         { status: 404 },
       );
     }
@@ -148,7 +149,7 @@ export async function POST(
 
     if (existing) {
       return NextResponse.json(
-        { error: "Pakketversie is al toegevoegd aan deze gemeente" },
+        { error: `Pakketversie is al toegevoegd aan deze ${tenant.organisatieType.enkelvoud}` },
         { status: 400 },
       );
     }
@@ -168,7 +169,7 @@ export async function POST(
       actie: "create",
       entiteit: "OrganisatiePakket",
       entiteitId: `${organisatieId}:${pakketversieId}`,
-      details: `Pakketversie toegevoegd aan gemeente "${gemeente.naam}" via API`,
+      details: `Pakketversie toegevoegd aan ${tenant.organisatieType.enkelvoud} "${gemeente.naam}" via API`,
     });
 
     return NextResponse.json({ data: record }, { status: 201 });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/data/prisma";
 import { getSessionUser } from "@/process/auth-helpers";
+import { tenant } from "@/process/tenant-config";
 
 function escapeCsv(value: string): string {
   if (value.includes(",") || value.includes('"') || value.includes("\n")) {
@@ -58,7 +59,7 @@ export async function GET(request: NextRequest) {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="gemeenten.csv"',
+      "Content-Disposition": `attachment; filename="${tenant.organisatieType.meervoud}.csv"`,
     },
   });
 }

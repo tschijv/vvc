@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/process/auth-helpers";
 import { getMergePreview } from "@/service/gemeente";
+import { tenant } from "@/process/tenant-config";
 
 export async function GET(req: NextRequest) {
   const user = await getSessionUser();
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(preview);
   } catch {
     return NextResponse.json(
-      { error: "Gemeente niet gevonden." },
+      { error: `${tenant.organisatieType.capitaal} niet gevonden.` },
       { status: 404 }
     );
   }

@@ -3,6 +3,7 @@ import { auth } from "@/process/auth";
 import { prisma } from "@/data/prisma";
 import { withRateLimit, RATE_LIMITS } from "@/process/rate-limit";
 import { logAudit } from "@/service/audit";
+import { tenant } from "@/process/tenant-config";
 
 export async function DELETE(
   request: NextRequest,
@@ -34,7 +35,7 @@ export async function DELETE(
     session.user.organisatieId !== organisatieId
   ) {
     return NextResponse.json(
-      { error: "Onvoldoende rechten voor deze gemeente" },
+      { error: `Onvoldoende rechten voor deze ${tenant.organisatieType.enkelvoud}` },
       { status: 403 },
     );
   }
@@ -51,7 +52,7 @@ export async function DELETE(
 
     if (!existing) {
       return NextResponse.json(
-        { error: "Pakketversie niet gevonden in gemeente portfolio" },
+        { error: `Pakketversie niet gevonden in ${tenant.organisatieType.enkelvoud} portfolio` },
         { status: 404 },
       );
     }
@@ -71,7 +72,7 @@ export async function DELETE(
       actie: "delete",
       entiteit: "OrganisatiePakket",
       entiteitId: `${organisatieId}:${pakketversieId}`,
-      details: `Pakketversie verwijderd uit gemeente portfolio via API`,
+      details: `Pakketversie verwijderd uit ${tenant.organisatieType.enkelvoud} portfolio via API`,
     });
 
     return new NextResponse(null, { status: 204 });

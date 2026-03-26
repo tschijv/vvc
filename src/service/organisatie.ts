@@ -305,7 +305,7 @@ export async function getOrganisatieHistorie(organisatieId: string, take = 20) {
   return prisma.auditLog.findMany({
     where: {
       entiteitId: organisatieId,
-      entiteit: "GemeentePakket",
+      entiteit: "OrganisatiePakket",
     },
     orderBy: { createdAt: "desc" },
     take,

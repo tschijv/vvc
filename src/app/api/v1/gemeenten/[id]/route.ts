@@ -3,6 +3,7 @@ import { getGemeenteById } from "@/service/gemeente";
 import { negotiateFormat, isRdfFormat } from "@/integration/rdf/content-negotiation";
 import { serializeRdf } from "@/integration/rdf/serializer";
 import { gemeenteToTriples } from "@/integration/rdf/mappers";
+import { tenant } from "@/process/tenant-config";
 import type { components } from "@/integration/api-types";
 
 type GemeenteDetail = components["schemas"]["GemeenteDetail"];
@@ -19,7 +20,7 @@ export async function GET(
 
     if (!gemeente) {
       return NextResponse.json(
-        { error: "Gemeente niet gevonden" },
+        { error: `${tenant.organisatieType.capitaal} niet gevonden` },
         { status: 404 }
       );
     }

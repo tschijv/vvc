@@ -5,6 +5,7 @@ import { prisma } from "@/data/prisma";
 import { parseBody } from "@/process/validation";
 import { withRateLimit, RATE_LIMITS } from "@/process/rate-limit";
 import { logAudit } from "@/service/audit";
+import { tenant } from "@/process/tenant-config";
 
 const createKoppelingSchema = z.object({
   bronPakketversieId: z.string().uuid("Ongeldig bronPakketversieId"),
@@ -45,7 +46,7 @@ export async function POST(
     session.user.organisatieId !== organisatieId
   ) {
     return NextResponse.json(
-      { error: "Onvoldoende rechten voor deze gemeente" },
+      { error: `Onvoldoende rechten voor deze ${tenant.organisatieType.enkelvoud}` },
       { status: 403 },
     );
   }
@@ -63,7 +64,7 @@ export async function POST(
 
     if (!gemeente) {
       return NextResponse.json(
-        { error: "Gemeente niet gevonden" },
+        { error: `${tenant.organisatieType.capitaal} niet gevonden` },
         { status: 404 },
       );
     }
@@ -129,7 +130,7 @@ export async function POST(
       actie: "create",
       entiteit: "Koppeling",
       entiteitId: koppeling.id,
-      details: `Koppeling aangemaakt voor gemeente "${gemeente.naam}" via API`,
+      details: `Koppeling aangemaakt voor ${tenant.organisatieType.enkelvoud} "${gemeente.naam}" via API`,
     });
 
     return NextResponse.json({ data: koppeling }, { status: 201 });
