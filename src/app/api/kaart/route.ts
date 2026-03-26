@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const viewId = searchParams.get("viewId");
-  const organisatieId = searchParams.get("gemeenteId");
+  const organisatieId = searchParams.get("organisatieId") || searchParams.get("gemeenteId");
 
   if (!viewId) {
     return NextResponse.json(
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
 
   if (!targetOrganisatieId) {
     return NextResponse.json(
-      { error: "gemeenteId is verplicht" },
+      { error: "organisatieId is verplicht" },
       { status: 400 }
     );
   }
