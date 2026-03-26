@@ -1,298 +1,250 @@
-# Regeneratie-prompt: Voorzieningencatalogus
+# Functionele Specificatie: Voorzieningencatalogus
 
-> Gebruik deze prompt om de volledige applicatie opnieuw te genereren met Claude Code of een vergelijkbare AI-assistent. Kopieer de relevante secties als context bij het starten van een nieuw project.
-
----
+> Technologie-onafhankelijke specificatie. Gebruik dit als basis om de applicatie te bouwen in elke stack (PHP, Python, Java, .NET, etc.).
 
 ## Opdracht
 
-Bouw een **Voorzieningencatalogus** voor de Nederlandse gemeentelijke sector. Dit is een webapplicatie waarmee gemeenten hun softwarepakketten, leveranciers, standaarden en koppelingen kunnen beheren en vergelijken. De applicatie is gebaseerd op het GEMMA-referentiemodel van VNG.
+Bouw een Voorzieningencatalogus voor de Nederlandse publieke sector. Een webapplicatie waarmee organisaties (gemeenten, waterschappen, etc.) hun softwarepakketten, leveranciers, standaarden en koppelingen kunnen beheren en vergelijken.
 
-## Technische stack
+De applicatie moet **multi-tenant** zijn: dezelfde codebase bedient meerdere domeinen (bijv. gemeenten en waterschappen) via configuratie.
 
-- **Framework**: Next.js 16 (App Router, Server Components)
-- **Taal**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Database**: PostgreSQL (Neon) via Prisma 7 met PrismaPg adapter
-- **Authenticatie**: NextAuth v5 (credentials provider, bcrypt)
-- **E-mail**: Resend
-- **Rich text editor**: TipTap
-- **Kaarten**: Leaflet / React-Leaflet
-- **CSV/Excel**: csv-parse, xlsx
-- **Document generatie**: docx (voor Word-documenten)
-- **AI**: Anthropic Claude API (@anthropic-ai/sdk) voor AI-advisering
-- **Deployment**: Vercel (Hobby tier)
-- **Tests**: Vitest
+---
 
-## Datamodel (Prisma schema)
-
-Maak de volgende entiteiten aan:
+## Datamodel — 34 entiteiten
 
 ### Kern-entiteiten
-1. **Leverancier** - Softwareleveranciers met contactgegevens, convenant-status, logo, support/documentatie URLs
-2. **Pakket** - Softwarepakketten van leveranciers (naam, slug, beschrijving, productpagina URL)
-3. **Pakketversie** - Versies van pakketten met status (in ontwikkeling/test/distributie), start-datums per fase
-4. **PakketContact** - Contactpersonen per pakket
-5. **ExternPakket** - Externe pakketten buiten de catalogus (voor koppelingen)
+1. **Leverancier** — naam, slug, contactpersoon, email, telefoon, website, logo, convenant-status
+2. **Pakket** — naam, slug, beschrijving, leverancier (FK), aantalOrganisaties (cache-telling)
+3. **Pakketversie** — naam, status (in ontwikkeling/test/distributie/uit distributie), pakket (FK)
+4. **PakketContact** — naam, email, telefoon, rol, pakket (FK)
+5. **ExternPakket** — naam, versie (pakketten buiten de catalogus)
+6. **Testrapport** — pakketversie (FK), status, datum, toelichting
 
-### GEMMA-domein
-6. **Referentiecomponent** - GEMMA referentiecomponenten (gesynchroniseerd via API)
-7. **Standaard** - Standaarden (bijv. StUF, API's)
-8. **Standaardversie** - Versies van standaarden met compliancyMonitor vlag
-9. **Applicatiefunctie** - Applicatiefuncties uit GEMMA
-10. **GemmaView** - Views/diagrammen uit het GEMMA ArchiMate-model
+### Referentie-architectuur
+7. **Referentiecomponent** — naam, GUID (koppeling met externe architectuur-API)
+8. **Standaard** — naam (bijv. StUF BG, ZDS, API's)
+9. **Standaardversie** — naam, standaard (FK), compliancyMonitor flag
+10. **Applicatiefunctie** — naam, beschrijving
+11. **ArchitectuurView** — views/diagrammen uit extern ArchiMate-model
 
-### Gemeente-domein
-11. **Gemeente** - Alle Nederlandse gemeenten met CBS-code, contactgegevens, voortgang
-12. **Samenwerking** - Samenwerkingsverbanden tussen gemeenten
-13. **SamenwerkingGemeente** - Koppeltabel Samenwerking-Gemeente
+### Organisatie-domein
+12. **Organisatie** — naam, slug, CBS-code, contactpersoon, email, telefoon, voortgang (%)
+13. **Samenwerking** — samenwerkingsverbanden tussen organisaties
+14. **SamenwerkingOrganisatie** — koppeltabel
 
 ### Integratie-domein
-14. **Koppeling** - Koppelingen/integraties tussen systemen bij een gemeente (bron, doel, richting, standaard, protocol)
-15. **Addendum** - Addenda bij convenanten
-16. **LeverancierAddendum** - Koppeltabel Leverancier-Addendum
+15. **Koppeling** — bron (pakketversie), doel (pakketversie of extern), richting, standaard, status
+16. **Addendum** — addenda bij leveranciersconvenanten
+17. **LeverancierAddendum** — koppeltabel met deadline, ondertekeningsdatum
 
-### Koppeltabellen met attributen
-17. **GemeentePakket** - Welk pakket een gemeente gebruikt (status, licentievorm, technologie, aantal gebruikers)
-18. **PakketversieReferentiecomponent** - Welke referentiecomponenten een pakketversie implementeert (type: leverancier/gemeente)
-19. **PakketversieStandaard** - Compliancy van pakketversie aan standaardversie (incl. testrapport URL)
-20. **PakketversieApplicatiefunctie** - Welke applicatiefuncties een pakketversie ondersteunt
-21. **PakketversieTechnologie** - Technologieen per pakketversie
+### Pakket-relaties (op Pakket-niveau, niet Pakketversie)
+18. **PakketReferentiecomponent** — pakket ↔ referentiecomponent
+19. **PakketStandaard** — pakket ↔ standaardversie (compliancy)
+20. **PakketApplicatiefunctie** — pakket ↔ applicatiefunctie
+21. **PakketTechnologie** — pakket ↔ technologie-tag
 
-### Gebruikers & Content
-22. **User** - Gebruikers met rollen (enum: GEVERIFIEERD, GEMEENTE_RAADPLEGER/BEHEERDER, SAMENWERKING_BEHEERDER, LEVERANCIER, REDACTEUR, KING_RAADPLEGER/BEHEERDER, ADMIN, API_USER), gekoppeld aan gemeente of leverancier
-23. **PasswordResetToken** - Wachtwoord-reset tokens
-24. **Pagina** - CMS-pagina's (slug, titel, rich-text inhoud)
-25. **Begrip** - Begrippen/termen conform NL-SBB/SKOS (term, definitie, URI, synoniemen, vocabulaire, status)
-26. **AuditLog** - Audit logging (actie, entiteit, details, IP-adres)
+### Gebruik
+22. **OrganisatiePakket** — welke pakketversie een organisatie gebruikt + status, maatwerk, verantwoordelijke
 
-## Pagina's en routes
+### Dienstverleners & Cloud
+23. **Dienstverlener** — naam, type (Advies/Implementatie/Beheer/Hosting/Training), specialisaties, regio
+24. **DienstverlenerPakket** — koppeltabel
+25. **DienstverlenerOrganisatie** — klantrelaties
+26. **Cloudprovider** — naam, type (IaaS/PaaS/SaaS/Hosting), certificeringen, datacenterlocatie
+27. **CloudproviderPakket** — koppeltabel
 
-### Publieke pagina's
-- **`/`** - Homepage met tegelmenu in 3 groepen:
-  - Oranje: Pakketten, Leveranciers
-  - Blauw: Gemeenten, Standaarden, Referentiecomponenten, Samenwerkingen
-  - Groen: Dienstverleners, Cloud-providers
-- **`/pakketten`** - Overzicht alle pakketten met zoeken en filteren op leverancier
-- **`/pakketten/[slug]`** - Pakketdetail met versies, referentiecomponenten, standaarden, applicatiefuncties, gemeenten
-- **`/leveranciers`** - Overzicht alle leveranciers met zoeken, convenant-filter
-- **`/leveranciers/[slug]`** - Leverancierdetail met pakketten, contactinfo, addenda
-- **`/gemeenten`** - Overzicht alle gemeenten met voortgangsindicator, zoeken
-- **`/gemeenten/[slug]`** - Gemeentedetail met applicatieportfolio, koppelingen
-- **`/gemeenten/vergelijk`** - Vergelijk twee gemeenten qua pakketgebruik
-- **`/standaarden`** - Overzicht standaarden met versies en compliancy-percentages
-- **`/referentiecomponenten`** - Overzicht referentiecomponenten met pakketdekking
-- **`/samenwerkingen`** - Overzicht samenwerkingsverbanden
-- **`/samenwerkingen/[id]`** - Detail met deelnemende gemeenten
-- **`/koppelingen`** - Overzicht koppelingen per gemeente
-- **`/compliancy`** - Compliancy-monitor: matrix van pakketten vs standaarden
-- **`/begrippen`** - Begrippenkader met zoeken (NL-SBB/SKOS vocabulaire)
-- **`/kaart`** - Interactieve kaart (Leaflet) met gemeenten
-- **`/kaart/nederland`** - SVG-kaart van Nederland met gemeenten ingekleurd
-- **`/inkoop`** - Inkoopondersteuning: selecteer applicatiefuncties, vergelijk pakketten
-- **`/zoeken`** - Globale zoekfunctie over alle entiteiten
-- **`/dashboard`** - Dashboard met statistieken en grafieken
-- **`/info/[slug]`** - CMS-pagina's (handleidingen, nieuws)
-- **`/dienstverleners`** - Placeholder (nog niet geimplementeerd)
-- **`/cloudproviders`** - Placeholder (nog niet geimplementeerd)
+### Reviews
+28. **PakketReview** — score (1-5), 4 subscores, toelichting, anoniem flag, per organisatie per pakket
+
+### Gebruikers & Systeem
+29. **User** — email, wachtwoord (gehasht), rollen (array), organisatieId (FK), leverancierId (FK), 2FA velden
+30. **UserOrganisatie** — multi-organisatie toegang (many-to-many met rol)
+31. **PasswordResetToken** — token, userId, verlooptijd
+32. **Pagina** — CMS-pagina's (slug, titel, rich-text body)
+33. **AuditLog** — userId, actie, entiteitType, entiteitId, details, timestamp
+34. **AppSetting** — key-value configuratie
+35. **Notificatie** — type, titel, bericht, gelezen, userId
+36. **Favoriet** — entiteitType, entiteitId, userId
+
+---
+
+## Rollen & Autorisatie
+
+| Rol | Rechten |
+|---|---|
+| **ADMIN** | Alles — gebruikersbeheer, data-import, deploy, configuratie |
+| **ORGANISATIE_BEHEERDER** | Eigen portfolio bewerken, pakketten toevoegen/verwijderen, koppelingen beheren |
+| **ORGANISATIE_RAADPLEGER** | Alle data bekijken, AI-adviseur gebruiken |
+| **LEVERANCIER** | Eigen pakketten beheren, addenda bewerken, eigen data zien |
+| **API_USER** | Lees/schrijf via REST API met Bearer token |
+| **PUBLIEK** | Alleen openbare pagina's (pakketten, leveranciers, standaarden) |
+
+---
+
+## Pagina's — 60+ routes
+
+### Publiek (geen login vereist)
+- **Homepage** — tegelmenu met live aantallen, snelzoekbalk, laatste wijzigingen feed
+- **Pakketten** — zoeken, filteren op leverancier/referentiecomponent, paginering (25/p), CSV export
+- **Pakketversies** — status-filter, paginering
+- **Pakket detail** — versies, referentiecomponenten, standaarden, reviews (radar chart), contactpersonen
+- **Leveranciers** — zoeken, paginering, CSV export
+- **Leverancier detail** — pakketaanbod, addenda, contactgegevens
+- **Organisaties** — zoeken, filteren op pakket, voortgangsindicator (sterren), paginering
+- **Organisatie detail** — dashboard (KPI-cards), pakketten-tab, koppelingen-tab, suggesties-tab, AI-adviseur-tab
+- **Standaarden** — met versies en pakketdekking, paginering
+- **Referentiecomponenten** — met link naar externe architectuur-site, paginering
+- **Applicatiefuncties** — paginering
+- **Begrippen** — live van externe SKOS API, zoekbaar
+- **Koppelingen** — filters op soort, standaard, status
+- **Compliancy-monitor** — matrix pakketten vs standaarden
+- **Inkoopondersteuning** — selecteer applicatiefuncties, vergelijk pakketten
+- **Marktverdeling** — scatterplot (klanten vs referentiecomponenten vs pakketten per leverancier)
+- **Zoeken** — fuzzy search over 6 contenttypen, multi-filter
+- **Kaart** — interactieve kaart van Nederland met organisaties, voortgang per regio
+- **Samenwerkingsverbanden kaart** — alle samenwerkingen op kaart met aggregeerde stats
+- **Organisaties vergelijken** — tot 4 organisaties side-by-side
+- **Vergelijkbare organisaties** — Jaccard-similariteit, sorteerbare tabel
+- **Dienstverleners** — zoeken, type-filter, paginering
+- **Cloudproviders** — zoeken, type-filter, certificeringen-badges
+- **Help/handleiding** — gebruikershulp
 
 ### Authenticatie
-- **`/auth/login`** - Inlogpagina
-- **`/auth/registreren`** - Registratie (met organisatietype-keuze)
-- **`/auth/wachtwoord-vergeten`** - Wachtwoord vergeten
-- **`/auth/wachtwoord-reset`** - Wachtwoord resetten
+- **Login** — email + wachtwoord + optioneel TOTP (2FA)
+- **Registratie** — organisatie of leverancier, concept-status tot admin goedkeurt
+- **Wachtwoord vergeten/reset** — email-based flow
 
-### Beheerpagina's (ADMIN-rol)
-- **`/admin`** - Beheerdashboard met links naar alle beheermodules
-- **`/admin/gebruikers`** - Gebruikersbeheer (overzicht, rollen wijzigen)
-- **`/admin/gebruikers/[id]`** - Gebruiker bewerken
-- **`/admin/registraties`** - Nieuwe registraties goedkeuren/afwijzen
-- **`/admin/registraties/[id]`** - Registratie beoordelen
-- **`/admin/gemeenten/samenvoegen`** - Gemeenten samenvoegen (herindeling)
-- **`/admin/auditlog`** - Audit log bekijken
-- **`/admin/statistieken`** - Platform statistieken
-- **`/admin/pve-analyse`** - PvE-analyse (104 eisen en wensen)
-- **`/admin/datamodel`** - MIM-informatiemodel (UML-diagram)
-- **`/admin/migratie`** - Data-migratie mapping: documenteert de mapping van 6 CSV-bronbestanden (Drupal Softwarecatalogus) naar Prisma-entiteiten, inclusief kolomtoewijzingen, speciale verwerkingsregels en importvolgorde met FK-dependencies
-- **`/admin/prompt`** - PROMPT.md viewer: toont de regeneratie-prompt direct in de web-UI met kopieerknop
-- **`/upload`** - Data importeren (CSV, JSON, Excel)
+### Dashboard (ingelogd)
+- **Dashboard** — 6 KPI-cards, portfolio, koppelingen, suggesties, AI-adviseur
+- **Favorieten** — opgeslagen pakketten/leveranciers
+- **Notificaties** — meldingen met gelezen/ongelezen
+- **Profiel** — bewerken, 2FA setup/disable
 
-### Admin panels (componenten op /admin)
-- **GemmaSyncPanel** - Synchroniseer referentiecomponenten en standaarden vanuit GEMMA ArchiMate API
-- **BegrippenSyncPanel** - Synchroniseer begrippen vanuit NL-SBB SKOS/Skosmos API
-- **ApiDocPanel** - Link naar API-documentatie
-- **DeployPanel** - Deploy naar Vercel (alleen in development)
-
-### AI-adviseur (op gemeente-detailpagina's)
-- **AIAdviseur** - Client-side component op `/gemeenten/[slug]` dat via de Claude API (Sonnet 4) intelligent advies geeft over het applicatieportfolio van een gemeente. Bevat voorgestelde vragen en een Q&A-interface. Context-aware: analyseert pakketten, compliancy, koppelingen, referentiecomponenten en standaarden. Toegankelijk voor rollen: ADMIN, GEMEENTE_BEHEERDER, GEMEENTE_RAADPLEGER, KING_BEHEERDER, KING_RAADPLEGER.
-- **getAIAdvies** - Server action (`app/gemeenten/[slug]/actions.ts`) die de Claude API aanroept met volledige gemeentecontext.
-
-### User impersonation (admin)
-- **ImpersonationBanner** - Toont een waarschuwingsbanner wanneer een admin een andere gebruiker impersoneert, met de naam van de echte en geïmpersoneerde gebruiker en een "Stop"-knop.
-- **lib/actions/impersonation.ts** - Server action voor het stoppen van impersonatie.
+### Admin
+- **Beheer** — overzicht met links naar alle admin-functies
+- **Gebruikersbeheer** — CRUD, multi-organisatie toewijzing
+- **Registraties** — goedkeuren/afwijzen van concept-registraties
+- **Organisaties samenvoegen** — herindeling met data-migratie
+- **Audit log** — alle mutaties
+- **Statistieken** — platformbrede tellingen, top-10 lijsten
+- **PvE-analyse** — eisen vs realisatie met percentages
+- **Datamodel** — MIM-diagram met relaties
+- **Linked Data** — RDF explorer
+- **Regeneratie-prompt** — deze specificatie
+- **Demo draaiboek** — 22 secties met spraak
+- **Data import** — CSV/Excel/JSON upload
+- **Dependencies** — npm/composer audit
+- **Deploy** — productie-deploy met live output
 
 ### REST API (v1)
-- **`/api/v1/gemeenten`** - GET gemeenten (paginatie, zoeken, include pakketten)
-- **`/api/v1/gemeenten/[id]`** - GET gemeente detail
-- **`/api/v1/gemeenten/[id]/pakketten`** - GET pakketten van gemeente
-- **`/api/v1/leveranciers`** - GET leveranciers (paginatie, zoeken)
-- **`/api/v1/leveranciers/[id]`** - GET leverancier detail
-- **`/api/v1/leveranciers/[id]/pakketten`** - GET pakketten van leverancier
-- **`/api/v1/referentiecomponenten`** - GET referentiecomponenten
-- **`/api/v1/standaarden`** - GET standaarden
-- **`/api/v1/begrippen`** - GET begrippen (zoeken, vocabulaire filter)
-- **`/api/v1/openapi`** - OpenAPI 3.0 specificatie (JSON)
-- **`/api/v1/docs`** - Swagger UI
+- GET/POST `/api/v1/pakketten` — lezen + aanmaken
+- GET/PUT/DELETE `/api/v1/pakketten/:id` — detail + bewerken + verwijderen
+- POST `/api/v1/pakketten/:id/versies` — versie toevoegen
+- GET/POST `/api/v1/leveranciers` — lezen + aanmaken
+- GET `/api/v1/organisaties` + `/:id` + `/:id/pakketten`
+- POST/DELETE `/api/v1/organisaties/:id/pakketten` — portfolio beheren
+- POST `/api/v1/organisaties/:id/koppelingen` — koppeling toevoegen
+- GET `/api/v1/standaarden`, `/api/v1/referentiecomponenten`, `/api/v1/begrippen`
+- GET `/api/v1/openapi` — OpenAPI 3.0 spec
+- GET `/api/feed` — RSS/Atom
 
-### Interne API's
-- **`/api/admin/sync-gemma`** - POST synchroniseer GEMMA data
-- **`/api/admin/sync-begrippen`** - POST synchroniseer begrippen
-- **`/api/admin/deploy`** - POST deploy naar Vercel
-- **`/api/admin/users`** - GET/POST gebruikers
-- **`/api/admin/users/[id]`** - PATCH/DELETE gebruiker
-- **`/api/admin/registraties`** - GET registraties
-- **`/api/admin/registraties/[id]`** - PATCH registratie (goedkeuren/afwijzen)
-- **`/api/admin/gemeenten/samenvoegen`** - POST gemeenten samenvoegen
-- **`/api/admin/gemeenten/samenvoegen/preview`** - POST preview samenvoegen
-- **`/api/auth/registreren`** - POST nieuwe registratie
-- **`/api/auth/wachtwoord-vergeten`** - POST wachtwoord-vergeten email
-- **`/api/auth/wachtwoord-reset`** - POST wachtwoord resetten
-- **`/api/begrippen`** - GET begrippen voor GlossaryProvider
-- **`/api/export`** - GET export data als CSV/JSON
-- **`/api/inkoop`** - POST inkoop-vergelijking
-- **`/api/kaart`** - GET kaartdata
-- **`/api/kaart/gemeenten`** - GET gemeenten voor kaart
-- **`/api/views`** - GET GEMMA views
-- **`/api/upload/gemeente-portfolio`** - POST import gemeente portfolio
-- **`/api/upload/leverancier-pakketten`** - POST import leverancier pakketten
-- **`/api/upload/templates`** - GET download import templates
+---
 
-## Shared componenten
-- **ImpersonationBanner** - Waarschuwingsbanner bij admin-impersonatie van een andere gebruiker
-- **GlossaryHighlighter** - Markeert begrippen in tekst met tooltips (event delegation, onMouseOver/onMouseLeave)
-- **GlossaryProvider** - Client-side context provider die begrippen laadt
-- **AuthButton** - Login/logout knop met gebruikersnaam
-- **MobileNav** - Mobiel navigatiemenu
-- **MobileFilterToggle** - Toggle voor filters op mobiel
-- **RichTextEditor** - TipTap rich-text editor voor CMS-pagina's
-- **KaartViewer** - Leaflet kaartcomponent
-- **Spinner** - Laad-indicator
-- **ThemeToggle** - Dark/light mode toggle
-- **ErrorAlert** - Foutmelding component
-- **DashboardExportBar** - Export-balk op dashboard
-- **DashboardKaartBar** - Kaart-balk op dashboard
-- **GemeenteSelector** - Gemeente-selectie dropdown
-- **Providers** - SessionProvider wrapper
+## Externe integraties
 
-## Services (lib/services/)
-- **audit.ts** - Audit logging
-- **begrippen.ts** - Begrippen CRUD + NL-SBB sync
-- **export.ts** - Data export (CSV, JSON)
-- **gemeente.ts** - Gemeente CRUD
-- **gemma.ts** - GEMMA API sync (referentiecomponenten, standaarden, views)
-- **kaart.ts** - Kaartdata queries
-- **leverancier.ts** - Leverancier CRUD
-- **pakket.ts** - Pakket CRUD
-- **referentiecomponent.ts** - Referentiecomponent queries
-- **samenwerking.ts** - Samenwerking CRUD
-- **standaard.ts** - Standaard queries
-- **upload.ts** - Import CSV/Excel
-- **upload-templates.ts** - Download import templates
-- **user.ts** - User CRUD, registraties
+| Integratie | Doel | Methode |
+|---|---|---|
+| **Architectuur-API** (GEMMA/WILMA) | Referentiecomponenten, standaarden, applicatiefuncties importeren | REST API, periodieke sync |
+| **SKOS/Skosmos API** | Begrippen live ophalen voor tooltips | REST API, caching (1 uur) |
+| **AI-adviseur** (Claude/GPT) | Portfolio-analyse en advies | API call met context |
+| **E-mail** | Registratie, goedkeuring, wachtwoord-reset | SMTP of API (Resend/SendGrid) |
 
-## Lib utilities
-- **auth.ts** - NextAuth configuratie
-- **auth-helpers.ts** - Session helpers (getSessionUser)
-- **email.ts** - Resend email verzending
-- **email-templates.ts** - Email templates (welkom, wachtwoord-reset)
-- **menu-items.ts** - Navigatiemenu structuur
-- **openapi.ts** - OpenAPI specificatie generator
-- **prisma.ts** - Prisma client singleton
-- **progress.ts** - Voortgangsberekening voor gemeenten
-- **actions/impersonation.ts** - Server action voor admin user impersonation
+---
 
-## GEMMA synchronisatie
-De applicatie synchroniseert data uit externe bronnen:
-- **GEMMA ArchiMate Model API** (gemmaonline.nl): Referentiecomponenten, standaarden, applicatiefuncties, views
-- **NL-SBB SKOS/Skosmos API** (begrippenxl.nl): Begrippen/termen voor het begrippenkader
+## Linked Data (RDF)
 
-## Stijl en UX
-- Kleurenpalet: VNG-blauw (#1a6ca8), oranje voor leveranciers/pakketten, groen voor dienstverleners
-- Responsive design (mobile-first)
-- Compacte tabellen met hover-effects
-- Glassmorphism-achtig design op sommige elementen
-- Zoekfunctionaliteit op de meeste overzichtspagina's
-- Breadcrumb-achtige navigatie
-- Dark mode ondersteuning (ThemeToggle)
+- Publicatie als JSON-LD, Turtle en RDF/XML
+- Content negotiation via Accept header of `?format=` parameter
+- DCAT-catalogus voor machine-readable metadata
+- Begrippen als SKOS-concepten
+- Privacy: organisatie-pakket relaties niet openbaar zonder authenticatie
 
-## Data import
-De applicatie ondersteunt import van:
-- **CSV**: Gemeenten, pakketten, portfolio, samenwerkingen
-- **Excel (.xlsx)**: Pakketten, portfolio
-- **JSON**: Diverse datasets
-- Import scripts staan in `scripts/import/`
+---
 
-## Environment variabelen
-```
-DATABASE_URL=postgresql://...@neon.tech/...
-AUTH_SECRET=... (willekeurige base64 string, genereer met: openssl rand -base64 32)
-NEXTAUTH_URL=http://localhost:3000
-ANTHROPIC_API_KEY=... (voor AI-adviseur op gemeentepagina's)
-RESEND_API_KEY=... (voor e-mail verzending)
-VERCEL_TOKEN=... (voor deploy functionaliteit)
-```
+## Multi-tenant configuratie
 
-## Lokale ontwikkelomgeving opzetten
+Eén codebase, meerdere deployments. Tenant bepaald via environment variable `TENANT`.
 
-### Vereisten
-- macOS (Apple Silicon of Intel)
-- Homebrew, Node.js (v20+), npm
-- PostgreSQL database (Neon)
+| Configuratie-item | VNG (gemeenten) | HWH (waterschappen) |
+|---|---|---|
+| Organisatie-type | Gemeente | Waterschap |
+| Route | /gemeenten | /waterschappen |
+| Architectuur-sync | GEMMA (gemmaonline.nl) | WILMA (wilmaonline.nl) |
+| Branding | VNG blauw | HWH blauw |
+| Rollen | GEMEENTE_BEHEERDER | WATERSCHAP_BEHEERDER |
 
-### Stappen
-```bash
-# 1. Homebrew installeren (als nog niet aanwezig)
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+---
 
-# 2. Node.js installeren
-brew install node
+## Security vereisten
 
-# 3. Naar projectmap navigeren
-cd ~/claude/vvc
+### Authenticatie & Sessies
+- Auth check op ELKE API route en beschermde pagina (eerste regel van de handler)
+- 2FA/TOTP voor alle rollen, geen uitzonderingen
+- Sessie-rotatie na login
+- Redirect-parameters valideren (geen open redirects)
 
-# 4. Dependencies installeren
-npm install
+### Autorisatie
+- Ownership checks op alle mutaties
+- Admin-routes apart beveiligd
+- Deny by default
 
-# 5. Environment variabelen instellen
-cp .env.example .env  # of maak handmatig aan met bovenstaande variabelen
+### Input validatie
+- Schema-validatie op ALLE externe input (API, uploads, URL params)
+- Geen mass assignment (`{...req.body}` direct naar database)
+- File uploads: MIME check + max 10MB + extensie whitelist
 
-# 6. Database schema synchroniseren (als je een verse Neon database gebruikt)
-npx prisma db push
+### XSS preventie
+- Alle user-generated HTML sanitizen (DOMPurify of equivalent)
+- SVG content sanitizen
+- CSP headers configureren
 
-# 7. Data importeren (optioneel, als je CSV-exports hebt)
-npx ts-node --esm scripts/import/seed.ts
+### Rate limiting
+- API: 100 req/min
+- Auth: 10 req/min
+- Admin: 30 req/min
+- Distributed (Redis) voor productie
 
-# 8. Dev server starten
-npm run dev
-# Applicatie is beschikbaar op http://localhost:3000
-```
+### Overig
+- Wachtwoorden: bcrypt/argon2
+- Error responses: generiek naar client, details naar server logs
+- CSV export: sanitize tegen formula injection
+- Audit logging op alle mutaties
+- Security headers: X-Frame-Options, CSP, HSTS, Referrer-Policy
 
-### Troubleshooting
-- **"AUTH_SECRET missing"**: Zorg dat `AUTH_SECRET` in `.env` staat (genereer met `openssl rand -base64 32`)
-- **Node/npm niet gevonden na installatie**: Laad Homebrew in je shell: `eval "$(/opt/homebrew/bin/brew shellenv)"`
-- **Prisma generate errors**: Draai `npx prisma generate` na het installeren van dependencies
+---
 
-## Documentatie-generatie
-In `docs/` staan scripts voor het genereren van Word-documenten:
-- **generate-advies.cjs** - Adviesdocument voor VNG (ArchiXL branding, kosteninschattingen, scenario's)
-- MIM-informatiemodel als PlantUML bronbestand
+## UX vereisten
 
-## Bijzonderheden
-- Het begrippenkader gebruikt de GlossaryHighlighter component die automatisch termen in tekst herkent en tooltips toont
-- De compliancy-monitor toont een matrix van pakketten vs standaarden met vinkjes/kruisjes
-- De inkoopondersteuning laat gebruikers applicatiefuncties selecteren en vergelijkt welke pakketten deze ondersteunen
-- De kaart-pagina toont gemeenten op een interactieve Leaflet-kaart EN een statische SVG-kaart van Nederland
-- Gemeenten kunnen worden samengevoegd bij herindelingen (met data-migratie)
-- De PvE-analyse pagina toont 104 eisen en wensen uit het programma van eisen
-- Er is een audit log die alle mutaties bijhoudt
-- API-authenticatie via API_USER rol met bearer tokens
+- **Responsief**: 375px (mobile) tot 1920px+ (desktop)
+- **Dark mode**: systeemvoorkeur-detectie
+- **WCAG 2.1 AA**: semantische HTML, ARIA labels, keyboard navigatie, kleurcontrast 4.5:1
+- **Loading states**: skeleton placeholders op alle lijstpagina's
+- **Paginering**: 25 items per pagina op alle overzichten
+- **Zoeken**: fuzzy search met typefouttolerantie
+- **Breadcrumbs**: op alle detailpagina's
+- **Keyboard shortcuts**: / voor zoeken
+- **Print styles**: nette afdrukken zonder navigatie
+- **QR-codes**: op detailpagina's voor delen
+- **Share-button**: kopieer-link functionaliteit
+
+---
+
+## Performance vereisten
+
+- Database indexes op alle zoek- en FK-kolommen
+- Caching op publieke pagina's (minimaal 1 uur)
+- Lazy-loading van zware componenten (kaart, editor)
+- Paginering verplicht (nooit alle records laden)
+- Parallelle database queries waar mogelijk
+- Geen N+1 queries
+- API response time: p95 < 200ms reads, p95 < 500ms writes
