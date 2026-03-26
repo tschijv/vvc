@@ -260,7 +260,7 @@ function LoginForm() {
         <div className="mt-4 p-4 bg-blue-50 border border-blue-100 rounded text-xs text-gray-600">
           <p className="font-semibold text-[#1a6ca8] mb-1">Test-accounts:</p>
           <p>Admin: admin@swc.nl / admin2026</p>
-          <p>Gemeente: gemeente1@swc.nl / test2026</p>
+          <p>Beheerder: gemeente1@swc.nl / test2026</p>
           <p>Leverancier: leverancier1@swc.nl / test2026</p>
         </div>
       </div>
