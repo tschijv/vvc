@@ -6,6 +6,7 @@ import { getPakketBySlug } from "@/service/pakket";
 import { getReviewsForPakket, getReviewStats, getMyReview } from "@/service/review";
 import { getSessionUser, canEditLeverancierPakket } from "@/process/auth-helpers";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
+import { tenant } from "@/process/tenant-config";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import ShareButton from "@/ui/components/ShareButton";
 import FavorietButton from "@/ui/components/FavorietButton";
@@ -304,7 +305,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
         {/* Referentiecomponenten */}
         <div>
           <h3 className="text-sm font-semibold text-gray-700 mb-2">
-            Pakket geschikt voor (GEMMA 2) — Ingevuld door {pakket.aantalOrganisaties} gemeenten
+            Pakket geschikt voor ({tenant.architectuur.naam} 2) — Ingevuld door {pakket.aantalOrganisaties} {tenant.organisatieType.meervoud}
           </h3>
           <table className="w-full text-sm border-collapse">
             <tbody>
@@ -312,7 +313,7 @@ export default async function PakketDetailPage({ params, searchParams }: Props) 
                 <tr key={rc.naam} className="border-b border-gray-100">
                   <td className="py-1.5 pr-3">{rc.naam}</td>
                   <td className="py-1.5 text-gray-500">
-                    {rc.aantalOrganisaties > 0 ? `${rc.aantalOrganisaties} gemeenten` : ""}
+                    {rc.aantalOrganisaties > 0 ? `${rc.aantalOrganisaties} ${tenant.organisatieType.meervoud}` : ""}
                   </td>
                 </tr>
               ))}

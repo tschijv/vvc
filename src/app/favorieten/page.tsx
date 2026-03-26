@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getSessionUser } from "@/process/auth-helpers";
 import { prisma } from "@/data/prisma";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
+import { tenant } from "@/process/tenant-config";
 
 export const metadata: Metadata = {
   title: "Mijn favorieten",
@@ -47,7 +48,7 @@ export default async function FavorietenPage() {
       if (p) items.push({ id: f.id, type: "Pakket", naam: p.naam, href: `/pakketten/${p.slug}`, createdAt: f.createdAt });
     } else if (f.entityType === "gemeente") {
       const g = gemeenteMap.get(f.entityId);
-      if (g) items.push({ id: f.id, type: "Gemeente", naam: g.naam, href: `/gemeenten/${g.id}`, createdAt: f.createdAt });
+      if (g) items.push({ id: f.id, type: tenant.organisatieType.capitaal, naam: g.naam, href: `/gemeenten/${g.id}`, createdAt: f.createdAt });
     } else if (f.entityType === "leverancier") {
       const l = leverancierMap.get(f.entityId);
       if (l) items.push({ id: f.id, type: "Leverancier", naam: l.naam, href: `/leveranciers/${l.slug}`, createdAt: f.createdAt });
@@ -56,7 +57,7 @@ export default async function FavorietenPage() {
 
   const typeLabels: Record<string, string> = {
     Pakket: "bg-blue-100 text-blue-800",
-    Gemeente: "bg-green-100 text-green-800",
+    [tenant.organisatieType.capitaal]: "bg-green-100 text-green-800",
     Leverancier: "bg-purple-100 text-purple-800",
   };
 
@@ -69,7 +70,7 @@ export default async function FavorietenPage() {
         <div className="border rounded p-6 text-center text-gray-500 dark:text-gray-400">
           <p>Je hebt nog geen favorieten.</p>
           <p className="text-sm mt-1">
-            Klik op het hartje bij een pakket, gemeente of leverancier om deze als favoriet op te slaan.
+            Klik op het hartje bij een pakket, {tenant.organisatieType.enkelvoud} of leverancier om deze als favoriet op te slaan.
           </p>
         </div>
       ) : (

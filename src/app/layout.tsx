@@ -13,17 +13,18 @@ import KeyboardShortcuts from "@/ui/components/KeyboardShortcuts";
 import NotificatieBel from "@/ui/components/NotificatieBel";
 import OrganisatieSwitcher from "@/ui/components/OrganisatieSwitcher";
 import DemoPlayer from "@/ui/components/DemoPlayer";
+import { tenant } from "@/process/tenant-config";
 
 export const metadata: Metadata = {
   title: {
-    default: "VNG Voorzieningencatalogus",
-    template: "%s — VNG Voorzieningencatalogus",
+    default: tenant.naam,
+    template: `%s — ${tenant.naam}`,
   },
-  description: "De voorzieningencatalogus voor gemeenten — overzicht van pakketten, leveranciers, standaarden en referentiecomponenten.",
+  description: `De voorzieningencatalogus voor ${tenant.organisatieType.meervoud} — overzicht van pakketten, leveranciers, standaarden en referentiecomponenten.`,
   openGraph: {
     type: "website",
     locale: "nl_NL",
-    siteName: "VNG Voorzieningencatalogus",
+    siteName: tenant.naam,
     images: [{ url: "/og-image.svg", width: 1200, height: 630, type: "image/svg+xml" }],
   },
   twitter: {
@@ -76,10 +77,10 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <Link href="/" className="text-lg sm:text-2xl font-light text-gray-800 dark:text-slate-200 tracking-wide flex items-center gap-2">
               <Image src="/logo.svg" alt="" width={28} height={28} className="inline-block" />
-              <span className="hidden sm:inline">VNG Voorzieningencatalogus</span>
-              <span className="sm:hidden">VNG VC</span>
+              <span className="hidden sm:inline">{tenant.naam}</span>
+              <span className="sm:hidden">{tenant.korteNaam}</span>
             </Link>
-            <span className="text-sm text-gray-500 dark:text-slate-400 hidden sm:inline">websites VNG Realisatie ▾</span>
+            <span className="text-sm text-gray-500 dark:text-slate-400 hidden sm:inline">websites {tenant.organisatie} ▾</span>
           </div>
         </header>
 
@@ -138,23 +139,16 @@ export default function RootLayout({
         <footer aria-label="Footer" className="bg-[#1a6ca8] dark:bg-[#0f4c75] text-white mt-16 py-8">
           <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-sm">
             <div className="space-y-2">
-              <a href="#" className="block hover:underline opacity-90">Onderwerpen VNG</a>
-              <a href="#" className="block hover:underline opacity-90">Privacyverklaring</a>
-              <a href="#" className="block hover:underline opacity-90">Over VNG Realisatie</a>
-              <a href="#" className="block hover:underline opacity-90">Vacatures</a>
+              {tenant.footer.links.map((link) => (
+                <a key={link.href} href={link.href} className="block hover:underline opacity-90">{link.label}</a>
+              ))}
             </div>
             <div className="space-y-2">
-              <a href="#" className="block hover:underline opacity-90">Agenda VNG</a>
-              <a href="#" className="block hover:underline opacity-90">Nieuws</a>
-              <a href="#" className="block hover:underline opacity-90">Contact</a>
-              <a href="#" className="block hover:underline opacity-90">Meld aan VNG Realisatie</a>
+              <a href={`mailto:${tenant.branding.contactEmail}`} className="block hover:underline opacity-90">Contact</a>
               <Link href="/help" className="block hover:underline opacity-90">Help</Link>
             </div>
             <div className="space-y-2">
-              <a href="#" className="block hover:underline opacity-90">Twitter</a>
-              <a href="#" className="block hover:underline opacity-90">Linkedin</a>
-              <a href="#" className="block hover:underline opacity-90">Youtube</a>
-              <a href="#" className="block hover:underline opacity-90">Nieuwsbrief GEMMA</a>
+              <a href="#" className="block hover:underline opacity-90">Nieuwsbrief {tenant.architectuur.naam}</a>
               <a href="/api/feed" className="inline-flex items-center gap-1.5 hover:underline opacity-90" title="RSS Feed">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4" aria-hidden="true">
                   <circle cx="6.18" cy="17.82" r="2.18" />
@@ -165,7 +159,7 @@ export default function RootLayout({
             </div>
           </div>
           <div className="max-w-7xl mx-auto px-4 mt-6 pt-4 border-t border-white/20 text-xs opacity-90">
-            Colofon · Proclaimer · Toegankelijkheid · VNG Realisatie © 2026
+            Colofon · Proclaimer · Toegankelijkheid · {tenant.footer.copyright} © {new Date().getFullYear()}
           </div>
         </footer>
         </GlossaryProvider>

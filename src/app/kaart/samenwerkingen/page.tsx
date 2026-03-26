@@ -1,6 +1,7 @@
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getSamenwerkingenMetStats } from "@/service/samenwerking-kaart";
 import SamenwerkingKaartWrapper from "./SamenwerkingKaartWrapper";
+import { tenant } from "@/process/tenant-config";
 
 export default async function SamenwerkingenKaartPage() {
   const samenwerkingen = await getSamenwerkingenMetStats();
@@ -31,7 +32,7 @@ export default async function SamenwerkingenKaartPage() {
         Samenwerkingsverbanden op de kaart
       </h1>
       <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-        Overzicht van alle samenwerkingsverbanden en hun deelnemende gemeenten.
+        Overzicht van alle samenwerkingsverbanden en hun deelnemende {tenant.organisatieType.meervoud}.
       </p>
 
       {/* Stats summary bar */}
@@ -47,7 +48,7 @@ export default async function SamenwerkingenKaartPage() {
           <span className="font-semibold text-[#1a6ca8] dark:text-blue-300">
             {totaalDeelnemers}
           </span>{" "}
-          deelnemende gemeenten
+          deelnemende {tenant.organisatieType.meervoud}
         </div>
         <div className="text-gray-300 dark:text-gray-600">|</div>
         <div className="text-sm text-gray-700 dark:text-gray-300">
@@ -68,8 +69,8 @@ export default async function SamenwerkingenKaartPage() {
       <SamenwerkingKaartWrapper samenwerkingen={samenwerkingen} />
 
       <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
-        Gemeentegrenzen: CBS / Kadaster, {new Date().getFullYear()}. Klik op een
-        gemeente voor meer informatie.
+        Grenzen: CBS / Kadaster, {new Date().getFullYear()}. Klik op een
+        {tenant.organisatieType.enkelvoud} voor meer informatie.
       </p>
     </div>
   );

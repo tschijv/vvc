@@ -7,6 +7,7 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import ShareButton from "@/ui/components/ShareButton";
 import FavorietButton from "@/ui/components/FavorietButton";
 import QRCode from "@/ui/components/QRCode";
+import { tenant } from "@/process/tenant-config";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -30,10 +31,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!cp) return {};
   return {
     title: cp.naam,
-    description: `${cp.naam} — cloud-provider in de VNG Voorzieningencatalogus`,
+    description: `${cp.naam} — cloud-provider in de ${tenant.naam}`,
     openGraph: {
       title: cp.naam,
-      description: `${cp.naam} — cloud-provider in de VNG Voorzieningencatalogus`,
+      description: `${cp.naam} — cloud-provider in de ${tenant.naam}`,
     },
   };
 }

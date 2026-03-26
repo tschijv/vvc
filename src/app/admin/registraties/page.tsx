@@ -3,6 +3,7 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/process/auth-helpers";
 import { getPendingRegistrations } from "@/service/user";
+import { tenant } from "@/process/tenant-config";
 
 export default async function RegistratiesPage() {
   const user = await getSessionUser();
@@ -58,7 +59,7 @@ export default async function RegistratiesPage() {
                           ? "bg-blue-100 text-blue-700"
                           : "bg-green-100 text-green-700"
                       }`}>
-                        {r.organisatieType === "leverancier" ? "Leverancier" : "Gemeente"}
+                        {r.organisatieType === "leverancier" ? "Leverancier" : tenant.organisatieType.capitaal}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-gray-600">{r.organisatieNaam}</td>

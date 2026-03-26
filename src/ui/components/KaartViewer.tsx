@@ -272,7 +272,7 @@ export default function KaartViewer({
     return (
       <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg border border-gray-200">
         <p className="text-gray-500 text-sm">
-          Selecteer een view en gemeente om de kaart te genereren
+          Selecteer een view en organisatie om de kaart te genereren
         </p>
       </div>
     );

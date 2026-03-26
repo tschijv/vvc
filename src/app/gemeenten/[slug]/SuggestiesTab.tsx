@@ -10,7 +10,7 @@ export default function SuggestiesTab({ suggesties }: { suggesties: SuggestieDat
       <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
         <h2 className="text-lg font-bold text-[#1a6ca8] mb-3">Voortgang verbeteren</h2>
         <p className="text-sm text-gray-600 mb-4">
-          De sterren geven de volledigheid van de ingevulde gegevens aan. Hoe meer gegevens uw gemeente invult, hoe hoger de voortgang.
+          De sterren geven de volledigheid van de ingevulde gegevens aan. Hoe meer gegevens uw organisatie invult, hoe hoger de voortgang.
         </p>
 
         <div className="space-y-2 mb-5">

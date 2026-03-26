@@ -6,6 +6,7 @@ import { getPendingRegistrationCount } from "@/service/user";
 import { computePveStats } from "./pve-analyse/pve-data";
 import GemmaSyncPanel from "./GemmaSyncPanel";
 import BegrippenSyncPanel from "./BegrippenSyncPanel";
+import { tenant } from "@/process/tenant-config";
 import ApiDocPanel from "./ApiDocPanel";
 import DeployPanel from "./DeployPanel";
 import TestRunnerPanel from "./TestRunnerPanel";
@@ -88,7 +89,7 @@ export default async function AdminPage() {
         />
         <AdminRow
           label="Registraties"
-          description="Beoordeel aanmeldingen van nieuwe leveranciers en gemeenten"
+          description={`Beoordeel aanmeldingen van nieuwe leveranciers en ${tenant.organisatieType.meervoud}`}
           href="/admin/registraties"
           badge={pendingCount > 0 ? `${pendingCount} wachtend` : undefined}
           badgeColor="orange"
@@ -110,8 +111,8 @@ export default async function AdminPage() {
           linkText="Importeren →"
         />
         <AdminRow
-          label="Gemeente samenvoegen"
-          description="Voeg gemeenten samen bij een herindeling"
+          label={`${tenant.organisatieType.capitaal} samenvoegen`}
+          description={`Voeg ${tenant.organisatieType.meervoud} samen bij een herindeling`}
           href="/admin/gemeenten/samenvoegen"
           linkText="Samenvoegen →"
         />

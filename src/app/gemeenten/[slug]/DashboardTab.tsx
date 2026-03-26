@@ -5,6 +5,7 @@ import {
   type getOrganisatieById,
 } from "@/service/organisatie";
 import HelpLink from "@/ui/components/HelpLink";
+import { tenant } from "@/process/tenant-config";
 
 // ─── Dashboard tab ───────────────────────────────────────────────────────────
 
@@ -155,7 +156,7 @@ export default function DashboardTab({ stats, organisatieId, similarOrganisaties
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div className="flex items-start justify-between p-4 pb-2">
             <h3 className="text-[#e35b10] font-semibold text-base leading-tight pr-2">
-              Vergelijkbare gemeenten
+              Vergelijkbare {tenant.organisatieType.meervoud}
               <span
                 className="inline-block ml-1.5 w-4 h-4 rounded-full bg-[#1a6ca8] text-white text-[10px] text-center leading-4 align-middle cursor-help"
                 title="Jaccard-similariteit: overlap = gedeelde pakketten / totaal unieke pakketten. Hoe hoger het percentage, hoe meer overeenkomst in het applicatielandschap."
@@ -174,7 +175,7 @@ export default function DashboardTab({ stats, organisatieId, similarOrganisaties
               <span className="inline-flex items-center justify-center w-8 h-8 rounded bg-green-600 text-white text-sm font-bold">
                 {similarOrganisaties.length}
               </span>
-              <span className="text-sm text-gray-700">Gemeenten met overlap</span>
+              <span className="text-sm text-gray-700">{tenant.organisatieType.meervoudCapitaal} met overlap</span>
             </div>
           </div>
           <div className="px-4 pb-4">
@@ -221,7 +222,7 @@ export default function DashboardTab({ stats, organisatieId, similarOrganisaties
                   href={`/gemeenten/${organisatieId}/vergelijkbaar`}
                   className="text-sm text-[#1a6ca8] hover:underline font-medium"
                 >
-                  Alle vergelijkbare gemeenten ({similarTotalCount}) &rarr;
+                  Alle vergelijkbare {tenant.organisatieType.meervoud} ({similarTotalCount}) &rarr;
                 </Link>
               </div>
             )}

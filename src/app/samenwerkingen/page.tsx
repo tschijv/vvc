@@ -1,6 +1,7 @@
 import { prisma } from "@/data/prisma";
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -131,8 +132,7 @@ export default async function SamenwerkingenPage({
                       </span>
                     )}
                     <span className="text-xs text-gray-500">
-                      {sw.organisaties.length} gemeente
-                      {sw.organisaties.length !== 1 ? "n" : ""}
+                      {sw.organisaties.length} {sw.organisaties.length !== 1 ? tenant.organisatieType.meervoud : tenant.organisatieType.enkelvoud}
                     </span>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export default async function SamenwerkingenPage({
               {sw.organisaties.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-100">
                   <p className="text-xs font-medium text-gray-500 mb-1">
-                    Deelnemende gemeenten:
+                    Deelnemende {tenant.organisatieType.meervoud}:
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {sw.organisaties.map((sg) => (

@@ -3,10 +3,11 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/process/auth-helpers";
 import RdfExplorer from "./RdfExplorer";
+import { tenant } from "@/process/tenant-config";
 
 const ENDPOINTS = [
   { entity: "Catalogus", path: "/api/v1/catalog" },
-  { entity: "Gemeenten", path: "/api/v1/gemeenten" },
+  { entity: tenant.organisatieType.meervoudCapitaal, path: "/api/v1/gemeenten" },
   { entity: "Leveranciers", path: "/api/v1/leveranciers" },
   { entity: "Pakketten", path: null },
   { entity: "Referentiecomponenten", path: "/api/v1/referentiecomponenten" },

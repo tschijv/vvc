@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const ENTITIES = [
   { label: "Catalogus", value: "catalog" },
-  { label: "Gemeenten", value: "gemeenten" },
+  { label: "Organisaties", value: "gemeenten" },
   { label: "Leveranciers", value: "leveranciers" },
   { label: "Referentiecomponenten", value: "referentiecomponenten" },
   { label: "Standaarden", value: "standaarden" },

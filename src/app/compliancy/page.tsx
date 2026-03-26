@@ -3,6 +3,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
 import HelpLink from "@/ui/components/HelpLink";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -73,7 +74,7 @@ export default async function CompliancyMonitorPage() {
         <HelpLink section="compliancy" label="Help over de Compliancy Monitor" />
       </div>
       <p className="text-sm text-gray-600 mb-6 max-w-3xl">
-        <GlossaryHighlighter>De Compliancy Monitor toont per standaard welke pakketversies compliant zijn. Dit geeft gemeenten inzicht in welke software voldoet aan de verplichte standaarden voor gegevensuitwisseling en dienstverlening.</GlossaryHighlighter>
+        <GlossaryHighlighter>{`De Compliancy Monitor toont per standaard welke pakketversies compliant zijn. Dit geeft ${tenant.organisatieType.meervoud} inzicht in welke software voldoet aan de verplichte standaarden voor gegevensuitwisseling en dienstverlening.`}</GlossaryHighlighter>
       </p>
 
       {standaarden.length === 0 ? (

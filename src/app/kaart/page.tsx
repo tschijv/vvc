@@ -3,6 +3,7 @@ import { getSessionUser } from "@/process/auth-helpers";
 import { prisma } from "@/data/prisma";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import KaartPageClient from "./KaartPageClient";
+import { tenant } from "@/process/tenant-config";
 
 export default async function KaartPage() {
   const user = await getSessionUser();
@@ -42,6 +43,7 @@ export default async function KaartPage() {
         organisaties={organisaties}
         eigenOrganisatie={eigenOrganisatie}
         isAdmin={user.role === "ADMIN"}
+        organisatieTypeLabel={tenant.organisatieType.enkelvoud}
       />
     </>
   );

@@ -1,6 +1,7 @@
 import { prisma } from "@/data/prisma";
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -24,7 +25,7 @@ const TYPE_CONFIG: Record<
 > = {
   pakket: { label: "Pakket", bg: "bg-blue-50", text: "text-blue-700", bgActive: "bg-blue-600", textActive: "text-white" },
   leverancier: { label: "Leverancier", bg: "bg-orange-50", text: "text-orange-700", bgActive: "bg-orange-500", textActive: "text-white" },
-  gemeente: { label: "Gemeente", bg: "bg-green-50", text: "text-green-700", bgActive: "bg-green-600", textActive: "text-white" },
+  gemeente: { label: tenant.organisatieType.capitaal, bg: "bg-green-50", text: "text-green-700", bgActive: "bg-green-600", textActive: "text-white" },
   standaard: { label: "Standaard", bg: "bg-purple-50", text: "text-purple-700", bgActive: "bg-purple-600", textActive: "text-white" },
   referentiecomponent: { label: "Ref.component", bg: "bg-teal-50", text: "text-teal-700", bgActive: "bg-teal-600", textActive: "text-white" },
   begrip: { label: "Begrip", bg: "bg-amber-50", text: "text-amber-700", bgActive: "bg-amber-500", textActive: "text-white" },
@@ -272,7 +273,7 @@ export default async function ZoekenPage({ searchParams }: Props) {
             type="text"
             name="q"
             defaultValue={q}
-            placeholder="Zoek in pakketten, leveranciers, gemeenten, standaarden, begrippen..."
+            placeholder={`Zoek in pakketten, leveranciers, ${tenant.organisatieType.meervoud}, standaarden, begrippen...`}
             autoFocus
             className="border rounded px-3 py-2 text-sm flex-1"
           />

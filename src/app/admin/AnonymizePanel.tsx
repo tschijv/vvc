@@ -64,7 +64,7 @@ export default function AnonymizePanel() {
             Contactgegevens anonimiseren
           </span>
           <span className="text-sm text-gray-500 truncate hidden sm:inline">
-            Vervang persoonsgegevens van gemeenten door fictieve data
+            Vervang persoonsgegevens van organisaties door fictieve data
           </span>
         </div>
         <div className="flex items-center gap-2 ml-4">

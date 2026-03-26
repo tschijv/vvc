@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getSessionUser } from "@/process/auth-helpers";
 import { demoSections as sections } from "@/ui/demo-sections";
 import DemoStartButton from "./DemoStartButton";
+import { tenant } from "@/process/tenant-config";
 
 export default async function DemoDraaiboekPage() {
   const user = await getSessionUser();
@@ -180,7 +181,7 @@ export default async function DemoDraaiboekPage() {
 
       {/* Footer */}
       <div className="mt-8 mb-12 text-center text-sm text-gray-400">
-        VNG Voorzieningencatalogus &middot; Demo Draaiboek &middot;{" "}
+        {tenant.naam} &middot; Demo Draaiboek &middot;{" "}
         {sections.length} onderdelen &middot; ~{totalMinutes} minuten
       </div>
     </div>

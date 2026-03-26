@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
+import { tenant } from "@/process/tenant-config";
 
 export async function generateMetadata({
   params,
@@ -16,7 +17,7 @@ export async function generateMetadata({
   if (!pagina) return {};
   return {
     title: pagina.titel,
-    description: `${pagina.titel} — VNG Voorzieningencatalogus`,
+    description: `${pagina.titel} — ${tenant.naam}`,
     openGraph: {
       title: pagina.titel,
     },

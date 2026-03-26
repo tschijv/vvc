@@ -25,6 +25,7 @@ interface KaartPageClientProps {
   organisaties: Organisatie[];
   eigenOrganisatie: Organisatie | null;
   isAdmin: boolean;
+  organisatieTypeLabel?: string;
 }
 
 export default function KaartPageClient({
@@ -32,6 +33,7 @@ export default function KaartPageClient({
   organisaties,
   eigenOrganisatie,
   isAdmin,
+  organisatieTypeLabel = "gemeente",
 }: KaartPageClientProps) {
   const [selectedViewId, setSelectedViewId] = useState<string>("");
   const [selectedGemeenteId, setSelectedGemeenteId] = useState<string>(
@@ -64,7 +66,7 @@ export default function KaartPageClient({
       </h1>
       <p className="text-sm text-gray-500 mb-6">
         Bekijk de softwarepakketten van{" "}
-        {selectedGemeente ? selectedGemeente.naam : "een gemeente"} op het GEMMA
+        {selectedGemeente ? selectedGemeente.naam : `een ${organisatieTypeLabel}`} op het GEMMA
         applicatielandschap.
       </p>
 
@@ -97,14 +99,14 @@ export default function KaartPageClient({
         {isAdmin && (
           <div className="flex-1 min-w-[250px]">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Gemeente
+              Organisatie
             </label>
             <select
               value={selectedGemeenteId}
               onChange={(e) => setSelectedGemeenteId(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6ca8] focus:border-transparent"
             >
-              <option value="">Selecteer een gemeente...</option>
+              <option value="">Selecteer een {organisatieTypeLabel}...</option>
               {organisaties.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.naam}
@@ -137,10 +139,10 @@ export default function KaartPageClient({
         <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg border border-gray-200">
           <p className="text-gray-500 text-sm">
             {!selectedViewId && !selectedGemeenteId
-              ? "Selecteer een view en gemeente om de kaart te genereren"
+              ? `Selecteer een view en ${organisatieTypeLabel} om de kaart te genereren`
               : !selectedViewId
                 ? "Selecteer een view"
-                : "Selecteer een gemeente"}
+                : `Selecteer een ${organisatieTypeLabel}`}
           </p>
         </div>
       )}

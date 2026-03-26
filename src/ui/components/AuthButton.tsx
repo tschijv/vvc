@@ -45,16 +45,16 @@ export default function AuthButton() {
   if (isGemeente || isAdmin) {
     menuItems.push({ label: "Mijn Voorzieningencatalogus", href: "/dashboard" });
     menuItems.push({ label: "Applicatielandschap", href: "/kaart" });
-    menuItems.push({ label: "Alles van gemeenten en samenwerkingen", href: "/gemeenten" });
+    menuItems.push({ label: "Alles van organisaties en samenwerkingen", href: "/gemeenten" });
     menuItems.push({ label: "Alle koppelingen", href: "/koppelingen" });
-    menuItems.push({ label: "Mijn gemeenten", href: "/dashboard" });
-    menuItems.push({ label: "Alle gemeenten", href: "/gemeenten" });
+    menuItems.push({ label: "Mijn organisaties", href: "/dashboard" });
+    menuItems.push({ label: "Alle organisaties", href: "/gemeenten" });
     menuItems.push({ label: "Alle samenwerkingen", href: "/samenwerkingen" });
   }
 
   if (isLeverancier) {
     menuItems.push({ label: "Mijn pakketten", href: "/leveranciers" });
-    menuItems.push({ label: "Alle gemeenten", href: "/gemeenten" });
+    menuItems.push({ label: "Alle organisaties", href: "/gemeenten" });
   }
 
   if (isAdmin) {

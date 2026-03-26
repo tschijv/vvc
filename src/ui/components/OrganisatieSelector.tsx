@@ -16,7 +16,7 @@ export default function OrganisatieSelector({
   return (
     <div className="mb-4 flex items-center gap-3">
       <label className="text-sm font-medium text-gray-600">
-        Gemeente:
+        Organisatie:
       </label>
       <select
         value={selectedId}

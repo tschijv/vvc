@@ -74,7 +74,7 @@ export default function UploadForm({
         formData.append("leverancierId", selectedOrg);
       } else {
         if (!selectedOrg) {
-          setError("Selecteer een gemeente.");
+          setError("Selecteer een organisatie.");
           setLoading(false);
           return;
         }
@@ -170,7 +170,7 @@ export default function UploadForm({
                 Applicatieportfolio
               </div>
               <div className="text-xs text-gray-500 mt-1">
-                Importeer welke pakketten uw gemeente in gebruik heeft
+                Importeer welke pakketten uw organisatie in gebruik heeft
               </div>
             </label>
           )}
@@ -192,7 +192,7 @@ export default function UploadForm({
               — Selecteer{" "}
               {uploadType === "leverancier-pakketten"
                 ? "leverancier"
-                : "gemeente"}{" "}
+                : "organisatie"}{" "}
               —
             </option>
             {(uploadType === "leverancier-pakketten"
@@ -269,7 +269,7 @@ export default function UploadForm({
                   deze{" "}
                   {uploadType === "leverancier-pakketten"
                     ? "leverancier (pakketten, versies en koppelingen)"
-                    : "gemeente (applicatieportfolio)"}{" "}
+                    : "organisatie (applicatieportfolio)"}{" "}
                   verwijderd en vervangen.
                 </div>
               )}

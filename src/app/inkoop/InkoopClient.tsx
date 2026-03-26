@@ -26,10 +26,12 @@ interface StandaardItem {
 
 interface InkoopClientProps {
   referentiecomponenten: RefComp[];
+  tenantNaam?: string;
 }
 
 export default function InkoopClient({
   referentiecomponenten,
+  tenantNaam = "VNG Voorzieningencatalogus",
 }: InkoopClientProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [zoek, setZoek] = useState("");
@@ -75,7 +77,7 @@ export default function InkoopClient({
       .map((rc) => rc.naam);
 
     const lines: string[] = [];
-    lines.push("BESTEKTEKST - VNG Voorzieningencatalogus");
+    lines.push(`BESTEKTEKST - ${tenantNaam}`);
     lines.push("=".repeat(50));
     lines.push("");
     lines.push(`Datum: ${new Date().toLocaleDateString("nl-NL")}`);

@@ -9,6 +9,7 @@ import {
   type SamenwerkingPakketRow,
   type SamenwerkingKoppelingRow,
 } from "@/service/samenwerking";
+import { tenant } from "@/process/tenant-config";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -58,8 +59,7 @@ export default async function SamenwerkingDetailPage({
                 </span>
               )}
               <span className="text-sm text-gray-500">
-                {samenwerking.organisaties.length} gemeente
-                {samenwerking.organisaties.length !== 1 ? "n" : ""}
+                {samenwerking.organisaties.length} {samenwerking.organisaties.length !== 1 ? tenant.organisatieType.meervoud : tenant.organisatieType.enkelvoud}
               </span>
             </div>
           </div>
@@ -170,7 +170,7 @@ function OverzichtTab({
       {/* Statistieken */}
       <div className="grid grid-cols-4 gap-4">
         <StatCard
-          label="Gemeenten"
+          label={tenant.organisatieType.meervoudCapitaal}
           value={stats.organisatieCount}
           color="bg-[#1a6ca8]"
         />
@@ -196,7 +196,7 @@ function OverzichtTab({
       {/* Deelnemende gemeenten */}
       <div className="bg-white border border-gray-200 rounded-lg p-5">
         <h2 className="text-lg font-semibold text-[#1a6ca8] mb-3">
-          Deelnemende gemeenten ({samenwerking.organisaties.length})
+          Deelnemende {tenant.organisatieType.meervoud} ({samenwerking.organisaties.length})
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {samenwerking.organisaties.map((sg) => (
@@ -274,7 +274,7 @@ function PakkettenTab({
     <div className="space-y-6">
       {gemeenteNames.length === 0 ? (
         <p className="text-sm text-gray-400 py-8 text-center">
-          Geen pakketten geregistreerd bij de deelnemende gemeenten.
+          Geen pakketten geregistreerd bij de deelnemende {tenant.organisatieType.meervoud}.
         </p>
       ) : (
         gemeenteNames.map((naam) => {
@@ -359,7 +359,7 @@ function KoppelingenTab({
     <div className="space-y-6">
       {gemeenteNames.length === 0 ? (
         <p className="text-sm text-gray-400 py-8 text-center">
-          Geen koppelingen geregistreerd bij de deelnemende gemeenten.
+          Geen koppelingen geregistreerd bij de deelnemende {tenant.organisatieType.meervoud}.
         </p>
       ) : (
         gemeenteNames.map((naam) => {

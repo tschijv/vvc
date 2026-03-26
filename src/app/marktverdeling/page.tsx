@@ -1,6 +1,7 @@
 import { prisma } from "@/data/prisma";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import MarktverdelingChart from "./MarktverdelingChart";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -121,7 +122,7 @@ export default async function MarktverdelingPage() {
               <strong>X-as:</strong> Unieke referentiecomponenten
             </p>
             <p>
-              <strong>Y-as:</strong> Aantal klanten (gemeenten)
+              <strong>Y-as:</strong> Aantal klanten ({tenant.organisatieType.meervoud})
             </p>
             <p>
               <strong>Bolgrootte:</strong> Aantal pakketten
@@ -130,7 +131,7 @@ export default async function MarktverdelingPage() {
         </div>
       </div>
 
-      <MarktverdelingChart data={data} />
+      <MarktverdelingChart data={data} yAxisLabel={`Aantal klanten (${tenant.organisatieType.meervoud})`} />
 
       {/* Tabel */}
       <details className="mt-6">

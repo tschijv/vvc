@@ -19,6 +19,7 @@ import {
 } from "@/process/auth-helpers";
 import AIAdviseur from "./AIAdviseur";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
+import { tenant } from "@/process/tenant-config";
 import ShareButton from "@/ui/components/ShareButton";
 import FavorietButton from "@/ui/components/FavorietButton";
 import QRCode from "@/ui/components/QRCode";
@@ -45,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!gemeente) return {};
   return {
     title: gemeente.naam,
-    description: `${gemeente.naam} \u2014 gemeente in de VNG Voorzieningencatalogus`,
+    description: `${gemeente.naam} \u2014 ${tenant.organisatieType.enkelvoud} in de ${tenant.naam}`,
     openGraph: {
       title: gemeente.naam,
       description: `Applicatieportfolio en voortgang van ${gemeente.naam}`,
@@ -137,7 +138,7 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
-          { label: "Gemeenten", href: "/gemeenten" },
+          { label: tenant.organisatieType.meervoudCapitaal, href: tenant.routes.organisaties },
           { label: gemeente.naam, href: `/gemeenten/${slug}` },
         ]}
       />

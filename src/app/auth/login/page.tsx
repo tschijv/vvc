@@ -196,7 +196,7 @@ function LoginForm() {
       <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
         <h1 className="text-2xl font-bold text-[#1a6ca8] mb-2">Inloggen</h1>
         <p className="text-sm text-gray-500 mb-6">
-          Log in om het applicatieportfolio van gemeenten te bekijken.
+          Log in om het applicatieportfolio te bekijken.
         </p>
 
         {error && (

@@ -4,6 +4,7 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getSessionUser, canViewGemeenteContact } from "@/process/auth-helpers";
 import { getGemeenten, getGemeenteCount, getPakkettenMetTellingen } from "@/service/gemeente";
 import { sterrenDisplay } from "@/process/progress";
+import { tenant } from "@/process/tenant-config";
 
 interface Props {
   searchParams: Promise<{ zoek?: string; pagina?: string; pakket?: string }>;
@@ -69,9 +70,9 @@ export default async function GemeentenPage({ searchParams }: Props) {
 
   return (
     <div>
-      <Breadcrumbs items={[{ label: "Gemeenten", href: "/gemeenten" }]} />
+      <Breadcrumbs items={[{ label: tenant.organisatieType.meervoudCapitaal, href: tenant.routes.organisaties }]} />
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-2">
-        <h1 className="text-2xl sm:text-3xl font-light text-[#1a6ca8]">Gemeenten</h1>
+        <h1 className="text-2xl sm:text-3xl font-light text-[#1a6ca8]">{tenant.organisatieType.meervoudCapitaal}</h1>
         <div className="flex items-center gap-2 self-start">
           <Link
             href={`/api/gemeenten/export?zoek=${zoek}${pakketFilter ? `&pakket=${pakketFilter}` : ""}`}
@@ -112,7 +113,7 @@ export default async function GemeentenPage({ searchParams }: Props) {
                 type="text"
                 name="zoek"
                 defaultValue={zoek}
-                placeholder="Zoek in gemeenten"
+                placeholder={`Zoek in ${tenant.organisatieType.meervoud}`}
                 className="border border-gray-300 rounded-l px-4 py-2.5 text-sm flex-1"
               />
               <button

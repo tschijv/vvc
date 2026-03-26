@@ -105,7 +105,7 @@ export default function RegistratieApprovalForm({
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Koppel aan {isLeverancier ? "leverancier" : "gemeente"}
+            Koppel aan {isLeverancier ? "leverancier" : "organisatie"}
           </label>
           <select
             value={orgId}
@@ -120,7 +120,7 @@ export default function RegistratieApprovalForm({
             ))}
           </select>
           <p className="text-xs text-gray-500 mt-1">
-            De gebruiker krijgt automatisch de rol {isLeverancier ? "Leverancier" : "Gemeente beheerder"}.
+            De gebruiker krijgt automatisch de rol {isLeverancier ? "Leverancier" : "Beheerder"}.
           </p>
         </div>
 

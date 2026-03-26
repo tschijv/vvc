@@ -6,10 +6,11 @@ import { getSessionUser, canViewGemeentePortfolio } from "@/process/auth-helpers
 import { getGemeenteById } from "@/service/gemeente";
 import OrganisatieSelector from "./OrganisatieSelector";
 import HelpLink from "@/ui/components/HelpLink";
+import { tenant } from "@/process/tenant-config";
 
 export const metadata: Metadata = {
-  title: "Gemeenten vergelijken",
-  description: "Vergelijk het applicatielandschap van meerdere gemeenten",
+  title: `${tenant.organisatieType.meervoudCapitaal} vergelijken`,
+  description: `Vergelijk het applicatielandschap van meerdere ${tenant.organisatieType.meervoud}`,
 };
 
 interface Props {
@@ -103,13 +104,13 @@ export default async function VergelijkPage({ searchParams }: Props) {
   return (
     <div className="max-w-6xl">
       <Breadcrumbs items={[
-        { label: "Gemeenten", href: "/gemeenten" },
+        { label: tenant.organisatieType.meervoudCapitaal, href: tenant.routes.organisaties },
         { label: "Vergelijken", href: "/gemeenten/vergelijk" },
       ]} />
 
       <div className="flex items-center gap-3 mb-6">
-        <h1 className="text-2xl font-bold text-[#1a6ca8]">Gemeenten vergelijken</h1>
-        <HelpLink section="vergelijken" label="Help over gemeenten vergelijken" />
+        <h1 className="text-2xl font-bold text-[#1a6ca8]">{tenant.organisatieType.meervoudCapitaal} vergelijken</h1>
+        <HelpLink section="vergelijken" label={`Help over ${tenant.organisatieType.meervoud} vergelijken`} />
       </div>
 
       <OrganisatieSelector
@@ -239,7 +240,7 @@ export default async function VergelijkPage({ searchParams }: Props) {
             </div>
           ) : (
             <p className="text-sm text-gray-500 italic">
-              Geen pakketten geregistreerd bij deze gemeenten.
+              Geen pakketten geregistreerd bij deze {tenant.organisatieType.meervoud}.
             </p>
           )}
         </>
@@ -247,7 +248,7 @@ export default async function VergelijkPage({ searchParams }: Props) {
 
       {showPortfolio && filledIds.length < 2 && (
         <p className="text-sm text-gray-500 mt-4">
-          Selecteer minimaal twee gemeenten om hun applicatielandschap te vergelijken.
+          Selecteer minimaal twee {tenant.organisatieType.meervoud} om hun applicatielandschap te vergelijken.
         </p>
       )}
     </div>

@@ -3,6 +3,7 @@ import { prisma } from "@/data/prisma";
 import { getSessionUser, canEditPagina } from "@/process/auth-helpers";
 import GlossaryHighlighter from "@/ui/components/GlossaryHighlighter";
 import { unstable_cache } from "next/cache";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -266,7 +267,7 @@ export default async function HomePage() {
 
   return (
     <div className="-mt-6">
-      <h1 className="sr-only">VNG Voorzieningencatalogus</h1>
+      <h1 className="sr-only">{tenant.naam}</h1>
       {/* Orange tile navigation */}
       <div className="bg-[#e35b10] -mx-4 px-2 sm:px-6 py-5 mb-8">
         <div className="flex flex-wrap gap-0 justify-center max-w-5xl mx-auto">
@@ -293,7 +294,7 @@ export default async function HomePage() {
             { href: "/pakketversies", label: "Pakket\nversies", count: aantalPakketversies, Icon: IconPakketversies },
             { href: "/leveranciers", label: "Leveranciers", count: aantalLeveranciers, Icon: IconLeveranciers },
             { href: "/addenda", label: "Addenda", count: aantalAddenda, Icon: IconAddenda },
-            { href: "/gemeenten", label: "Gemeenten", count: aantalOrganisaties, Icon: IconGemeenten },
+            { href: tenant.routes.organisaties, label: tenant.organisatieType.meervoudCapitaal, count: aantalOrganisaties, Icon: IconGemeenten },
             { href: "/standaarden", label: "Standaarden", count: aantalStandaarden, Icon: IconStandaarden },
             { href: "/referentiecomponenten", label: "Referentie\ncomponenten", count: aantalRefComps, Icon: IconReferentie },
             { href: "/applicatiefuncties", label: "Applicatie\nfuncties", count: aantalAppFuncties, Icon: IconApplicatiefuncties },
@@ -335,7 +336,7 @@ export default async function HomePage() {
           <input
             type="text"
             name="q"
-            placeholder="Zoek in pakketten, leveranciers, gemeenten..."
+            placeholder={`Zoek in pakketten, leveranciers, ${tenant.organisatieType.meervoud}...`}
             className="w-full border border-gray-300 dark:border-slate-600 rounded-lg px-4 py-3 pl-11 text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#1a6ca8] focus:border-transparent shadow-sm"
           />
           <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -392,7 +393,7 @@ export default async function HomePage() {
         {/* Voortgang gemeenten */}
         <div>
           <div className="flex items-center border-b border-gray-200 pb-2 mb-3">
-            <h2 className="text-base font-bold text-[#c44b0a]">Voortgang gemeenten</h2>
+            <h2 className="text-base font-bold text-[#c44b0a]">Voortgang {tenant.organisatieType.meervoud}</h2>
           </div>
           <div className="space-y-2 mb-4">
             {sterVerdeling.map(({ ster, count }) => (
@@ -402,17 +403,17 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <Link href="/gemeenten" className="text-sm text-[#1a6ca8] hover:underline block mb-3">
+          <Link href={tenant.routes.organisaties} className="text-sm text-[#1a6ca8] hover:underline block mb-3">
             Uitleg over de voortgang categorieën
           </Link>
           <div className="text-sm text-gray-700 space-y-1">
             {ingelogdPerJaar.map(({ jaar, n }) => (
               <div key={jaar}>
-                Aantal ingelogde gemeenten in {jaar}: <strong>{n}</strong>
+                Aantal ingelogde {tenant.organisatieType.meervoud} in {jaar}: <strong>{n}</strong>
               </div>
             ))}
           </div>
-          <Link href="/gemeenten" className="mt-3 inline-block text-sm text-[#1a6ca8] hover:underline">
+          <Link href={tenant.routes.organisaties} className="mt-3 inline-block text-sm text-[#1a6ca8] hover:underline">
             Volledige rapportage →
           </Link>
         </div>

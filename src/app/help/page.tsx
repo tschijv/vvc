@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
 export const metadata: Metadata = {
   title: "Help — Voorzieningencatalogus",
-  description: "Gebruikershandleiding voor de VNG Voorzieningencatalogus",
+  description: `Gebruikershandleiding voor de ${tenant.naam}`,
 };
 
 const tocItems = [
@@ -16,10 +17,10 @@ const tocItems = [
   { id: "pakketversies", label: "Pakketversies" },
   { id: "leveranciers", label: "Leveranciers" },
   { id: "addenda", label: "Addenda" },
-  { id: "gemeenten", label: "Gemeenten" },
+  { id: "gemeenten", label: tenant.organisatieType.meervoudCapitaal },
   { id: "dashboard", label: "Dashboard" },
-  { id: "vergelijken", label: "Gemeenten vergelijken" },
-  { id: "vergelijkbaar", label: "Vergelijkbare gemeenten" },
+  { id: "vergelijken", label: `${tenant.organisatieType.meervoudCapitaal} vergelijken` },
+  { id: "vergelijkbaar", label: `Vergelijkbare ${tenant.organisatieType.meervoud}` },
   { id: "standaarden", label: "Standaarden & Referentiecomponenten" },
   { id: "compliancy", label: "Compliancy Monitor" },
   { id: "inkoop", label: "Inkoopondersteuning" },
@@ -88,12 +89,12 @@ export default function HelpPage() {
       <div className="space-y-6">
         <Section id="introductie" title="Wat is de Voorzieningencatalogus?">
           <p>
-            De VNG Voorzieningencatalogus is het centrale register waarin gemeenten, leveranciers en samenwerkingsverbanden
+            De {tenant.naam} is het centrale register waarin {tenant.organisatieType.meervoud}, leveranciers en samenwerkingsverbanden
             hun softwarepakketten, standaarden en koppelingen bijhouden. Het platform biedt inzicht in welke software er
-            binnen de gemeentelijke markt beschikbaar is en helpt bij inkoop- en compliancy-beslissingen.
+            beschikbaar is en helpt bij inkoop- en compliancy-beslissingen.
           </p>
           <p>
-            De catalogus is ontwikkeld door VNG Realisatie en wordt gebruikt door honderden gemeenten en tientallen leveranciers
+            De catalogus is ontwikkeld door {tenant.organisatie} en wordt gebruikt door honderden {tenant.organisatieType.meervoud} en tientallen leveranciers
             in Nederland.
           </p>
         </Section>
@@ -102,7 +103,7 @@ export default function HelpPage() {
           <p>
             Op de homepage vindt u drie rijen tegels. De <strong className="text-[#e35b10]">oranje tegels</strong> zijn
             functionaliteiten (Dashboard, Inkoopondersteuning, Compliancy Monitor). De <strong className="text-[#1a6ca8]">blauwe tegels</strong> geven
-            toegang tot data (Pakketten, Leveranciers, Gemeenten, etc.). De <strong className="text-green-600">groene tegels</strong> verwijzen
+            toegang tot data (Pakketten, Leveranciers, {tenant.organisatieType.meervoudCapitaal}, etc.). De <strong className="text-green-600">groene tegels</strong> verwijzen
             naar dienstverleners en cloudproviders.
           </p>
           <p>
@@ -115,7 +116,7 @@ export default function HelpPage() {
           <p>
             Op de pakkettenlijst kunt u zoeken op naam, filteren op leverancier, referentiecomponent of status, en de
             resultaten exporteren als CSV-bestand. Klik op een pakket voor de detailpagina met versies, standaarden en
-            de gemeenten die het pakket gebruiken.
+            de {tenant.organisatieType.meervoud} die het pakket gebruiken.
           </p>
           <p>
             Elk pakket bevat informatie over de leverancier, beschikbare versies en aan welke referentiecomponenten
@@ -145,7 +146,7 @@ export default function HelpPage() {
 
         <Section id="addenda" title="Addenda" link="/addenda" linkLabel="Ga naar Addenda">
           <p>
-            Addenda zijn aanvullende afspraken tussen een leverancier en VNG Realisatie over het voldoen aan standaarden.
+            Addenda zijn aanvullende afspraken tussen een leverancier en {tenant.organisatie} over het voldoen aan standaarden.
             U kunt filteren op leverancier of status. Leveranciers met een inlog kunnen hun addenda bewerken.
           </p>
           <p>
@@ -153,21 +154,21 @@ export default function HelpPage() {
           </p>
         </Section>
 
-        <Section id="gemeenten" title="Gemeenten" link="/gemeenten" linkLabel="Ga naar Gemeenten">
+        <Section id="gemeenten" title={tenant.organisatieType.meervoudCapitaal} link={tenant.routes.organisaties} linkLabel={`Ga naar ${tenant.organisatieType.meervoudCapitaal}`}>
           <p>
-            Het gemeentenoverzicht toont alle deelnemende gemeenten. U kunt zoeken op naam en filteren op provincie.
-            Elke gemeente heeft een sterren-score (0-5 sterren) die de voortgang aangeeft in het bijhouden van hun
+            Het overzicht toont alle deelnemende {tenant.organisatieType.meervoud}. U kunt zoeken op naam en filteren op provincie.
+            Elke {tenant.organisatieType.enkelvoud} heeft een sterren-score (0-5 sterren) die de voortgang aangeeft in het bijhouden van hun
             softwareportfolio.
           </p>
           <p>
             De score is gebaseerd op het percentage ingevulde gegevens: 0% = 0 sterren, 1-20% = 1 ster, enzovoort
-            tot 81-100% = 5 sterren. Klik op een gemeente voor het volledige dashboard.
+            tot 81-100% = 5 sterren. Klik op een {tenant.organisatieType.enkelvoud} voor het volledige dashboard.
           </p>
         </Section>
 
         <Section id="dashboard" title="Dashboard" link="/dashboard" linkLabel="Ga naar Dashboard">
           <p>
-            Het gemeente-dashboard bevat 6 KPI-kaarten: Compliant pakketversies, Einde ondersteuning leverancier,
+            Het dashboard bevat 6 KPI-kaarten: Compliant pakketversies, Einde ondersteuning leverancier,
             SaaS alternatieven, Inkoopondersteuning, Pakketten met meer mogelijkheden, en Referentiecomponenten
             met meerdere pakketten. Elke kaart toont een aantal en een directe link naar de relevante gegevens.
           </p>
@@ -177,24 +178,24 @@ export default function HelpPage() {
           </p>
         </Section>
 
-        <Section id="vergelijken" title="Gemeenten vergelijken" link="/gemeenten/vergelijk" linkLabel="Ga naar Vergelijken">
+        <Section id="vergelijken" title={`${tenant.organisatieType.meervoudCapitaal} vergelijken`} link={`${tenant.routes.organisaties}/vergelijk`} linkLabel="Ga naar Vergelijken">
           <p>
-            Op de vergelijkpagina kunt u tot 4 gemeenten naast elkaar zetten om hun softwareportfolio te vergelijken.
-            Selecteer gemeenten via de dropdowns en bekijk welke pakketten ze gemeen hebben en welke uniek zijn.
+            Op de vergelijkpagina kunt u tot 4 {tenant.organisatieType.meervoud} naast elkaar zetten om hun softwareportfolio te vergelijken.
+            Selecteer {tenant.organisatieType.meervoud} via de dropdowns en bekijk welke pakketten ze gemeen hebben en welke uniek zijn.
           </p>
           <p>
             De Jaccard-similariteit wordt berekend als het aantal gedeelde pakketten gedeeld door het totaal aantal
-            unieke pakketten van beide gemeenten. Een score van 1.0 betekent een identiek portfolio.
+            unieke pakketten van beide {tenant.organisatieType.meervoud}. Een score van 1.0 betekent een identiek portfolio.
           </p>
         </Section>
 
-        <Section id="vergelijkbaar" title="Vergelijkbare gemeenten">
+        <Section id="vergelijkbaar" title={`Vergelijkbare ${tenant.organisatieType.meervoud}`}>
           <p>
-            Op het dashboard van elke gemeente wordt automatisch een top-5 van vergelijkbare gemeenten getoond.
+            Op het dashboard van elke {tenant.organisatieType.enkelvoud} wordt automatisch een top-5 van vergelijkbare {tenant.organisatieType.meervoud} getoond.
             De overlap wordt berekend op basis van de Jaccard-similariteit van het pakketportfolio.
           </p>
           <p>
-            Klik op &quot;Alle vergelijkbare gemeenten&quot; voor een uitgebreid overzicht met tot 500 gemeenten,
+            Klik op &quot;Alle vergelijkbare {tenant.organisatieType.meervoud}&quot; voor een uitgebreid overzicht met tot 500 {tenant.organisatieType.meervoud},
             sorteerbaar op overlap-percentage.
           </p>
         </Section>
@@ -202,7 +203,7 @@ export default function HelpPage() {
         <Section id="standaarden" title="Standaarden & Referentiecomponenten" link="/standaarden" linkLabel="Ga naar Standaarden">
           <p>
             Standaarden beschrijven de technische afspraken waaraan software moet voldoen (bijv. StUF, ZDS, ZGW).
-            Referentiecomponenten zijn de logische bouwblokken van de gemeentelijke informatievoorziening
+            Referentiecomponenten zijn de logische bouwblokken van de informatievoorziening
             (bijv. Zaakregistratiecomponent, Documentregistratiecomponent).
           </p>
           <p>
@@ -214,7 +215,7 @@ export default function HelpPage() {
         <Section id="compliancy" title="Compliancy Monitor" link="/compliancy" linkLabel="Ga naar Compliancy Monitor">
           <p>
             De Compliancy Monitor toont een matrix van standaardversies en pakketversies. Per standaard ziet u welke
-            softwarepakketten compliant zijn, zodat gemeenten weloverwogen keuzes kunnen maken.
+            softwarepakketten compliant zijn, zodat {tenant.organisatieType.meervoud} weloverwogen keuzes kunnen maken.
           </p>
           <p>
             De monitor wordt bijgehouden op basis van de gegevens die leveranciers invoeren bij hun pakketversies.
@@ -223,7 +224,7 @@ export default function HelpPage() {
 
         <Section id="inkoop" title="Inkoopondersteuning" link="/inkoop" linkLabel="Ga naar Inkoopondersteuning">
           <p>
-            De inkoopondersteuning helpt gemeenten bij het selecteren van software. Selecteer een of meer
+            De inkoopondersteuning helpt {tenant.organisatieType.meervoud} bij het selecteren van software. Selecteer een of meer
             referentiecomponenten om te zien welke pakketten beschikbaar zijn en aan welke standaarden ze voldoen.
           </p>
           <p>
@@ -233,18 +234,18 @@ export default function HelpPage() {
 
         <Section id="begrippen" title="Begrippen">
           <p>
-            Begrippen in de catalogus worden live opgehaald uit SKOSMOS, het begrippenkader van VNG Realisatie.
+            Begrippen in de catalogus worden live opgehaald uit SKOSMOS, het begrippenkader van {tenant.organisatie}.
             Wanneer u met de muis over een gemarkeerd woord beweegt, verschijnt een tooltip met de definitie.
           </p>
           <p>
-            Het begrippenkader bevat definities van termen uit de gemeentelijke informatievoorziening. De begrippen
+            Het begrippenkader bevat definities van termen uit de informatievoorziening. De begrippen
             worden gecached voor snelle weergave.
           </p>
         </Section>
 
         <Section id="zoeken" title="Zoeken" link="/zoeken" linkLabel="Ga naar Zoeken">
           <p>
-            De zoekfunctie doorzoekt 6 contenttypen: pakketten, pakketversies, leveranciers, gemeenten, standaarden
+            De zoekfunctie doorzoekt 6 contenttypen: pakketten, pakketversies, leveranciers, {tenant.organisatieType.meervoud}, standaarden
             en referentiecomponenten. De zoekmachine gebruikt fuzzy matching, zodat kleine typefouten geen probleem zijn.
           </p>
           <p>
@@ -255,25 +256,25 @@ export default function HelpPage() {
 
         <Section id="kaart" title="Kaart" link="/kaart/nederland" linkLabel="Ga naar Kaart">
           <p>
-            De interactieve kaart toont alle deelnemende gemeenten op een kaart van Nederland. Klik op een gemeente
+            De interactieve kaart toont alle deelnemende {tenant.organisatieType.meervoud} op een kaart van Nederland. Klik op een {tenant.organisatieType.enkelvoud}
             om naar de detailpagina te navigeren. De kleurcodering geeft de voortgang aan.
           </p>
         </Section>
 
         <Section id="ai-adviseur" title="AI-adviseur">
           <p>
-            De AI-adviseur is beschikbaar op het dashboard van elke gemeente en kan vragen beantwoorden over het
+            De AI-adviseur is beschikbaar op het dashboard van elke {tenant.organisatieType.enkelvoud} en kan vragen beantwoorden over het
             softwareportfolio. Er worden voorgestelde vragen getoond, maar u kunt ook eigen vragen stellen.
           </p>
           <p>
-            De adviseur heeft toegang tot de gegevens van de geselecteerde gemeente en kan advies geven over
+            De adviseur heeft toegang tot de gegevens van de geselecteerde {tenant.organisatieType.enkelvoud} en kan advies geven over
             compliancy, alternatieven en optimalisatie van het applicatielandschap.
           </p>
         </Section>
 
         <Section id="favorieten" title="Favorieten" link="/favorieten" linkLabel="Ga naar Favorieten">
           <p>
-            Klik op het hart-icoon op een detailpagina om een pakket, leverancier of gemeente aan uw favorieten
+            Klik op het hart-icoon op een detailpagina om een pakket, leverancier of {tenant.organisatieType.enkelvoud} aan uw favorieten
             toe te voegen. Uw favorieten worden lokaal opgeslagen en zijn terug te vinden op de favorietenpagina.
           </p>
         </Section>
@@ -316,7 +317,7 @@ export default function HelpPage() {
 
         <Section id="qr-codes" title="QR-codes">
           <p>
-            Op detailpagina&apos;s van pakketten, leveranciers en gemeenten wordt een QR-code getoond die naar de
+            Op detailpagina&apos;s van pakketten, leveranciers en {tenant.organisatieType.meervoud} wordt een QR-code getoond die naar de
             huidige pagina linkt. Dit is handig voor presentaties of om snel een link te delen met collega&apos;s.
           </p>
         </Section>

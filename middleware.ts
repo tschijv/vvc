@@ -40,7 +40,7 @@ export function middleware(request: NextRequest) {
   return new NextResponse("Toegang geweigerd", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="VNG Voorzieningencatalogus"',
+      "WWW-Authenticate": `Basic realm="${process.env.TENANT === "hwh" ? "HWH Voorzieningencatalogus" : "VNG Voorzieningencatalogus"}"`,
     },
   });
 }

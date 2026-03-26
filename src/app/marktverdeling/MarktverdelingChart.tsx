@@ -12,6 +12,7 @@ type DataPoint = {
 
 type Props = {
   data: DataPoint[];
+  yAxisLabel?: string;
 };
 
 const CHART_W = 900;
@@ -22,7 +23,7 @@ const INNER_H = CHART_H - PAD.top - PAD.bottom;
 const MIN_R = 5;
 const MAX_R = 40;
 
-export default function MarktverdelingChart({ data }: Props) {
+export default function MarktverdelingChart({ data, yAxisLabel = "Aantal klanten (gemeenten)" }: Props) {
   const [hover, setHover] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -163,7 +164,7 @@ export default function MarktverdelingChart({ data }: Props) {
           fontWeight={600}
           transform={`rotate(-90, 15, ${PAD.top + INNER_H / 2})`}
         >
-          Aantal klanten (gemeenten)
+          {yAxisLabel}
         </text>
 
         {/* Bubbles */}

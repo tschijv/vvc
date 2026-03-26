@@ -3,6 +3,7 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { prisma } from "@/data/prisma";
 import { getSessionUser } from "@/process/auth-helpers";
 import { redirect } from "next/navigation";
+import { tenant } from "@/process/tenant-config";
 
 export const revalidate = 3600; // ISR: regenerate every hour
 
@@ -165,7 +166,7 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
           <table className="w-full text-sm border-collapse">
             <thead>
               <tr className="border-b-2 border-gray-200 text-left">
-                <th scope="col" className="pb-2 pr-4 font-semibold">Gemeenten</th>
+                <th scope="col" className="pb-2 pr-4 font-semibold">{tenant.organisatieType.meervoudCapitaal}</th>
                 <th scope="col" className="pb-2 pr-4">
                   <Link href="#" className="text-[#1a6ca8] hover:underline font-semibold">
                     Pakketversie/Extern

@@ -4,6 +4,7 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getSessionUser } from "@/process/auth-helpers";
 import { prisma } from "@/data/prisma";
 import type { Metadata } from "next";
+import { tenant } from "@/process/tenant-config";
 
 export const metadata: Metadata = {
   title: "Statistieken",
@@ -55,7 +56,7 @@ export default async function StatistiekenPage() {
   ]);
 
   const stats = [
-    { label: "Gemeenten", value: aantalOrganisaties },
+    { label: tenant.organisatieType.meervoudCapitaal, value: aantalOrganisaties },
     { label: "Leveranciers", value: aantalLeveranciers },
     { label: "Pakketten", value: aantalPakketten },
     { label: "Pakketversies", value: aantalPakketversies },
@@ -96,7 +97,7 @@ export default async function StatistiekenPage() {
                 <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">#</th>
                 <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Pakket</th>
                 <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400">Leverancier</th>
-                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400 text-right">Gemeenten</th>
+                <th scope="col" className="pb-1.5 font-medium text-gray-500 dark:text-slate-400 text-right">{tenant.organisatieType.meervoudCapitaal}</th>
               </tr>
             </thead>
             <tbody>
@@ -141,7 +142,7 @@ export default async function StatistiekenPage() {
 
         {/* Recente activiteit */}
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-4 md:col-span-2">
-          <h2 className="font-semibold text-gray-800 dark:text-slate-200 mb-3">Recente gemeenteactiviteit</h2>
+          <h2 className="font-semibold text-gray-800 dark:text-slate-200 mb-3">Recente activiteit {tenant.organisatieType.meervoud}</h2>
           {recenteActiviteit.length === 0 ? (
             <p className="text-sm text-gray-500">Geen activiteit geregistreerd.</p>
           ) : (
