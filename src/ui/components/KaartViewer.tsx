@@ -376,7 +376,7 @@ export default function KaartViewer({
             transformOrigin: "0 0",
             transition: isPanning ? "none" : "transform 0.15s ease-out",
           }}
-          dangerouslySetInnerHTML={{ __html: sanitize(svgContent, { USE_PROFILES: { svg: true } }) }}
+          dangerouslySetInnerHTML={{ __html: sanitize(svgContent, { USE_PROFILES: { svg: true, svgFilters: true }, ADD_TAGS: ["image", "use"], ADD_ATTR: ["xlink:href", "href"] }) }}
         />
       </div>
     </div>
