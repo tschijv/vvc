@@ -31,7 +31,7 @@ interface SyncResponse {
   details?: string;
 }
 
-export default function GemmaSyncPanel() {
+export default function GemmaSyncPanel({ architectuurNaam = "GEMMA" }: { architectuurNaam?: string }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<SyncResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +64,7 @@ export default function GemmaSyncPanel() {
     <div className="bg-white border border-gray-200 rounded-lg">
       <div className="flex items-center justify-between px-5 py-3">
         <div className="flex items-center gap-4 min-w-0">
-          <span className="font-semibold text-gray-800 whitespace-nowrap">GEMMA synchronisatie</span>
+          <span className="font-semibold text-gray-800 whitespace-nowrap">{architectuurNaam} synchronisatie</span>
           <span className="text-sm text-gray-500 truncate hidden sm:inline">Referentiecomponenten, applicatiefuncties en standaarden</span>
         </div>
         <button

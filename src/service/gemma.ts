@@ -269,6 +269,11 @@ export async function syncStandaarden(
 // ─── Views sync ─────────────────────────────────────────────────────────────────
 
 export async function syncViews(): Promise<ViewSyncResult> {
+  // Skip views sync if no model ID configured (e.g. WILMA doesn't use swcquery)
+  if (!GEMMA_MODEL_ID) {
+    return { created: 0, updated: 0, total: 0, errors: [] };
+  }
+
   const params = new URLSearchParams({
     action: "swcquery",
     output: "list",
@@ -280,7 +285,7 @@ export async function syncViews(): Promise<ViewSyncResult> {
   const res = await fetch(`${GEMMA_API}?${params}`);
   if (!res.ok) {
     throw new Error(
-      `GEMMA swcquery API fout: ${res.status} ${res.statusText}`
+      `${tenant.architectuur.naam} swcquery API fout: ${res.status} ${res.statusText}`
     );
   }
 

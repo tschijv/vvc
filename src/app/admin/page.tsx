@@ -118,7 +118,7 @@ export default async function AdminPage() {
         />
       </div>
       <div className="space-y-4">
-        <GemmaSyncPanel />
+        <GemmaSyncPanel architectuurNaam={tenant.architectuur.naam} />
         <BegrippenSyncPanel />
         <AnonymizePanel />
       </div>
