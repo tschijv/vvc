@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import DOMPurify from "isomorphic-dompurify";
+const sanitize = (html: string, opts?: Record<string, unknown>) => {
+  if (typeof window === "undefined") return html;
+  const DOMPurify = require("dompurify");
+  const fn = DOMPurify.default?.sanitize ?? DOMPurify.sanitize;
+  return fn ? fn(html, opts) : html;
+};
 
 interface KaartViewerProps {
   viewId: string;
@@ -371,7 +376,7 @@ export default function KaartViewer({
             transformOrigin: "0 0",
             transition: isPanning ? "none" : "transform 0.15s ease-out",
           }}
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(svgContent, { USE_PROFILES: { svg: true } }) }}
+          dangerouslySetInnerHTML={{ __html: sanitize(svgContent, { USE_PROFILES: { svg: true } }) }}
         />
       </div>
     </div>
