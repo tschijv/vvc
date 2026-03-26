@@ -30,7 +30,7 @@ async function getMarktverdelingData(): Promise<LeverancierData[]> {
             select: {
               id: true,
               organisatiePakketten: {
-                select: { gemeenteId: true },
+                select: { organisatieId: true },
               },
             },
           },
