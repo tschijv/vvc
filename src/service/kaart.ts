@@ -1,11 +1,11 @@
 import { prisma } from "@/data/prisma";
 import { tenant } from "@/process/tenant-config";
 
-const GEMMA_API = tenant.architectuur.apiUrl;
+const API_URL = tenant.architectuur.apiUrl;
 
 /**
  * Genereer een SVG kaart van het applicatielandschap van een organisatie
- * voor een specifieke GEMMA view.
+ * voor een specifieke view (GEMMA/WILMA).
  */
 export async function genereerKaartSvg(
   viewId: string,
@@ -28,6 +28,7 @@ export async function genereerKaartSvg(
   }
 
   // 3. Haal organisatie-pakketten op met alle benodigde relaties
+  //    Referentiecomponenten zitten op Pakket-niveau (niet Pakketversie)
   const organisatiePakketten = await prisma.organisatiePakket.findMany({
     where: { organisatieId },
     include: {
@@ -55,6 +56,7 @@ export async function genereerKaartSvg(
       const pakket = pv.pakket;
       const leverancier = pakket.leverancier;
 
+      // Referentiecomponenten zitten op pakket-niveau
       const refComps = (pakket.referentiecomponenten || [])
         .filter((rc) => rc.referentiecomponent.guid)
         .map((rc) => ({
@@ -96,8 +98,8 @@ export async function genereerKaartSvg(
     },
   ];
 
-  // 6. POST naar GEMMA Online viewdiagram API
-  const gemmaParams = new URLSearchParams({
+  // 6. POST naar architectuur API (GEMMA/WILMA) viewdiagram endpoint
+  const params = new URLSearchParams({
     action: "swcquery",
     output: "viewdiagram",
     view: view.objectId,
@@ -106,7 +108,7 @@ export async function genereerKaartSvg(
     format: "json",
   });
 
-  const gemmaRes = await fetch(`${GEMMA_API}?${gemmaParams}`, {
+  const res = await fetch(`${API_URL}?${params}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -114,29 +116,29 @@ export async function genereerKaartSvg(
     body: `json=${encodeURIComponent(JSON.stringify(viewInfoData))}`,
   });
 
-  if (!gemmaRes.ok) {
-    const errorText = await gemmaRes.text();
-    console.error("GEMMA viewdiagram API fout:", errorText);
+  if (!res.ok) {
+    const errorText = await res.text();
+    console.error(`${tenant.architectuur.naam} viewdiagram API fout:`, errorText);
     throw new KaartError(
-      `GEMMA Online API fout: ${gemmaRes.status}: ${errorText.substring(0, 200)}`,
+      `${tenant.architectuur.naam} API fout: ${res.status}: ${errorText.substring(0, 200)}`,
       502
     );
   }
 
-  const gemmaData = await gemmaRes.json();
+  const data = await res.json();
 
   // 7. Decodeer base64 SVG uit response
   const base64Svg =
-    gemmaData?.viewdiagrams?.item?.base64 ||
-    gemmaData?.viewdiagram?.item?.base64;
+    data?.viewdiagrams?.item?.base64 ||
+    data?.viewdiagram?.item?.base64;
 
   if (!base64Svg) {
     console.error(
-      "GEMMA response zonder SVG:",
-      JSON.stringify(gemmaData).substring(0, 500)
+      `${tenant.architectuur.naam} response zonder SVG:`,
+      JSON.stringify(data).substring(0, 500)
     );
     throw new KaartError(
-      `Geen SVG ontvangen van GEMMA Online: ${JSON.stringify(gemmaData).substring(0, 300)}`,
+      `Geen SVG ontvangen van ${tenant.architectuur.naam}: ${JSON.stringify(data).substring(0, 300)}`,
       502
     );
   }
