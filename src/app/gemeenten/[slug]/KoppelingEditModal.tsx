@@ -12,7 +12,7 @@ export type KoppelingEditData = {
   richting: string;
   doelPakketversieId?: string | null;
   doelExternNaam?: string | null;
-  buitengemeentelijk: boolean;
+  buitenOrganisatie: boolean;
   status?: string | null;
   standaard?: string | null;
   transportprotocol?: string | null;
@@ -25,7 +25,7 @@ type PakketversieOption = {
 };
 
 type Props = {
-  gemeenteId: string;
+  organisatieId: string;
   /** Existing data for edit mode, null for add mode */
   existing: KoppelingEditData | null;
   pakketversies: PakketversieOption[];
@@ -33,7 +33,7 @@ type Props = {
 };
 
 export default function KoppelingEditModal({
-  gemeenteId,
+  organisatieId,
   existing,
   pakketversies,
   onClose,
@@ -67,8 +67,8 @@ export default function KoppelingEditModal({
   );
 
   // Other fields
-  const [buitengemeentelijk, setBuitengemeentelijk] = useState(
-    existing?.buitengemeentelijk ?? false
+  const [buitenOrganisatie, setBuitengemeentelijk] = useState(
+    existing?.buitenOrganisatie ?? false
   );
   const [status, setStatus] = useState(existing?.status || "");
   const [standaard, setStandaard] = useState(existing?.standaard || "");
@@ -101,7 +101,7 @@ export default function KoppelingEditModal({
           : undefined,
       doelExternNaam:
         doelType === "extern" && doelExternNaam ? doelExternNaam : undefined,
-      buitengemeentelijk,
+      buitenOrganisatie,
       status: status || undefined,
       standaard: standaard || undefined,
       transportprotocol: transportprotocol || undefined,
@@ -110,7 +110,7 @@ export default function KoppelingEditModal({
 
     let result;
     if (isAdd) {
-      result = await addKoppeling(gemeenteId, data);
+      result = await addKoppeling(organisatieId, data);
     } else {
       result = await updateKoppeling(existing.id, data);
     }
@@ -260,13 +260,13 @@ export default function KoppelingEditModal({
         <div className="flex items-center gap-2">
           <input
             type="checkbox"
-            id="buitengemeentelijk"
-            checked={buitengemeentelijk}
+            id="buitenOrganisatie"
+            checked={buitenOrganisatie}
             onChange={(e) => setBuitengemeentelijk(e.target.checked)}
             className="accent-[#1a6ca8] w-4 h-4"
           />
           <label
-            htmlFor="buitengemeentelijk"
+            htmlFor="buitenOrganisatie"
             className="text-sm text-gray-700 dark:text-gray-300"
           >
             Buitengemeentelijk

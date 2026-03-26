@@ -13,9 +13,9 @@ type UserProfile = {
   emailNotificaties: boolean;
   totpEnabled: boolean;
   lastLoginAt: string | null;
-  gemeenteId: string | null;
+  organisatieId: string | null;
   leverancierId: string | null;
-  gemeente: { id: string; naam: string } | null;
+  organisatie: { id: string; naam: string } | null;
   leverancier: { id: string; naam: string; slug: string } | null;
 };
 

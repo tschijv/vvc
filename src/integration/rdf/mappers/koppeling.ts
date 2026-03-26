@@ -12,7 +12,7 @@ interface KoppelingInput {
   richting?: string | null;
   standaard?: string | null;
   transportprotocol?: string | null;
-  buitengemeentelijk?: boolean | null;
+  buitenOrganisatie?: boolean | null;
   bronPakketversie?: { id: string; pakket?: { slug: string } | null } | null;
   doelPakketversie?: { id: string; pakket?: { slug: string } | null } | null;
 }
@@ -49,10 +49,10 @@ export function koppelingToTriples(koppeling: KoppelingInput): Quad[] {
     quads.push(quad(subject, VVC.transportprotocol, literal(koppeling.transportprotocol)));
   }
 
-  if (koppeling.buitengemeentelijk != null) {
+  if (koppeling.buitenOrganisatie != null) {
     quads.push(
       quad(subject, VVC.buitengemeentelijk,
-        literal(String(koppeling.buitengemeentelijk), DataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean")))
+        literal(String(koppeling.buitenOrganisatie), DataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean")))
     );
   }
 

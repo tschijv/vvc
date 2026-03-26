@@ -7,7 +7,7 @@ import PakketversieSearchSelect from "@/ui/components/PakketversieSearchSelect";
 import {
   searchPakketversies,
   addPakketToPortfolio,
-  updateGemeentePakket,
+  updateOrganisatiePakket,
 } from "./portfolio-actions";
 
 type GemeentePakketData = {
@@ -23,7 +23,7 @@ type GemeentePakketData = {
 };
 
 type Props = {
-  gemeenteId: string;
+  organisatieId: string;
   /** Existing data for edit mode, null for add mode */
   existing: GemeentePakketData | null;
   onClose: () => void;
@@ -37,7 +37,7 @@ const STATUS_OPTIONS = [
   "Onbekend",
 ];
 
-export default function GemeentePakketEditModal({ gemeenteId, existing, onClose }: Props) {
+export default function GemeentePakketEditModal({ organisatieId, existing, onClose }: Props) {
   const router = useRouter();
   const isAdd = !existing;
 
@@ -73,9 +73,9 @@ export default function GemeentePakketEditModal({ gemeenteId, existing, onClose 
         setSaving(false);
         return;
       }
-      result = await addPakketToPortfolio(gemeenteId, { pakketversieId, ...data });
+      result = await addPakketToPortfolio(organisatieId, { pakketversieId, ...data });
     } else {
-      result = await updateGemeentePakket(gemeenteId, existing.pakketversieId, data);
+      result = await updateOrganisatiePakket(organisatieId, existing.pakketversieId, data);
     }
 
     setSaving(false);

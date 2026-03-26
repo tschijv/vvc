@@ -37,11 +37,11 @@ const SUGGESTIES = [
 ];
 
 export default function AIAdviseur({
-  gemeenteId,
-  gemeenteNaam,
+  organisatieId,
+  organisatieNaam,
 }: {
-  gemeenteId: string;
-  gemeenteNaam: string;
+  organisatieId: string;
+  organisatieNaam: string;
 }) {
   const [vraag, setVraag] = useState("");
   const [antwoord, setAntwoord] = useState("");
@@ -66,7 +66,7 @@ export default function AIAdviseur({
     setGesteldeVraag(q);
 
     try {
-      const result = await getAIAdvies(gemeenteId, q);
+      const result = await getAIAdvies(organisatieId, q);
       setAntwoord(result);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -98,7 +98,7 @@ export default function AIAdviseur({
             AI-adviseur
           </h2>
           <p className="text-sm text-gray-500">
-            Intelligente analyse van het applicatieportfolio van {gemeenteNaam}
+            Intelligente analyse van het applicatieportfolio van {organisatieNaam}
           </p>
         </div>
       </div>

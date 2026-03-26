@@ -17,7 +17,7 @@ const ALLOWED_ROLES = [
   "KING_RAADPLEGER",
 ];
 
-export async function getAIAdvies(gemeenteId: string, vraag: string) {
+export async function getAIAdvies(organisatieId: string, vraag: string) {
   const user = await getSessionUser();
   if (!user || !ALLOWED_ROLES.includes(user.role)) {
     throw new Error("Geen toegang tot AI-advisering");
@@ -35,12 +35,12 @@ export async function getAIAdvies(gemeenteId: string, vraag: string) {
   // Haal alle context op
   const [gemeente, pakketten, stats, koppelingen] = await Promise.all([
     prisma.organisatie.findUnique({
-      where: { id: gemeenteId },
+      where: { id: organisatieId },
       select: { naam: true, cbsCode: true, progress: true },
     }),
-    getGemeentePakketten(gemeenteId),
-    getGemeenteDashboardStats(gemeenteId),
-    getGemeenteKoppelingen(gemeenteId),
+    getGemeentePakketten(organisatieId),
+    getGemeenteDashboardStats(organisatieId),
+    getGemeenteKoppelingen(organisatieId),
   ]);
 
   if (!gemeente) {

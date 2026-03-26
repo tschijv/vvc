@@ -10,7 +10,7 @@ export type UserListItem = {
   naam: string;
   actief: boolean;
   rollen: Role[];
-  gemeenteNaam: string | null;
+  organisatieNaam: string | null;
   leverancierNaam: string | null;
   laatsteToegangOp: Date | null;
   createdAt: Date;
@@ -63,7 +63,7 @@ export async function getUsers(options?: {
     naam: u.naam,
     actief: u.actief,
     rollen: u.rollen,
-    gemeenteNaam: u.organisatie?.naam || null,
+    organisatieNaam: u.organisatie?.naam || null,
     leverancierNaam: u.leverancier?.naam || null,
     laatsteToegangOp: u.laatsteToegangOp,
     createdAt: u.createdAt,
@@ -114,7 +114,7 @@ export async function getUserById(id: string): Promise<UserDetail | null> {
     actief: u.actief,
     rollen: u.rollen,
     organisatieId: u.organisatieId,
-    gemeenteNaam: u.organisatie?.naam || null,
+    organisatieNaam: u.organisatie?.naam || null,
     leverancierId: u.leverancierId,
     leverancierNaam: u.leverancier?.naam || null,
     laatsteToegangOp: u.laatsteToegangOp,

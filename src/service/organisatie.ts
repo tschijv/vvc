@@ -247,7 +247,7 @@ export type KoppelingRow = {
   doel: string;
   status: string | null;
   standaard: string | null;
-  buitengemeentelijk: boolean;
+  buitenOrganisatie: boolean;
   datumIngangStatus: string | null;
   transportprotocol: string | null;
   aanvullendeInformatie: string | null;
@@ -277,7 +277,7 @@ export async function getOrganisatieKoppelingen(
     const doelLabel = k.doelPakketversie
       ? `${k.doelPakketversie.pakket.naam} - ${k.doelPakketversie.naam}`
       : k.doelExternPakket
-        ? `${k.doelExternPakket.naam}${k.doelExternPakket.versie ? ` ${k.doelExternPakket.versie}` : ""}${k.buitengemeentelijk ? " (Buitengemeentelijk)" : " (Extern pakket)"}`
+        ? `${k.doelExternPakket.naam}${k.doelExternPakket.versie ? ` ${k.doelExternPakket.versie}` : ""}${k.buitenOrganisatie ? " (Buitengemeentelijk)" : " (Extern pakket)"}`
         : "—";
 
     const richting =
@@ -289,7 +289,7 @@ export async function getOrganisatieKoppelingen(
       doel: doelLabel,
       status: k.status,
       standaard: k.standaard,
-      buitengemeentelijk: k.buitengemeentelijk,
+      buitenOrganisatie: k.buitenOrganisatie,
       datumIngangStatus: k.datumIngangStatus
         ? k.datumIngangStatus.toISOString().split("T")[0]
         : null,

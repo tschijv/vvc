@@ -5,7 +5,7 @@ const GEMMA_API = "https://www.gemmaonline.nl/api.php";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
-interface GemeentePakketRow {
+interface OrganisatiePakketRow {
   leverancier: string;
   pakketNaam: string;
   pakketversieNaam: string;
@@ -24,14 +24,14 @@ interface GemeentePakketRow {
 // ─── Pakketoverzicht CSV (comma-separated) ──────────────────────────────────────
 
 export async function generatePakketoverzichtCsv(
-  gemeenteId: string
-): Promise<{ csv: string; gemeenteNaam: string }> {
-  const gemeente = await prisma.organisatie.findUnique({
-    where: { id: gemeenteId },
+  organisatieId: string
+): Promise<{ csv: string; organisatieNaam: string }> {
+  const organisatie = await prisma.organisatie.findUnique({
+    where: { id: organisatieId },
   });
-  if (!gemeente) throw new Error("Gemeente niet gevonden");
+  if (!organisatie) throw new Error("Organisatie niet gevonden");
 
-  const rows = await getExportRows(gemeenteId, gemeente.naam);
+  const rows = await getExportRows(organisatieId, organisatie.naam);
 
   const headers = [
     "Leverancier",
@@ -70,22 +70,22 @@ export async function generatePakketoverzichtCsv(
   );
 
   const csv = [headers.map(csvQuote).join(","), ...csvRows].join("\n") + "\n";
-  return { csv, gemeenteNaam: gemeente.naam };
+  return { csv, organisatieNaam: organisatie.naam };
 }
 
 // ─── IBD Foto CSV (semicolon-separated) ─────────────────────────────────────────
 
 export async function generateIbdFotoCsv(
-  gemeenteId: string
-): Promise<{ csv: string; gemeenteNaam: string }> {
-  const gemeente = await prisma.organisatie.findUnique({
-    where: { id: gemeenteId },
+  organisatieId: string
+): Promise<{ csv: string; organisatieNaam: string }> {
+  const organisatie = await prisma.organisatie.findUnique({
+    where: { id: organisatieId },
   });
-  if (!gemeente) throw new Error("Gemeente niet gevonden");
+  if (!organisatie) throw new Error("Organisatie niet gevonden");
 
   // Haal unieke pakketten op (niet per versie)
-  const gemeentePakketten = await prisma.organisatiePakket.findMany({
-    where: { organisatieId: gemeenteId },
+  const organisatiePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId },
     include: {
       pakketversie: {
         include: {
@@ -102,7 +102,7 @@ export async function generateIbdFotoCsv(
   const seen = new Set<string>();
   const uniquePakketten: { leverancier: string; product: string }[] = [];
 
-  for (const gp of gemeentePakketten) {
+  for (const gp of organisatiePakketten) {
     const key = gp.pakketversie.pakket.naam;
     if (!seen.has(key)) {
       seen.add(key);
@@ -125,7 +125,7 @@ export async function generateIbdFotoCsv(
 
   const csv =
     [headers.map(csvQuoteSemicolon).join(";"), ...csvRows].join("\n") + "\n";
-  return { csv, gemeenteNaam: gemeente.naam };
+  return { csv, organisatieNaam: organisatie.naam };
 }
 
 // ─── AMEFF Export (ArchiMate Model Exchange File Format) ─────────────────────────
@@ -137,22 +137,22 @@ export async function generateIbdFotoCsv(
 //   2. Als dat faalt: genereer zelf een standaard-conforme AMEFF 3.1 XML
 
 export async function generateAmeffExport(
-  gemeenteId: string,
+  organisatieId: string,
   viewId: string
-): Promise<{ xml: string; gemeenteNaam: string; viewTitel: string }> {
+): Promise<{ xml: string; organisatieNaam: string; viewTitel: string }> {
   const view = await prisma.gemmaView.findUnique({
     where: { id: viewId },
   });
   if (!view) throw new Error("View niet gevonden");
 
-  const gemeente = await prisma.organisatie.findUnique({
-    where: { id: gemeenteId },
+  const organisatie = await prisma.organisatie.findUnique({
+    where: { id: organisatieId },
   });
-  if (!gemeente) throw new Error("Gemeente niet gevonden");
+  if (!organisatie) throw new Error("Organisatie niet gevonden");
 
-  // Haal gemeente-pakketten op met alle benodigde relaties
-  const gemeentePakketten = await prisma.organisatiePakket.findMany({
-    where: { organisatieId: gemeenteId },
+  // Haal organisatie-pakketten op met alle benodigde relaties
+  const organisatiePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId },
     include: {
       pakketversie: {
         include: {
@@ -167,27 +167,27 @@ export async function generateAmeffExport(
 
   // Probeer eerst de GEMMA API
   try {
-    const xml = await tryGemmaAmeffApi(view, gemeente, gemeentePakketten);
+    const xml = await tryGemmaAmeffApi(view, organisatie, organisatiePakketten);
     if (xml) {
-      return { xml, gemeenteNaam: gemeente.naam, viewTitel: view.titel };
+      return { xml, organisatieNaam: organisatie.naam, viewTitel: view.titel };
     }
   } catch (error) {
     console.warn("GEMMA AMEFF API niet beschikbaar, gebruik lokale generator:", error);
   }
 
   // Fallback: genereer zelf een standaard-conforme AMEFF XML
-  const xml = generateAmeffXml(view, gemeente, gemeentePakketten);
-  return { xml, gemeenteNaam: gemeente.naam, viewTitel: view.titel };
+  const xml = generateAmeffXml(view, organisatie, organisatiePakketten);
+  return { xml, organisatieNaam: organisatie.naam, viewTitel: view.titel };
 }
 
 // ─── GEMMA API poging ─────────────────────────────────────────────────────────
 
 async function tryGemmaAmeffApi(
   view: { objectId: string; modelId: string; titel: string },
-  gemeente: { id: string; naam: string; cbsCode: string | null },
-  gemeentePakketten: GemeentePakketWithRelations[]
+  organisatie: { id: string; naam: string; cbsCode: string | null },
+  organisatiePakketten: OrganisatiePakketWithRelations[]
 ): Promise<string | null> {
-  const pakketData = buildSwcqueryPayload(view, gemeente, gemeentePakketten);
+  const pakketData = buildSwcqueryPayload(view, organisatie, organisatiePakketten);
 
   const gemmaParams = new URLSearchParams({
     action: "swcquery",
@@ -235,11 +235,11 @@ async function tryGemmaAmeffApi(
 
 function generateAmeffXml(
   view: { id: string; objectId: string; titel: string; domein: string },
-  gemeente: { id: string; naam: string; cbsCode: string | null },
-  gemeentePakketten: GemeentePakketWithRelations[]
+  organisatie: { id: string; naam: string; cbsCode: string | null },
+  organisatiePakketten: OrganisatiePakketWithRelations[]
 ): string {
   const now = new Date().toISOString();
-  const modelId = `id-${hashId(`model-${gemeente.id}-${view.id}`)}`;
+  const modelId = `id-${hashId(`model-${organisatie.id}-${view.id}`)}`;
 
   // Verzamel unieke entiteiten
   const leveranciers = new Map<string, { id: string; naam: string }>();
@@ -247,7 +247,7 @@ function generateAmeffXml(
   const refcomps = new Map<string, { id: string; naam: string; guid: string | null }>();
   const relationships: { id: string; type: string; source: string; target: string; naam?: string }[] = [];
 
-  for (const gp of gemeentePakketten) {
+  for (const gp of organisatiePakketten) {
     const pv = gp.pakketversie;
     const pakket = pv.pakket;
     const lev = pakket.leverancier;
@@ -309,14 +309,14 @@ function generateAmeffXml(
   const lines: string[] = [];
   lines.push(`<?xml version="1.0" encoding="utf-8"?>`);
   lines.push(`<model xmlns="http://www.opengroup.org/xsd/archimate/3.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.1/archimate3_Model.xsd" identifier="${modelId}">`);
-  lines.push(`  <name xml:lang="nl">${escXml(view.titel)} - ${escXml(gemeente.naam)}</name>`);
-  lines.push(`  <documentation xml:lang="nl">Applicatielandschap ${escXml(gemeente.naam)} - ${escXml(view.titel)}. Geëxporteerd uit de Voorzieningencatalogus op ${now}.</documentation>`);
+  lines.push(`  <name xml:lang="nl">${escXml(view.titel)} - ${escXml(organisatie.naam)}</name>`);
+  lines.push(`  <documentation xml:lang="nl">Applicatielandschap ${escXml(organisatie.naam)} - ${escXml(view.titel)}. Geëxporteerd uit de Voorzieningencatalogus op ${now}.</documentation>`);
 
   // Model properties
   lines.push(`  <properties>`);
-  lines.push(`    <property propertyDefinitionRef="id-propdef-organisatie"><value xml:lang="nl">${escXml(gemeente.naam)}</value></property>`);
-  if (gemeente.cbsCode) {
-    lines.push(`    <property propertyDefinitionRef="id-propdef-cbscode"><value xml:lang="nl">${escXml(gemeente.cbsCode)}</value></property>`);
+  lines.push(`    <property propertyDefinitionRef="id-propdef-organisatie"><value xml:lang="nl">${escXml(organisatie.naam)}</value></property>`);
+  if (organisatie.cbsCode) {
+    lines.push(`    <property propertyDefinitionRef="id-propdef-cbscode"><value xml:lang="nl">${escXml(organisatie.cbsCode)}</value></property>`);
   }
   lines.push(`    <property propertyDefinitionRef="id-propdef-bron"><value xml:lang="nl">Voorzieningencatalogus</value></property>`);
   lines.push(`    <property propertyDefinitionRef="id-propdef-exportdatum"><value xml:lang="nl">${now}</value></property>`);
@@ -333,12 +333,12 @@ function generateAmeffXml(
   // Elements
   lines.push(`  <elements>`);
 
-  // Gemeente als BusinessActor
-  const gemeenteElementId = `id-${hashId(`gem-${gemeente.id}`)}`;
-  lines.push(`    <element identifier="${gemeenteElementId}" xsi:type="BusinessActor">`);
-  lines.push(`      <name xml:lang="nl">${escXml(gemeente.naam)}</name>`);
-  if (gemeente.cbsCode) {
-    lines.push(`      <properties><property propertyDefinitionRef="id-propdef-cbscode"><value xml:lang="nl">${escXml(gemeente.cbsCode)}</value></property></properties>`);
+  // Organisatie als BusinessActor
+  const organisatieElementId = `id-${hashId(`gem-${organisatie.id}`)}`;
+  lines.push(`    <element identifier="${organisatieElementId}" xsi:type="BusinessActor">`);
+  lines.push(`      <name xml:lang="nl">${escXml(organisatie.naam)}</name>`);
+  if (organisatie.cbsCode) {
+    lines.push(`      <properties><property propertyDefinitionRef="id-propdef-cbscode"><value xml:lang="nl">${escXml(organisatie.cbsCode)}</value></property></properties>`);
   }
   lines.push(`    </element>`);
 
@@ -384,9 +384,9 @@ function generateAmeffXml(
   // Organizations (tree-based grouping)
   lines.push(`  <organizations>`);
 
-  // Top-level: gemeente
+  // Top-level: organisatie
   lines.push(`    <item identifier="id-org-gemeente">`);
-  lines.push(`      <label xml:lang="nl">${escXml(gemeente.naam)}</label>`);
+  lines.push(`      <label xml:lang="nl">${escXml(organisatie.naam)}</label>`);
 
   // Groepeer per leverancier
   for (const [levId, lev] of leveranciers) {
@@ -421,10 +421,10 @@ function generateAmeffXml(
 
 function buildSwcqueryPayload(
   view: { titel: string },
-  gemeente: { id: string; naam: string; cbsCode: string | null },
-  gemeentePakketten: GemeentePakketWithRelations[]
+  organisatie: { id: string; naam: string; cbsCode: string | null },
+  organisatiePakketten: OrganisatiePakketWithRelations[]
 ) {
-  const pakketData = gemeentePakketten
+  const pakketData = organisatiePakketten
     .map((gp) => {
       const pv = gp.pakketversie;
       const pakket = pv.pakket;
@@ -453,9 +453,9 @@ function buildSwcqueryPayload(
         Referentiecomponenten: refComps,
         Organisaties: [
           {
-            CBS: gemeente.cbsCode || "",
-            Id: gemeente.id,
-            Naam: gemeente.naam,
+            CBS: organisatie.cbsCode || "",
+            Id: organisatie.id,
+            Naam: organisatie.naam,
           },
         ],
       };
@@ -473,7 +473,7 @@ function buildSwcqueryPayload(
 
 // ─── AMEFF type voor Prisma resultaat ───────────────────────────────────────────
 
-type GemeentePakketWithRelations = {
+type OrganisatiePakketWithRelations = {
   organisatieId: string;
   pakketversieId: string;
   status: string | null;
@@ -498,11 +498,11 @@ type GemeentePakketWithRelations = {
 // ─── Helpers ────────────────────────────────────────────────────────────────────
 
 async function getExportRows(
-  gemeenteId: string,
-  gemeenteNaam: string
-): Promise<GemeentePakketRow[]> {
-  const gemeentePakketten = await prisma.organisatiePakket.findMany({
-    where: { organisatieId: gemeenteId },
+  organisatieId: string,
+  organisatieNaam: string
+): Promise<OrganisatiePakketRow[]> {
+  const organisatiePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId },
     include: {
       pakketversie: {
         include: {
@@ -517,18 +517,18 @@ async function getExportRows(
     orderBy: { pakketversie: { pakket: { leverancier: { naam: "asc" } } } },
   });
 
-  return gemeentePakketten.map((gp) => {
+  return organisatiePakketten.map((gp) => {
     const pv = gp.pakketversie;
     const pakket = pv.pakket;
     const leverancier = pakket.leverancier;
 
     // Referentiecomponenten van type "gemeente" (of alle als er geen gemeente-type zijn)
-    const gemeenteRefComps = pv.referentiecomponenten
+    const organisatieRefComps = pv.referentiecomponenten
       .filter((rc) => rc.type === "gemeente")
       .map((rc) => rc.referentiecomponent.naam);
     const allRefComps =
-      gemeenteRefComps.length > 0
-        ? gemeenteRefComps
+      organisatieRefComps.length > 0
+        ? organisatieRefComps
         : pv.referentiecomponenten.map((rc) => rc.referentiecomponent.naam);
 
     // Technologieën
@@ -555,7 +555,7 @@ async function getExportRows(
       externPakket: isExtern,
       pakketId: pakket.id,
       pakketversieId: pv.id,
-      organisatie: gemeenteNaam,
+      organisatie: organisatieNaam,
     };
   });
 }

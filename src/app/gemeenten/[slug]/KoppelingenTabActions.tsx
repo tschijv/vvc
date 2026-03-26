@@ -14,10 +14,10 @@ type PakketversieOption = {
  * "Koppeling toevoegen" button for the Koppelingen tab header.
  */
 export function AddKoppelingButton({
-  gemeenteId,
+  organisatieId,
   pakketversies,
 }: {
-  gemeenteId: string;
+  organisatieId: string;
   pakketversies: PakketversieOption[];
 }) {
   const [showModal, setShowModal] = useState(false);
@@ -36,7 +36,7 @@ export function AddKoppelingButton({
 
       {showModal && (
         <KoppelingEditModal
-          gemeenteId={gemeenteId}
+          organisatieId={organisatieId}
           existing={null}
           pakketversies={pakketversies}
           onClose={() => setShowModal(false)}
@@ -50,11 +50,11 @@ export function AddKoppelingButton({
  * Inline edit/delete buttons for a single koppeling row.
  */
 export function KoppelingRowActions({
-  gemeenteId,
+  organisatieId,
   koppeling,
   pakketversies,
 }: {
-  gemeenteId: string;
+  organisatieId: string;
   koppeling: KoppelingEditData;
   pakketversies: PakketversieOption[];
 }) {
@@ -102,7 +102,7 @@ export function KoppelingRowActions({
 
       {showEdit && (
         <KoppelingEditModal
-          gemeenteId={gemeenteId}
+          organisatieId={organisatieId}
           existing={koppeling}
           pakketversies={pakketversies}
           onClose={() => setShowEdit(false)}

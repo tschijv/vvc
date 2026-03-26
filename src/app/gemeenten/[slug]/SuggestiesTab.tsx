@@ -132,7 +132,7 @@ export default function SuggestiesTab({ suggesties }: { suggesties: SuggestieDat
       {/* Gesuggereerde koppelingen met buitengemeentelijke voorzieningen */}
       <div className="mb-8">
         <h2 className="text-lg font-bold text-[#1a6ca8] mb-3">Gesuggereerde koppelingen met buitengemeentelijke voorzieningen</h2>
-        {suggesties.buitengemeentelijkeKoppelingen.length > 0 ? (
+        {suggesties.buitenOrganisatieKoppelingen.length > 0 ? (
           <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <table className="w-full text-sm">
               <thead>
@@ -145,7 +145,7 @@ export default function SuggestiesTab({ suggesties }: { suggesties: SuggestieDat
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {suggesties.buitengemeentelijkeKoppelingen.map((s, i) => (
+                {suggesties.buitenOrganisatieKoppelingen.map((s, i) => (
                   <tr key={i} className="hover:bg-gray-50">
                     <td className="px-4 py-2.5">{s.voorziening}</td>
                     <td className="px-4 py-2.5">{s.standaard}</td>

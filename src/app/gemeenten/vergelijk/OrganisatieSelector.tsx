@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 
-interface GemeenteSelectorProps {
-  gemeenten: { id: string; naam: string }[];
-  selected: string[]; // up to 4 gemeente IDs
+interface OrganisatieSelectorProps {
+  organisaties: { id: string; naam: string }[];
+  selected: string[]; // up to 4 organisatie IDs
 }
 
-export default function GemeenteSelector({ gemeenten, selected }: GemeenteSelectorProps) {
+export default function OrganisatieSelector({ organisaties, selected }: OrganisatieSelectorProps) {
   const router = useRouter();
 
   const handleChange = (index: number, value: string) => {
@@ -69,7 +69,7 @@ export default function GemeenteSelector({ gemeenten, selected }: GemeenteSelect
               className="w-full border rounded px-3 py-2 text-sm"
             >
               <option value="">Selecteer gemeente...</option>
-              {gemeenten.map((g) => (
+              {organisaties.map((g) => (
                 <option
                   key={g.id}
                   value={g.id}

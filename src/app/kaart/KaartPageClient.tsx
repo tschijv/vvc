@@ -15,27 +15,27 @@ interface GemmaView {
   laag: string;
 }
 
-interface Gemeente {
+interface Organisatie {
   id: string;
   naam: string;
 }
 
 interface KaartPageClientProps {
   views: GemmaView[];
-  gemeenten: Gemeente[];
-  eigenGemeente: Gemeente | null;
+  organisaties: Organisatie[];
+  eigenOrganisatie: Organisatie | null;
   isAdmin: boolean;
 }
 
 export default function KaartPageClient({
   views,
-  gemeenten,
-  eigenGemeente,
+  organisaties,
+  eigenOrganisatie,
   isAdmin,
 }: KaartPageClientProps) {
   const [selectedViewId, setSelectedViewId] = useState<string>("");
   const [selectedGemeenteId, setSelectedGemeenteId] = useState<string>(
-    eigenGemeente?.id || ""
+    eigenOrganisatie?.id || ""
   );
 
   // Groepeer views op domein
@@ -52,8 +52,8 @@ export default function KaartPageClient({
   }, [views]);
 
   const selectedGemeente = isAdmin
-    ? gemeenten.find((g) => g.id === selectedGemeenteId)
-    : eigenGemeente;
+    ? organisaties.find((g) => g.id === selectedGemeenteId)
+    : eigenOrganisatie;
 
   const canGenerate = selectedViewId && selectedGemeenteId;
 
@@ -105,7 +105,7 @@ export default function KaartPageClient({
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1a6ca8] focus:border-transparent"
             >
               <option value="">Selecteer een gemeente...</option>
-              {gemeenten.map((g) => (
+              {organisaties.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.naam}
                 </option>
@@ -130,8 +130,8 @@ export default function KaartPageClient({
       {canGenerate ? (
         <KaartViewer
           viewId={selectedViewId}
-          gemeenteId={selectedGemeenteId}
-          gemeenteNaam={selectedGemeente?.naam}
+          organisatieId={selectedGemeenteId}
+          organisatieNaam={selectedGemeente?.naam}
         />
       ) : (
         <div className="flex items-center justify-center h-96 bg-gray-50 rounded-lg border border-gray-200">

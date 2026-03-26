@@ -9,8 +9,8 @@ interface GemmaView {
 }
 
 interface DashboardExportBarProps {
-  gemeenteId: string;
-  gemeenteNaam: string;
+  organisatieId: string;
+  organisatieNaam: string;
   views: GemmaView[];
   selectedViewId: string;
 }
@@ -18,8 +18,8 @@ interface DashboardExportBarProps {
 type ExportType = "csv" | "ibd" | "ameff";
 
 export default function DashboardExportBar({
-  gemeenteId,
-  gemeenteNaam,
+  organisatieId,
+  organisatieNaam,
   views,
   selectedViewId,
 }: DashboardExportBarProps) {
@@ -39,7 +39,7 @@ export default function DashboardExportBar({
     try {
       const params = new URLSearchParams({
         type: exportType,
-        gemeenteId,
+        organisatieId,
       });
 
       if (exportType === "ameff" && selectedViewId) {
@@ -56,7 +56,7 @@ export default function DashboardExportBar({
       // Bestandsnaam uit Content-Disposition header
       const disposition = response.headers.get("Content-Disposition");
       const filenameMatch = disposition?.match(/filename="([^"]+)"/);
-      const filename = filenameMatch?.[1] || `export-${gemeenteNaam}.${exportType === "ameff" ? "xml" : "csv"}`;
+      const filename = filenameMatch?.[1] || `export-${organisatieNaam}.${exportType === "ameff" ? "xml" : "csv"}`;
 
       // Download het bestand
       const blob = await response.blob();

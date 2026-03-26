@@ -32,7 +32,7 @@ export default async function VergelijkbaarPage({ params }: Props) {
   const gemeente = await prisma.organisatie.findUnique({ where: { id: slug }, select: { id: true, naam: true } });
   if (!gemeente) notFound();
 
-  const { gemeenten: similarGemeenten, totalCount } = await getSimilarGemeenten(slug, 500);
+  const { organisaties: similarOrganisaties, totalCount } = await getSimilarGemeenten(slug, 500);
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-6">
@@ -68,12 +68,12 @@ export default async function VergelijkbaarPage({ params }: Props) {
         <span className="text-sm text-gray-700">gemeenten met minimaal 1 gedeeld pakket</span>
       </div>
 
-      {similarGemeenten.length === 0 ? (
+      {similarOrganisaties.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-lg p-8 text-center text-gray-500">
           Geen vergelijkbare gemeenten gevonden.
         </div>
       ) : (
-        <SortableTable gemeenten={similarGemeenten} currentGemeenteId={gemeente.id} />
+        <SortableTable gemeenten={similarOrganisaties} currentGemeenteId={gemeente.id} />
       )}
     </main>
   );

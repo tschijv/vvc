@@ -11,16 +11,16 @@ interface GemmaView {
 
 interface DashboardKaartBarProps {
   views: GemmaView[];
-  gemeenteId: string;
-  gemeenteNaam: string;
+  organisatieId: string;
+  organisatieNaam: string;
 }
 
 type ExportType = "ameff" | "csv" | "ibd";
 
 export default function DashboardKaartBar({
   views,
-  gemeenteId,
-  gemeenteNaam,
+  organisatieId,
+  organisatieNaam,
 }: DashboardKaartBarProps) {
   const [selectedViewId, setSelectedViewId] = useState<string>("");
   const [showKaart, setShowKaart] = useState(false);
@@ -64,7 +64,7 @@ export default function DashboardKaartBar({
     try {
       const params = new URLSearchParams({
         type: exportType,
-        gemeenteId,
+        organisatieId,
       });
 
       if (exportType === "ameff" && selectedViewId) {
@@ -83,7 +83,7 @@ export default function DashboardKaartBar({
       const filenameMatch = disposition?.match(/filename="([^"]+)"/);
       const filename =
         filenameMatch?.[1] ||
-        `export-${gemeenteNaam}.${exportType === "ameff" ? "xml" : "csv"}`;
+        `export-${organisatieNaam}.${exportType === "ameff" ? "xml" : "csv"}`;
 
       // Download het bestand
       const blob = await response.blob();
@@ -171,7 +171,7 @@ export default function DashboardKaartBar({
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-[#1a6ca8]">
-                Applicatielandschap {gemeenteNaam}
+                Applicatielandschap {organisatieNaam}
               </h2>
               <button
                 onClick={handleCloseKaart}
@@ -184,8 +184,8 @@ export default function DashboardKaartBar({
             <div className="flex-1 overflow-hidden p-4">
               <KaartViewer
                 viewId={selectedViewId}
-                gemeenteId={gemeenteId}
-                gemeenteNaam={gemeenteNaam}
+                organisatieId={organisatieId}
+                organisatieNaam={organisatieNaam}
               />
             </div>
           </div>

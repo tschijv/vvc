@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import GemeentePakketEditModal from "./GemeentePakketEditModal";
-import { removeGemeentePakket } from "./portfolio-actions";
+import { removeOrganisatiePakket } from "./portfolio-actions";
 
 type PakketRowData = {
   pakketversieId: string;
@@ -18,13 +18,13 @@ type PakketRowData = {
 };
 
 type Props = {
-  gemeenteId: string;
+  organisatieId: string;
 };
 
 /**
  * "Pakket toevoegen" button for the Pakketten tab header.
  */
-export function AddPakketButton({ gemeenteId }: Props) {
+export function AddPakketButton({ organisatieId }: Props) {
   const [showModal, setShowModal] = useState(false);
 
   return (
@@ -41,7 +41,7 @@ export function AddPakketButton({ gemeenteId }: Props) {
 
       {showModal && (
         <GemeentePakketEditModal
-          gemeenteId={gemeenteId}
+          organisatieId={organisatieId}
           existing={null}
           onClose={() => setShowModal(false)}
         />
@@ -54,10 +54,10 @@ export function AddPakketButton({ gemeenteId }: Props) {
  * Inline edit/delete buttons for a single pakket row.
  */
 export function PakketRowActions({
-  gemeenteId,
+  organisatieId,
   row,
 }: {
-  gemeenteId: string;
+  organisatieId: string;
   row: PakketRowData;
 }) {
   const router = useRouter();
@@ -69,7 +69,7 @@ export function PakketRowActions({
       return;
     }
     setDeleting(true);
-    const result = await removeGemeentePakket(gemeenteId, row.pakketversieId);
+    const result = await removeOrganisatiePakket(organisatieId, row.pakketversieId);
     if ("error" in result) {
       alert(result.error);
     } else {
@@ -104,7 +104,7 @@ export function PakketRowActions({
 
       {showEdit && (
         <GemeentePakketEditModal
-          gemeenteId={gemeenteId}
+          organisatieId={organisatieId}
           existing={row}
           onClose={() => setShowEdit(false)}
         />

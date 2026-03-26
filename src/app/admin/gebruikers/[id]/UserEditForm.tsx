@@ -46,7 +46,7 @@ export default function UserEditForm({
   const [rollen, setRollen] = useState<string[]>(
     user?.rollen || ["GEVERIFIEERD"]
   );
-  const [gemeenteId, setGemeenteId] = useState(user?.organisatieId || "");
+  const [organisatieId, setOrganisatieId] = useState(user?.organisatieId || "");
   const [leverancierId, setLeverancierId] = useState(user?.leverancierId || "");
   const [wachtwoord, setWachtwoord] = useState("");
   const [wachtwoordBevestiging, setWachtwoordBevestiging] = useState("");
@@ -88,7 +88,7 @@ export default function UserEditForm({
         email,
         actief,
         rollen,
-        organisatieId: gemeenteId || null,
+        organisatieId: organisatieId || null,
         leverancierId: leverancierId || null,
       };
       if (wachtwoord) {
@@ -348,8 +348,8 @@ export default function UserEditForm({
             Actieve organisatie
           </label>
           <select
-            value={gemeenteId}
-            onChange={(e) => setGemeenteId(e.target.value)}
+            value={organisatieId}
+            onChange={(e) => setOrganisatieId(e.target.value)}
             className="border dark:border-slate-600 dark:bg-slate-700 rounded px-3 py-2 w-full max-w-md"
           >
             <option value="">-- Geen --</option>

@@ -4,7 +4,7 @@ import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { prisma } from "@/data/prisma";
 import { getSessionUser, canViewGemeentePortfolio } from "@/process/auth-helpers";
 import { getGemeenteById } from "@/service/gemeente";
-import GemeenteSelector from "./GemeenteSelector";
+import OrganisatieSelector from "./OrganisatieSelector";
 import HelpLink from "@/ui/components/HelpLink";
 
 export const metadata: Metadata = {
@@ -112,8 +112,8 @@ export default async function VergelijkPage({ searchParams }: Props) {
         <HelpLink section="vergelijken" label="Help over gemeenten vergelijken" />
       </div>
 
-      <GemeenteSelector
-        gemeenten={alleGemeenten}
+      <OrganisatieSelector
+        organisaties={alleGemeenten}
         selected={selectedIds}
       />
 

@@ -187,7 +187,7 @@ async function main() {
           doelPakketversieId,
           doelExternPakketId,
           richting,
-          buitengemeentelijk: !!isBuitengemeentelijk,
+          buitenOrganisatie: !!isBuitengemeentelijk,
           status,
           standaard: standaardVersie || (standaardType === "custom" ? "Maatwerk" : null),
           datumIngangStatus,

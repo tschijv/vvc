@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 interface KaartViewerProps {
   viewId: string;
-  gemeenteId: string;
-  gemeenteNaam?: string;
+  organisatieId: string;
+  organisatieNaam?: string;
 }
 
 /**
@@ -37,8 +37,8 @@ function parseSvgDimensions(svg: string): {
 
 export default function KaartViewer({
   viewId,
-  gemeenteId,
-  gemeenteNaam,
+  organisatieId,
+  organisatieNaam,
 }: KaartViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svgContent, setSvgContent] = useState<string | null>(null);
@@ -84,9 +84,9 @@ export default function KaartViewer({
     setTranslate({ x: offsetX, y: offsetY });
   }, [svgDimensions]);
 
-  // Fetch SVG when viewId or gemeenteId changes
+  // Fetch SVG when viewId or organisatieId changes
   useEffect(() => {
-    if (!viewId || !gemeenteId) return;
+    if (!viewId || !organisatieId) return;
 
     setLoading(true);
     setError(null);
@@ -95,7 +95,7 @@ export default function KaartViewer({
     setScale(1);
     setTranslate({ x: 0, y: 0 });
 
-    fetch(`/api/kaart?viewId=${viewId}&gemeenteId=${gemeenteId}`)
+    fetch(`/api/kaart?viewId=${viewId}&organisatieId=${organisatieId}`)
       .then(async (res) => {
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
@@ -120,7 +120,7 @@ export default function KaartViewer({
       .finally(() => {
         setLoading(false);
       });
-  }, [viewId, gemeenteId]);
+  }, [viewId, organisatieId]);
 
   // Auto-fit when SVG loads, container resizes, or becomes visible
   useEffect(() => {
@@ -214,10 +214,10 @@ export default function KaartViewer({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `applicatielandschap${gemeenteNaam ? `-${gemeenteNaam}` : ""}.svg`;
+    a.download = `applicatielandschap${organisatieNaam ? `-${organisatieNaam}` : ""}.svg`;
     a.click();
     URL.revokeObjectURL(url);
-  }, [svgContent, gemeenteNaam]);
+  }, [svgContent, organisatieNaam]);
 
   if (loading) {
     return (

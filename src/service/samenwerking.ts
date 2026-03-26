@@ -20,7 +20,7 @@ export async function getSamenwerkingById(id: string) {
   });
 }
 
-// ─── Aggregated pakketten across all member gemeenten ───────────────────────────
+// ─── Aggregated pakketten across all member organisaties ────────────────────────
 
 export type SamenwerkingPakketRow = {
   leverancier: string;
@@ -31,7 +31,7 @@ export type SamenwerkingPakketRow = {
   datumIngangStatus: Date | null;
   gebruiktVoor: string[];
   hasCompliancy: boolean;
-  gemeenteNaam: string;
+  organisatieNaam: string;
 };
 
 export async function getSamenwerkingPakketten(
@@ -85,7 +85,7 @@ export async function getSamenwerkingPakketten(
     hasCompliancy: gp.pakketversie.pakket.standaarden.some(
       (s) => s.compliancy === true
     ),
-    gemeenteNaam: organisatieMap.get(gp.organisatieId) || "Onbekend",
+    organisatieNaam: organisatieMap.get(gp.organisatieId) || "Onbekend",
   }));
 }
 
@@ -97,7 +97,7 @@ export type SamenwerkingKoppelingRow = {
   doel: string;
   status: string | null;
   standaard: string | null;
-  gemeenteNaam: string;
+  organisatieNaam: string;
 };
 
 export async function getSamenwerkingKoppelingen(
@@ -136,7 +136,7 @@ export async function getSamenwerkingKoppelingen(
     const doelLabel = k.doelPakketversie
       ? `${k.doelPakketversie.pakket.naam} - ${k.doelPakketversie.naam}`
       : k.doelExternPakket
-        ? `${k.doelExternPakket.naam}${k.doelExternPakket.versie ? ` ${k.doelExternPakket.versie}` : ""}${k.buitengemeentelijk ? " (Buitengemeentelijk)" : " (Extern pakket)"}`
+        ? `${k.doelExternPakket.naam}${k.doelExternPakket.versie ? ` ${k.doelExternPakket.versie}` : ""}${k.buitenOrganisatie ? " (Buitengemeentelijk)" : " (Extern pakket)"}`
         : "—";
 
     const richting =
@@ -148,7 +148,7 @@ export async function getSamenwerkingKoppelingen(
       doel: doelLabel,
       status: k.status,
       standaard: k.standaard,
-      gemeenteNaam: organisatieMap.get(k.organisatieId) || "Onbekend",
+      organisatieNaam: organisatieMap.get(k.organisatieId) || "Onbekend",
     };
   });
 }
@@ -160,7 +160,7 @@ export type SamenwerkingDashboardStats = {
   totaalKoppelingen: number;
   compliantCount: number;
   eindeOndersteuningCount: number;
-  gemeenteCount: number;
+  organisatieCount: number;
 };
 
 export async function getSamenwerkingDashboardStats(
@@ -178,7 +178,7 @@ export async function getSamenwerkingDashboardStats(
       totaalKoppelingen: 0,
       compliantCount: 0,
       eindeOndersteuningCount: 0,
-      gemeenteCount: 0,
+      organisatieCount: 0,
     };
   }
 
@@ -218,6 +218,6 @@ export async function getSamenwerkingDashboardStats(
     totaalKoppelingen: koppelingCount,
     compliantCount,
     eindeOndersteuningCount,
-    gemeenteCount: organisatieIds.length,
+    organisatieCount: organisatieIds.length,
   };
 }

@@ -1,19 +1,19 @@
 import Link from "next/link";
 import {
   type DashboardStats,
-  type SimilarGemeente,
-  type getGemeenteById,
-} from "@/service/gemeente";
+  type SimilarOrganisatie,
+  type getOrganisatieById,
+} from "@/service/organisatie";
 import HelpLink from "@/ui/components/HelpLink";
 
 // ─── Dashboard tab ───────────────────────────────────────────────────────────
 
-export default function DashboardTab({ stats, gemeenteId, similarGemeenten, similarTotalCount, samenwerkingen }: {
+export default function DashboardTab({ stats, organisatieId, similarOrganisaties, similarTotalCount, samenwerkingen }: {
   stats: DashboardStats;
-  gemeenteId: string;
-  similarGemeenten: SimilarGemeente[];
+  organisatieId: string;
+  similarOrganisaties: SimilarOrganisatie[];
   similarTotalCount: number;
-  samenwerkingen: NonNullable<Awaited<ReturnType<typeof getGemeenteById>>>["samenwerkingen"];
+  samenwerkingen: NonNullable<Awaited<ReturnType<typeof getOrganisatieById>>>["samenwerkingen"];
 }) {
   const cards = [
     {
@@ -27,7 +27,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
       count: stats.compliantCount,
       countLabel: "Pakketten",
       buttonLabel: "Toon compliant pakketversies",
-      href: `/gemeenten/${gemeenteId}?tab=pakketten&compliancy=wel`,
+      href: `/gemeenten/${organisatieId}?tab=pakketten&compliancy=wel`,
     },
     {
       title: "Einde ondersteuning leverancier",
@@ -40,7 +40,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
       count: stats.eindeOndersteuningCount,
       countLabel: "Pakketten",
       buttonLabel: "Toon pakketten zonder ondersteuning",
-      href: `/gemeenten/${gemeenteId}?tab=pakketten`,
+      href: `/gemeenten/${organisatieId}?tab=pakketten`,
     },
     {
       title: "SaaS alternatieven",
@@ -53,7 +53,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
       count: stats.saasAlternatievenCount,
       countLabel: "Pakketten met SaaS alternatieven",
       buttonLabel: "Toon pakketten met SaaS alternatieven",
-      href: `/gemeenten/${gemeenteId}?tab=pakketten`,
+      href: `/gemeenten/${organisatieId}?tab=pakketten`,
     },
     {
       title: "Inkoopondersteuning",
@@ -150,7 +150,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
     </div>
 
     {/* Vergelijkbare gemeenten — volle breedte */}
-    {similarGemeenten.length > 0 && (
+    {similarOrganisaties.length > 0 && (
       <div className="mt-8">
         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
           <div className="flex items-start justify-between p-4 pb-2">
@@ -172,7 +172,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
           <div className="px-4 pb-2">
             <div className="flex items-center gap-2 my-3">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded bg-green-600 text-white text-sm font-bold">
-                {similarGemeenten.length}
+                {similarOrganisaties.length}
               </span>
               <span className="text-sm text-gray-700">Gemeenten met overlap</span>
             </div>
@@ -189,7 +189,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
                 </tr>
               </thead>
               <tbody>
-                {similarGemeenten.map((sg) => (
+                {similarOrganisaties.map((sg) => (
                   <tr key={sg.id} className="border-b border-gray-50 last:border-0">
                     <td className="py-1.5 pr-2">
                       <Link href={`/gemeenten/${sg.id}`} className="text-[#1a6ca8] hover:underline truncate block max-w-[180px]">
@@ -205,7 +205,7 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
                     </td>
                     <td className="py-1.5 text-right pl-2">
                       <Link
-                        href={`/gemeenten/vergelijk?a=${gemeenteId}&b=${sg.id}`}
+                        href={`/gemeenten/vergelijk?a=${organisatieId}&b=${sg.id}`}
                         className="text-xs border border-[#1a6ca8] text-[#1a6ca8] rounded px-2 py-0.5 hover:bg-[#1a6ca8] hover:text-white transition-colors whitespace-nowrap"
                       >
                         Vergelijk
@@ -215,10 +215,10 @@ export default function DashboardTab({ stats, gemeenteId, similarGemeenten, simi
                 ))}
               </tbody>
             </table>
-            {similarTotalCount > similarGemeenten.length && (
+            {similarTotalCount > similarOrganisaties.length && (
               <div className="mt-3 pt-3 border-t border-gray-100">
                 <Link
-                  href={`/gemeenten/${gemeenteId}/vergelijkbaar`}
+                  href={`/gemeenten/${organisatieId}/vergelijkbaar`}
                   className="text-sm text-[#1a6ca8] hover:underline font-medium"
                 >
                   Alle vergelijkbare gemeenten ({similarTotalCount}) &rarr;

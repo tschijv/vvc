@@ -403,7 +403,7 @@ model Koppeling {
   doelPakketversieId        String?
   doelExternPakket          ExternPakket? @relation("koppelingDoelExtern", fields: [doelExternPakketId], references: [id])
   doelExternPakketId        String?
-  buitengemeentelijk        Boolean       @default(false)
+  buitenOrganisatie         Boolean       @default(false) @map("buitengemeentelijk")
   status                    String?
   standaard                 String?
   datumIngangStatus         DateTime?

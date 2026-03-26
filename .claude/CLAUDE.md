@@ -13,6 +13,20 @@
 - Nederlandse UI-teksten, Engelse code (variabelen, functies, comments)
 - Prisma modellen: PascalCase (`Pakketversie`, niet `pakketVersie`)
 - Routes: kebab-case (`/pakketversies`, niet `/pakketVersies`)
+
+## Generieke code (KRITIEK)
+- **Code MOET domein-onafhankelijk zijn.** Geen `gemeente`, `waterschap` of andere domein-termen in:
+  - Variabelen, parameters, type-properties, functienamen
+  - Prisma veldnamen (gebruik `@map()` voor DB-kolomnamen)
+  - Component props, service functies, API parameters
+- Gebruik **altijd** `organisatie` i.p.v. `gemeente`/`waterschap` in code
+- Domein-specifieke termen **alleen** in:
+  - UI labels/teksten (via tenant config)
+  - URL routes (`/gemeenten` in VVC, `/waterschappen` in HWH)
+  - Enum waarden in DB (GEMEENTE_BEHEERDER, WATERSCHAP_BEHEERDER)
+  - `tenant.config.ts`
+- Bij twijfel: als de term anders zou zijn in HWH dan in VVC → maak het generiek
+- Prisma schema: `aantalOrganisaties @map("aantalGemeenten")`, niet `aantalGemeenten`
 - Componenten: PascalCase bestandsnamen (`ShareButton.tsx`)
 - URL-parameter in Next.js routes heet `[slug]` — dit is de URL-vriendelijke versie van een naam
 

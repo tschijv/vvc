@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { updateGemeenteContact } from "./gemeente-edit-actions";
+import { updateOrganisatieContact } from "./gemeente-edit-actions";
 
 type Props = {
-  gemeenteId: string;
+  organisatieId: string;
   contactpersoon: string;
   email: string;
   telefoon: string;
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function GemeenteEditButton({
-  gemeenteId,
+  organisatieId,
   contactpersoon,
   email,
   telefoon,
@@ -36,7 +36,7 @@ export default function GemeenteEditButton({
     setSaving(true);
     setError("");
     try {
-      await updateGemeenteContact(gemeenteId, form);
+      await updateOrganisatieContact(organisatieId, form);
       setOpen(false);
       router.refresh();
     } catch (err) {

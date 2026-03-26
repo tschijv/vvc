@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const viewId = searchParams.get("viewId");
-  const gemeenteId = searchParams.get("gemeenteId");
+  const organisatieId = searchParams.get("gemeenteId");
 
   if (!viewId) {
     return NextResponse.json(
@@ -19,13 +19,13 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // For GEMEENTE users, use their own gemeente
-  let targetGemeenteId: string | null = gemeenteId;
+  // For GEMEENTE users, use their own organisatie
+  let targetOrganisatieId: string | null = organisatieId;
   if (user.role === "GEMEENTE") {
-    targetGemeenteId = user.organisatieId ?? null;
+    targetOrganisatieId = user.organisatieId ?? null;
   }
 
-  if (!targetGemeenteId) {
+  if (!targetOrganisatieId) {
     return NextResponse.json(
       { error: "gemeenteId is verplicht" },
       { status: 400 }
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const svgContent = await genereerKaartSvg(viewId, targetGemeenteId);
+    const svgContent = await genereerKaartSvg(viewId, targetOrganisatieId);
 
     return new NextResponse(svgContent, {
       headers: {

@@ -14,8 +14,8 @@ export default function PakkettenTab({
   testrapportFilter,
   standaardFilters,
   views,
-  gemeenteId,
-  gemeenteNaam,
+  organisatieId,
+  organisatieNaam,
   canEdit,
 }: {
   pakketten: PakketRow[];
@@ -25,8 +25,8 @@ export default function PakkettenTab({
   testrapportFilter?: string;
   standaardFilters?: { naam: string; count: number }[];
   views: { id: string; titel: string; domein: string }[];
-  gemeenteId: string;
-  gemeenteNaam: string;
+  organisatieId: string;
+  organisatieNaam: string;
   canEdit?: boolean;
 }) {
   const nietCompliant = pakketten.filter((p) => !p.hasCompliancy).length;
@@ -36,7 +36,7 @@ export default function PakkettenTab({
 
   // Build base URL preserving other active filters
   function buildBaseHref(excludeParam?: string) {
-    const url = new URL(`/gemeenten/${gemeenteId}`, "http://localhost");
+    const url = new URL(`/gemeenten/${organisatieId}`, "http://localhost");
     url.searchParams.set("tab", "pakketten");
     if (compliancyFilter && excludeParam !== "compliancy") url.searchParams.set("compliancy", compliancyFilter);
     if (standaardFilter && excludeParam !== "standaard") url.searchParams.set("standaard", standaardFilter);
@@ -53,8 +53,8 @@ export default function PakkettenTab({
     <div>
       {/* Action bar */}
       <div className="flex items-center justify-between gap-3 mb-5">
-        <div>{canEdit && <AddPakketButton gemeenteId={gemeenteId} />}</div>
-        <DashboardKaartBar views={views} gemeenteId={gemeenteId} gemeenteNaam={gemeenteNaam} />
+        <div>{canEdit && <AddPakketButton organisatieId={organisatieId} />}</div>
+        <DashboardKaartBar views={views} organisatieId={organisatieId} organisatieNaam={organisatieNaam} />
       </div>
 
       <div className="flex gap-8">
@@ -106,7 +106,7 @@ export default function PakkettenTab({
           {/* Reset filters */}
           {hasActiveFilter && (
             <Link
-              href={`/gemeenten/${gemeenteId}?tab=pakketten`}
+              href={`/gemeenten/${organisatieId}?tab=pakketten`}
               scroll={false}
               className="text-[#1a6ca8] hover:underline text-xs font-medium block"
             >
@@ -155,7 +155,7 @@ export default function PakkettenTab({
                   {canEdit && (
                     <td className="py-3">
                       <PakketRowActions
-                        gemeenteId={gemeenteId}
+                        organisatieId={organisatieId}
                         row={{
                           pakketversieId: p.pakketversieId,
                           pakketNaam: p.pakketNaam,

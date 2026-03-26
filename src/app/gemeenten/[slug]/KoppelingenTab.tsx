@@ -9,24 +9,24 @@ import type { KoppelingRow } from "@/service/gemeente";
 export default function KoppelingenTab({
   koppelingen: allKoppelingen,
   views,
-  gemeenteId,
-  gemeenteNaam,
+  organisatieId,
+  organisatieNaam,
   filterStandaard,
   filterBron,
-  filterBuitengemeentelijk,
+  filterBuitenOrganisatie,
   canEdit,
 }: {
   koppelingen: KoppelingRow[];
   views: { id: string; titel: string; domein: string }[];
-  gemeenteId: string;
-  gemeenteNaam: string;
+  organisatieId: string;
+  organisatieNaam: string;
   filterStandaard?: string;
   filterBron?: string;
-  filterBuitengemeentelijk?: string;
+  filterBuitenOrganisatie?: string;
   canEdit?: boolean;
 }) {
   // Counts on unfiltered data for sidebar
-  const buitengemeentelijkCount = allKoppelingen.filter((k) => k.buitengemeentelijk).length;
+  const buitenOrganisatieCount = allKoppelingen.filter((k) => k.buitenOrganisatie).length;
 
   const standaardCounts: Record<string, number> = {};
   allKoppelingen.forEach((k) => {
@@ -46,8 +46,8 @@ export default function KoppelingenTab({
 
   // Apply filters
   let koppelingen = allKoppelingen;
-  if (filterBuitengemeentelijk === "ja") {
-    koppelingen = koppelingen.filter((k) => k.buitengemeentelijk);
+  if (filterBuitenOrganisatie === "ja") {
+    koppelingen = koppelingen.filter((k) => k.buitenOrganisatie);
   }
   if (filterStandaard) {
     koppelingen = koppelingen.filter((k) => k.standaard === filterStandaard);
@@ -56,19 +56,19 @@ export default function KoppelingenTab({
     koppelingen = koppelingen.filter((k) => k.bron === filterBron);
   }
 
-  const hasActiveFilter = filterBuitengemeentelijk || filterStandaard || filterBron;
+  const hasActiveFilter = filterBuitenOrganisatie || filterStandaard || filterBron;
 
   // Build base URLs for each filter (with the other filters preserved)
   function buildBaseHref(excludeParam?: string) {
-    const url = new URL(`/gemeenten/${gemeenteId}`, "http://localhost");
+    const url = new URL(`/gemeenten/${organisatieId}`, "http://localhost");
     url.searchParams.set("tab", "koppelingen");
-    if (filterBuitengemeentelijk && excludeParam !== "buitengemeentelijk") url.searchParams.set("buitengemeentelijk", filterBuitengemeentelijk);
+    if (filterBuitenOrganisatie && excludeParam !== "buitengemeentelijk") url.searchParams.set("buitengemeentelijk", filterBuitenOrganisatie);
     if (filterStandaard && excludeParam !== "standaard") url.searchParams.set("standaard", filterStandaard);
     if (filterBron && excludeParam !== "bron") url.searchParams.set("bron", filterBron);
     return `${url.pathname}${url.search}`;
   }
 
-  const buitengemeentelijkToggleHref = filterBuitengemeentelijk === "ja"
+  const buitenOrganisatieToggleHref = filterBuitenOrganisatie === "ja"
     ? buildBaseHref("buitengemeentelijk")
     : buildBaseHref("buitengemeentelijk") + "&buitengemeentelijk=ja";
 
@@ -79,8 +79,8 @@ export default function KoppelingenTab({
     <div>
       {/* Action bar with export */}
       <div className="flex items-center justify-between gap-3 mb-5">
-        <div>{canEdit && <AddKoppelingButton gemeenteId={gemeenteId} pakketversies={[]} />}</div>
-        <DashboardKaartBar views={views} gemeenteId={gemeenteId} gemeenteNaam={gemeenteNaam} />
+        <div>{canEdit && <AddKoppelingButton organisatieId={organisatieId} pakketversies={[]} />}</div>
+        <DashboardKaartBar views={views} organisatieId={organisatieId} organisatieNaam={organisatieNaam} />
       </div>
 
       <div className="flex gap-8">
@@ -91,12 +91,12 @@ export default function KoppelingenTab({
             <h3 className="font-bold text-sm mb-2">Soort koppelingen</h3>
             <div className="space-y-1.5 text-sm">
               <Link
-                href={buitengemeentelijkToggleHref}
+                href={buitenOrganisatieToggleHref}
                 className="flex items-center gap-2 hover:underline"
               >
-                <input type="checkbox" readOnly checked={filterBuitengemeentelijk === "ja"} className="rounded border-gray-300" />
-                <span className={filterBuitengemeentelijk === "ja" ? "text-gray-900 font-medium" : "text-gray-700"}>
-                  Buitengemeentelijk ({buitengemeentelijkCount})
+                <input type="checkbox" readOnly checked={filterBuitenOrganisatie === "ja"} className="rounded border-gray-300" />
+                <span className={filterBuitenOrganisatie === "ja" ? "text-gray-900 font-medium" : "text-gray-700"}>
+                  Buitengemeentelijk ({buitenOrganisatieCount})
                 </span>
               </Link>
             </div>
@@ -129,7 +129,7 @@ export default function KoppelingenTab({
           {/* Reset filters */}
           {hasActiveFilter && (
             <Link
-              href={`/gemeenten/${gemeenteId}?tab=koppelingen`}
+              href={`/gemeenten/${organisatieId}?tab=koppelingen`}
               scroll={false}
               className="text-[#1a6ca8] hover:underline text-xs font-medium block"
             >
@@ -168,13 +168,13 @@ export default function KoppelingenTab({
                     {canEdit && (
                       <td className="py-3">
                         <KoppelingRowActions
-                          gemeenteId={gemeenteId}
+                          organisatieId={organisatieId}
                           koppeling={{
                             id: k.id,
                             bron: k.bron,
                             doel: k.doel,
                             richtingRaw: k.richtingRaw,
-                            buitengemeentelijk: k.buitengemeentelijk,
+                            buitenOrganisatie: k.buitenOrganisatie,
                             status: k.status,
                             standaard: k.standaard,
                             transportprotocol: k.transportprotocol,

@@ -12,7 +12,7 @@ type KoppelingData = {
   richting: string; // "heen" | "weer" | "beide"
   doelPakketversieId?: string;
   doelExternNaam?: string;
-  buitengemeentelijk?: boolean;
+  buitenOrganisatie?: boolean;
   status?: string;
   standaard?: string;
   transportprotocol?: string;
@@ -38,11 +38,11 @@ async function resolveExternPakket(naam: string): Promise<string> {
  * Add a new koppeling to a gemeente.
  */
 export async function addKoppeling(
-  gemeenteId: string,
+  organisatieId: string,
   data: KoppelingData,
 ): Promise<ActionResult> {
   const user = await getSessionUser();
-  if (!canEditGemeentePortfolio(user, gemeenteId)) {
+  if (!canEditGemeentePortfolio(user, organisatieId)) {
     return { error: "Geen toegang om koppelingen te bewerken." };
   }
 
@@ -60,13 +60,13 @@ export async function addKoppeling(
 
     await prisma.koppeling.create({
       data: {
-        organisatieId: gemeenteId,
+        organisatieId: organisatieId,
         bronPakketversieId: data.bronPakketversieId || null,
         bronExternPakketId: bronExternPakketId || null,
         richting: data.richting || "beide",
         doelPakketversieId: data.doelPakketversieId || null,
         doelExternPakketId: doelExternPakketId || null,
-        buitengemeentelijk: data.buitengemeentelijk ?? false,
+        buitenOrganisatie: data.buitenOrganisatie ?? false,
         status: data.status || null,
         standaard: data.standaard || null,
         transportprotocol: data.transportprotocol || null,
@@ -79,7 +79,7 @@ export async function addKoppeling(
       userEmail: user!.email,
       actie: "koppeling_add",
       entiteit: "Koppeling",
-      entiteitId: gemeenteId,
+      entiteitId: organisatieId,
       details: `Koppeling toegevoegd: ${data.bronPakketversieId || data.bronExternNaam || "?"} ${data.richting} ${data.doelPakketversieId || data.doelExternNaam || "?"}`,
     });
 
@@ -100,7 +100,7 @@ export async function updateKoppeling(
   const user = await getSessionUser();
 
   try {
-    // Look up the koppeling to get gemeenteId for auth check
+    // Look up the koppeling to get organisatieId for auth check
     const koppeling = await prisma.koppeling.findUnique({
       where: { id: koppelingId },
       select: { organisatieId: true },
@@ -133,7 +133,7 @@ export async function updateKoppeling(
         richting: data.richting || "beide",
         doelPakketversieId: data.doelPakketversieId || null,
         doelExternPakketId: doelExternPakketId,
-        buitengemeentelijk: data.buitengemeentelijk ?? false,
+        buitenOrganisatie: data.buitenOrganisatie ?? false,
         status: data.status || null,
         standaard: data.standaard || null,
         transportprotocol: data.transportprotocol || null,
@@ -203,14 +203,14 @@ export async function deleteKoppeling(
  * Search pakketversies that belong to a gemeente's portfolio (for bron/doel dropdowns).
  */
 export async function searchGemeentePakketversies(
-  gemeenteId: string,
+  organisatieId: string,
 ): Promise<{ id: string; label: string }[]> {
   const user = await getSessionUser();
   if (!user) return [];
 
   try {
     const gemeentePakketten = await prisma.organisatiePakket.findMany({
-      where: { organisatieId: gemeenteId },
+      where: { organisatieId: organisatieId },
       include: {
         pakketversie: {
           include: {

@@ -124,7 +124,7 @@ export async function POST(request: Request) {
               standaard: standaarden[Math.floor(Math.random() * standaarden.length)],
               transportprotocol: protocollen[Math.floor(Math.random() * protocollen.length)],
               status: "Actief",
-              buitengemeentelijk: false,
+              buitenOrganisatie: false,
             },
           });
           koppelingenAangemaakt++;
@@ -146,7 +146,7 @@ export async function POST(request: Request) {
               standaard: standaarden[Math.floor(Math.random() * standaarden.length)],
               transportprotocol: "HTTPS",
               status: "Actief",
-              buitengemeentelijk: true,
+              buitenOrganisatie: true,
             },
           });
           koppelingenAangemaakt++;

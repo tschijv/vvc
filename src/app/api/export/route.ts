@@ -28,11 +28,11 @@ export async function GET(request: NextRequest) {
   try {
     switch (type) {
       case "csv": {
-        const { csv, gemeenteNaam } =
+        const { csv, organisatieNaam } =
           await generatePakketoverzichtCsv(gemeenteId);
         const now = new Date();
         const dateStr = now.toISOString().replace(/[:.]/g, "-").substring(0, 19);
-        const filename = `Applicatieportfolio_Gemeente_${gemeenteNaam}_${dateStr}.csv`;
+        const filename = `Applicatieportfolio_Gemeente_${organisatieNaam}_${dateStr}.csv`;
 
         return new Response(csv, {
           headers: {
@@ -43,11 +43,11 @@ export async function GET(request: NextRequest) {
       }
 
       case "ibd": {
-        const { csv, gemeenteNaam } = await generateIbdFotoCsv(gemeenteId);
+        const { csv, organisatieNaam } = await generateIbdFotoCsv(gemeenteId);
         const now = new Date();
         const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}_${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
         // Sanitize gemeente naam for filename
-        const safeNaam = gemeenteNaam
+        const safeNaam = organisatieNaam
           .replace(/['']/g, "")
           .replace(/[^a-zA-Z0-9-_]/g, "_")
           .toLowerCase();
@@ -69,13 +69,13 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const { xml, gemeenteNaam, viewTitel } = await generateAmeffExport(
+        const { xml, organisatieNaam, viewTitel } = await generateAmeffExport(
           gemeenteId,
           viewId
         );
         const now = new Date();
         const dateStr = `${String(now.getDate()).padStart(2, "0")}-${String(now.getMonth() + 1).padStart(2, "0")}-${now.getFullYear()}`;
-        const filename = `${dateStr}_${viewTitel}_${gemeenteNaam}_ameff_model.xml`;
+        const filename = `${dateStr}_${viewTitel}_${organisatieNaam}_ameff_model.xml`;
 
         return new Response(xml, {
           headers: {

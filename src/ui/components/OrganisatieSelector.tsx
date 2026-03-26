@@ -2,12 +2,14 @@
 
 import { useRouter } from "next/navigation";
 
-export default function GemeenteSelector({
-  gemeenten,
+export default function OrganisatieSelector({
+  organisaties,
   selectedId,
+  currentTab,
 }: {
-  gemeenten: { id: string; naam: string }[];
+  organisaties: { id: string; naam: string }[];
   selectedId: string;
+  currentTab?: string;
 }) {
   const router = useRouter();
 
@@ -23,7 +25,7 @@ export default function GemeenteSelector({
         }
         className="border rounded px-3 py-1.5 text-sm w-72"
       >
-        {gemeenten.map((g) => (
+        {organisaties.map((g) => (
           <option key={g.id} value={g.id}>
             {g.naam}
           </option>

@@ -4,8 +4,8 @@ import { prisma } from "@/data/prisma";
 import { getSessionUser, canEditGemeentePortfolio } from "@/process/auth-helpers";
 import { revalidatePath } from "next/cache";
 
-export async function updateGemeenteContact(
-  gemeenteId: string,
+export async function updateOrganisatieContact(
+  organisatieId: string,
   data: {
     contactpersoon: string;
     email: string;
@@ -18,7 +18,7 @@ export async function updateGemeenteContact(
 
   // Look up gemeente slug for auth check
   const gemeente = await prisma.organisatie.findUnique({
-    where: { id: gemeenteId },
+    where: { id: organisatieId },
     select: { slug: true },
   });
   if (!gemeente) throw new Error("Gemeente niet gevonden");
@@ -28,7 +28,7 @@ export async function updateGemeenteContact(
   }
 
   await prisma.organisatie.update({
-    where: { id: gemeenteId },
+    where: { id: organisatieId },
     data: {
       contactpersoon: data.contactpersoon.trim() || null,
       email: data.email.trim() || null,
@@ -43,7 +43,7 @@ export async function updateGemeenteContact(
       userId: user.id,
       action: "GEMEENTE_CONTACT_UPDATED",
       entityType: "Gemeente",
-      entityId: gemeenteId,
+      entityId: organisatieId,
       details: `Contactgegevens bijgewerkt door ${user.email}`,
     },
   });

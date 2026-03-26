@@ -171,7 +171,7 @@ function OverzichtTab({
       <div className="grid grid-cols-4 gap-4">
         <StatCard
           label="Gemeenten"
-          value={stats.gemeenteCount}
+          value={stats.organisatieCount}
           color="bg-[#1a6ca8]"
         />
         <StatCard
@@ -263,9 +263,9 @@ function PakkettenTab({
   // Group by gemeente
   const byGemeente = new Map<string, SamenwerkingPakketRow[]>();
   for (const p of pakketten) {
-    const list = byGemeente.get(p.gemeenteNaam) || [];
+    const list = byGemeente.get(p.organisatieNaam) || [];
     list.push(p);
-    byGemeente.set(p.gemeenteNaam, list);
+    byGemeente.set(p.organisatieNaam, list);
   }
 
   const gemeenteNames = Array.from(byGemeente.keys()).sort();
@@ -348,9 +348,9 @@ function KoppelingenTab({
   // Group by gemeente
   const byGemeente = new Map<string, SamenwerkingKoppelingRow[]>();
   for (const k of koppelingen) {
-    const list = byGemeente.get(k.gemeenteNaam) || [];
+    const list = byGemeente.get(k.organisatieNaam) || [];
     list.push(k);
-    byGemeente.set(k.gemeenteNaam, list);
+    byGemeente.set(k.organisatieNaam, list);
   }
 
   const gemeenteNames = Array.from(byGemeente.keys()).sort();

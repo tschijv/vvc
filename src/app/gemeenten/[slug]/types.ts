@@ -3,7 +3,7 @@
 export type SuggestieData = {
   nieuwePakketten: { leverancier: string; pakketversie: string; pakketSlug: string; datum: string }[];
   nieuweVersies: { leverancier: string; pakketNaam: string; pakketSlug: string; huidigeVersie: string; nieuweVersie: string; datum: string }[];
-  buitengemeentelijkeKoppelingen: { voorziening: string; standaard: string; transportprotocol: string; datum: string; bron: string }[];
+  buitenOrganisatieKoppelingen: { voorziening: string; standaard: string; transportprotocol: string; datum: string; bron: string }[];
 };
 
 export type PakketRow = {

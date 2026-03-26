@@ -50,7 +50,7 @@ export async function searchPakketversies(query: string) {
  * Add a pakketversie to a gemeente's portfolio.
  */
 export async function addPakketToPortfolio(
-  gemeenteId: string,
+  organisatieId: string,
   data: {
     pakketversieId: string;
     status?: string;
@@ -62,7 +62,7 @@ export async function addPakketToPortfolio(
   },
 ): Promise<ActionResult> {
   const user = await getSessionUser();
-  if (!canEditGemeentePortfolio(user, gemeenteId)) {
+  if (!canEditGemeentePortfolio(user, organisatieId)) {
     return { error: "Geen toegang om het portfolio te bewerken." };
   }
 
@@ -71,7 +71,7 @@ export async function addPakketToPortfolio(
     const existing = await prisma.organisatiePakket.findUnique({
       where: {
         organisatieId_pakketversieId: {
-          organisatieId: gemeenteId,
+          organisatieId: organisatieId,
           pakketversieId: data.pakketversieId,
         },
       },
@@ -83,7 +83,7 @@ export async function addPakketToPortfolio(
 
     await prisma.organisatiePakket.create({
       data: {
-        organisatieId: gemeenteId,
+        organisatieId: organisatieId,
         pakketversieId: data.pakketversieId,
         status: data.status || null,
         technologie: data.technologie || null,
@@ -100,7 +100,7 @@ export async function addPakketToPortfolio(
       userEmail: user!.email,
       actie: "portfolio_add",
       entiteit: "GemeentePakket",
-      entiteitId: `${gemeenteId}:${data.pakketversieId}`,
+      entiteitId: `${organisatieId}:${data.pakketversieId}`,
       details: `Pakketversie ${data.pakketversieId} toegevoegd aan portfolio`,
     });
 
@@ -114,8 +114,8 @@ export async function addPakketToPortfolio(
 /**
  * Update a GemeentePakket record.
  */
-export async function updateGemeentePakket(
-  gemeenteId: string,
+export async function updateOrganisatiePakket(
+  organisatieId: string,
   pakketversieId: string,
   data: {
     status?: string;
@@ -127,14 +127,14 @@ export async function updateGemeentePakket(
   },
 ): Promise<ActionResult> {
   const user = await getSessionUser();
-  if (!canEditGemeentePortfolio(user, gemeenteId)) {
+  if (!canEditGemeentePortfolio(user, organisatieId)) {
     return { error: "Geen toegang om het portfolio te bewerken." };
   }
 
   try {
     await prisma.organisatiePakket.update({
       where: {
-        organisatieId_pakketversieId: { organisatieId: gemeenteId, pakketversieId },
+        organisatieId_pakketversieId: { organisatieId: organisatieId, pakketversieId },
       },
       data: {
         status: data.status ?? undefined,
@@ -152,13 +152,13 @@ export async function updateGemeentePakket(
       userEmail: user!.email,
       actie: "portfolio_update",
       entiteit: "GemeentePakket",
-      entiteitId: `${gemeenteId}:${pakketversieId}`,
+      entiteitId: `${organisatieId}:${pakketversieId}`,
       details: JSON.stringify(data),
     });
 
     return { success: true };
   } catch (err) {
-    console.error("updateGemeentePakket error:", err);
+    console.error("updateOrganisatiePakket error:", err);
     return { error: "Er ging iets mis bij het bijwerken." };
   }
 }
@@ -166,19 +166,19 @@ export async function updateGemeentePakket(
 /**
  * Remove a pakketversie from a gemeente's portfolio.
  */
-export async function removeGemeentePakket(
-  gemeenteId: string,
+export async function removeOrganisatiePakket(
+  organisatieId: string,
   pakketversieId: string,
 ): Promise<ActionResult> {
   const user = await getSessionUser();
-  if (!canEditGemeentePortfolio(user, gemeenteId)) {
+  if (!canEditGemeentePortfolio(user, organisatieId)) {
     return { error: "Geen toegang om het portfolio te bewerken." };
   }
 
   try {
     await prisma.organisatiePakket.delete({
       where: {
-        organisatieId_pakketversieId: { organisatieId: gemeenteId, pakketversieId },
+        organisatieId_pakketversieId: { organisatieId: organisatieId, pakketversieId },
       },
     });
 
@@ -187,13 +187,13 @@ export async function removeGemeentePakket(
       userEmail: user!.email,
       actie: "portfolio_remove",
       entiteit: "GemeentePakket",
-      entiteitId: `${gemeenteId}:${pakketversieId}`,
+      entiteitId: `${organisatieId}:${pakketversieId}`,
       details: `Pakketversie ${pakketversieId} verwijderd uit portfolio`,
     });
 
     return { success: true };
   } catch (err) {
-    console.error("removeGemeentePakket error:", err);
+    console.error("removeOrganisatiePakket error:", err);
     return { error: "Er ging iets mis bij het verwijderen." };
   }
 }

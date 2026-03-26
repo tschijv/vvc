@@ -3,12 +3,12 @@ import { prisma } from "@/data/prisma";
 const GEMMA_API = "https://www.gemmaonline.nl/api.php";
 
 /**
- * Genereer een SVG kaart van het applicatielandschap van een gemeente
+ * Genereer een SVG kaart van het applicatielandschap van een organisatie
  * voor een specifieke GEMMA view.
  */
 export async function genereerKaartSvg(
   viewId: string,
-  gemeenteId: string
+  organisatieId: string
 ): Promise<string> {
   // 1. Haal de view op
   const view = await prisma.gemmaView.findUnique({
@@ -19,16 +19,16 @@ export async function genereerKaartSvg(
   }
 
   // 2. Haal organisatie op
-  const gemeente = await prisma.organisatie.findUnique({
-    where: { id: gemeenteId },
+  const organisatie = await prisma.organisatie.findUnique({
+    where: { id: organisatieId },
   });
-  if (!gemeente) {
-    throw new KaartError("Gemeente niet gevonden", 404);
+  if (!organisatie) {
+    throw new KaartError("Organisatie niet gevonden", 404);
   }
 
   // 3. Haal organisatie-pakketten op met alle benodigde relaties
-  const gemeentePakketten = await prisma.organisatiePakket.findMany({
-    where: { organisatieId: gemeenteId },
+  const organisatiePakketten = await prisma.organisatiePakket.findMany({
+    where: { organisatieId },
     include: {
       pakketversie: {
         include: {
@@ -48,7 +48,7 @@ export async function genereerKaartSvg(
   });
 
   // 4. Transformeer naar swcquery JSON-formaat
-  const pakketData = gemeentePakketten
+  const pakketData = organisatiePakketten
     .map((gp) => {
       const pv = gp.pakketversie;
       const pakket = pv.pakket;
@@ -77,9 +77,9 @@ export async function genereerKaartSvg(
         Referentiecomponenten: refComps,
         Organisaties: [
           {
-            CBS: gemeente.cbsCode || "",
-            Id: gemeente.id,
-            Naam: gemeente.naam,
+            CBS: organisatie.cbsCode || "",
+            Id: organisatie.id,
+            Naam: organisatie.naam,
           },
         ],
       };

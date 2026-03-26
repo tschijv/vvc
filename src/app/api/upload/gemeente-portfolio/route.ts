@@ -3,7 +3,7 @@ import { getSessionUser } from "@/process/auth-helpers";
 import {
   parseUploadRequest,
   parseUploadFile,
-  processGemeenteUpload,
+  processOrganisatieUpload,
   UploadValidationError,
 } from "@/service/upload";
 
@@ -19,8 +19,8 @@ export async function POST(request: NextRequest) {
 
     const { file, mode, orgId } = await parseUploadRequest(request);
 
-    // Determine gemeenteId
-    let gemeenteId: string;
+    // Determine organisatieId
+    let organisatieId: string;
     if (user.role === "GEMEENTE") {
       if (!user.organisatieId) {
         return NextResponse.json(
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
           { status: 403 }
         );
       }
-      gemeenteId = user.organisatieId;
+      organisatieId = user.organisatieId;
     } else {
       if (!orgId) {
         return NextResponse.json(
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      gemeenteId = orgId;
+      organisatieId = orgId;
     }
 
     const rows = await parseUploadFile(file);
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Het bestand bevat geen data." }, { status: 400 });
     }
 
-    return NextResponse.json(await processGemeenteUpload(rows, gemeenteId, mode));
+    return NextResponse.json(await processOrganisatieUpload(rows, organisatieId, mode));
   } catch (error) {
     if (error instanceof UploadValidationError) {
       return NextResponse.json({ error: error.message }, { status: 400 });

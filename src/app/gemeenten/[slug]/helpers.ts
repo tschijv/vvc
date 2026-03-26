@@ -10,10 +10,10 @@ export function sterren(progress: number): string[] {
 }
 
 export async function loadPakketRows(
-  gemeenteId: string,
+  organisatieId: string,
   filters?: { compliancy?: string; standaard?: string; testrapport?: string },
 ): Promise<PakketRow[]> {
-  const gps = await getGemeentePakketten(gemeenteId);
+  const gps = await getGemeentePakketten(organisatieId);
 
   let filtered = gps;
   if (filters?.compliancy === "niet") {
@@ -52,18 +52,18 @@ export async function loadPakketRows(
   }));
 }
 
-export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData> {
+export async function loadSuggesties(organisatieId: string): Promise<SuggestieData> {
   // Run three independent queries in parallel:
-  // 1. gemeentePakketIds (needed for populairePakketten)
-  // 2. gemeentePakketten (for nieuweVersies)
-  // 3. bgKoppelingen (for buitengemeentelijkeKoppelingen)
-  const [gemeentePakketIds, gemeentePakketten, bgKoppelingen] = await Promise.all([
+  // 1. organisatiePakketIds (needed for populairePakketten)
+  // 2. organisatiePakketten (for nieuweVersies)
+  // 3. bgKoppelingen (for buitenOrganisatieKoppelingen)
+  const [organisatiePakketIds, organisatiePakketten, bgKoppelingen] = await Promise.all([
     prisma.organisatiePakket.findMany({
-      where: { organisatieId: gemeenteId },
+      where: { organisatieId: organisatieId },
       select: { pakketversie: { select: { pakketId: true } } },
     }),
     prisma.organisatiePakket.findMany({
-      where: { organisatieId: gemeenteId },
+      where: { organisatieId: organisatieId },
       select: {
         pakketversie: {
           select: {
@@ -84,7 +84,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
       },
     }),
     prisma.koppeling.findMany({
-      where: { organisatieId: gemeenteId, buitengemeentelijk: true },
+      where: { organisatieId: organisatieId, buitenOrganisatie: true },
       select: {
         standaard: true, transportprotocol: true, createdAt: true,
         doelExternPakket: { select: { naam: true } },
@@ -96,7 +96,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
     }),
   ]);
 
-  const heeftPakketIds = new Set<string>(gemeentePakketIds.map((gp: { pakketversie: { pakketId: string } }) => gp.pakketversie.pakketId));
+  const heeftPakketIds = new Set<string>(organisatiePakketIds.map((gp: { pakketversie: { pakketId: string } }) => gp.pakketversie.pakketId));
 
   // populairePakketten depends on heeftPakketIds, so it runs after the first batch
   const populairePakketten = await prisma.pakket.findMany({
@@ -126,7 +126,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
 
   const nieuweVersies: SuggestieData["nieuweVersies"] = [];
   const gezienPakketIds = new Set<string>();
-  for (const gp of gemeentePakketten) {
+  for (const gp of organisatiePakketten) {
     const pakket = gp.pakketversie.pakket;
     if (gezienPakketIds.has(pakket.id)) continue;
     gezienPakketIds.add(pakket.id);
@@ -143,7 +143,7 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
     }
   }
 
-  const buitengemeentelijkeKoppelingen = bgKoppelingen.map((k) => {
+  const buitenOrganisatieKoppelingen = bgKoppelingen.map((k) => {
     const voorziening = k.doelExternPakket?.naam || k.bronExternPakket?.naam || k.doelPakketversie?.pakket.naam || k.bronPakketversie?.pakket.naam || "Onbekend";
     const bron = k.doelPakketversie?.pakket.leverancier.naam || k.bronPakketversie?.pakket.leverancier.naam || "\u2014";
     return {
@@ -153,5 +153,5 @@ export async function loadSuggesties(gemeenteId: string): Promise<SuggestieData>
     };
   });
 
-  return { nieuwePakketten, nieuweVersies, buitengemeentelijkeKoppelingen };
+  return { nieuwePakketten, nieuweVersies, buitenOrganisatieKoppelingen };
 }

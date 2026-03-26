@@ -30,7 +30,7 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
   // Build where clause
   const where: Record<string, unknown> = {};
   if (soortFilter === "buitengemeentelijk") {
-    where.buitengemeentelijk = true;
+    where.buitenOrganisatie = true;
   }
   if (standaardFilter) {
     where.standaard = { contains: standaardFilter, mode: "insensitive" };
@@ -54,7 +54,7 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
       _count: true,
       orderBy: { _count: { status: "desc" } },
     }),
-    prisma.koppeling.count({ where: { buitengemeentelijk: true } }),
+    prisma.koppeling.count({ where: { buitenOrganisatie: true } }),
     prisma.koppeling.count({ where }),
     prisma.koppeling.findMany({
       where,
@@ -196,7 +196,7 @@ export default async function AlleKoppelingenPage({ searchParams }: Props) {
                 const doelLabel = k.doelPakketversie
                   ? `${k.doelPakketversie.pakket.naam} - ${k.doelPakketversie.naam}`
                   : k.doelExternPakket
-                    ? `${k.doelExternPakket.naam}${k.doelExternPakket.versie ? ` - ${k.doelExternPakket.versie}` : ""}${k.buitengemeentelijk ? " (Buitengemeentelijk)" : " (Extern pakket)"}`
+                    ? `${k.doelExternPakket.naam}${k.doelExternPakket.versie ? ` - ${k.doelExternPakket.versie}` : ""}${k.buitenOrganisatie ? " (Buitengemeentelijk)" : " (Extern pakket)"}`
                     : "—";
 
                 const richting = k.richting === "heen" ? "→" : k.richting === "weer" ? "←" : "↔";

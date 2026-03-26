@@ -41,7 +41,7 @@ interface LeverancierRow {
   rowNum: number;
 }
 
-interface GemeenteRow {
+interface OrganisatieRow {
   pakketNaam: string;
   leverancierNaam: string;
   versieNaam: string;
@@ -67,6 +67,7 @@ export async function parseUploadRequest(
   const mode = (formData.get("mode") as string) || "merge";
   const orgId =
     (formData.get("leverancierId") as string) ||
+    (formData.get("organisatieId") as string) ||
     (formData.get("gemeenteId") as string) ||
     null;
 
@@ -437,15 +438,15 @@ export async function processLeverancierUpload(
   };
 }
 
-// ─── Gemeente Upload ────────────────────────────────────────────────────────
+// ─── Organisatie Upload ──────────────────────────────────────────────────────
 
-export async function processGemeenteUpload(
+export async function processOrganisatieUpload(
   rows: Record<string, string>[],
-  gemeenteId: string,
+  organisatieId: string,
   mode: UploadMode
 ): Promise<UploadResult> {
   const errors: RowError[] = [];
-  const validRows: GemeenteRow[] = [];
+  const validRows: OrganisatieRow[] = [];
 
   // Collect mentioned leverancier names to scope the query
   const mentionedLeveranciers = new Set<string>();
@@ -534,13 +535,13 @@ export async function processGemeenteUpload(
   let skipped = 0;
 
   if (mode === "replace") {
-    const existing = await prisma.organisatiePakket.count({ where: { organisatieId: gemeenteId } });
-    await prisma.organisatiePakket.deleteMany({ where: { organisatieId: gemeenteId } });
+    const existing = await prisma.organisatiePakket.count({ where: { organisatieId: organisatieId } });
+    await prisma.organisatiePakket.deleteMany({ where: { organisatieId: organisatieId } });
     if (existing > 0) {
       logAudit({
         actie: "portfolio_replace",
         entiteit: "GemeentePakket",
-        entiteitId: gemeenteId,
+        entiteitId: organisatieId,
         details: `Portfolio vervangen: ${existing} pakketten verwijderd voor nieuwe import`,
       });
     }
@@ -551,7 +552,7 @@ export async function processGemeenteUpload(
     try {
       const where = {
         organisatieId_pakketversieId: {
-          organisatieId: gemeenteId,
+          organisatieId: organisatieId,
           pakketversieId: row.pakketversieId!,
         },
       };
@@ -571,7 +572,7 @@ export async function processGemeenteUpload(
       } else {
         await prisma.organisatiePakket.create({
           data: {
-            organisatieId: gemeenteId,
+            organisatieId: organisatieId,
             pakketversieId: row.pakketversieId!,
             status: row.status || null,
             datumIngangStatus: row.datumIngangStatus,
@@ -597,7 +598,7 @@ export async function processGemeenteUpload(
     logAudit({
       actie: "portfolio_upload",
       entiteit: "GemeentePakket",
-      entiteitId: gemeenteId,
+      entiteitId: organisatieId,
       details: `Portfolio-import (${mode}): ${parts.join(", ")}`,
     });
   }

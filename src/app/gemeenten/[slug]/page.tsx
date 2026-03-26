@@ -23,7 +23,7 @@ import ShareButton from "@/ui/components/ShareButton";
 import FavorietButton from "@/ui/components/FavorietButton";
 import QRCode from "@/ui/components/QRCode";
 import GemeenteEditButton from "./GemeenteEditButton";
-import GemeenteSelector from "@/ui/components/GemeenteSelector";
+import OrganisatieSelector from "@/ui/components/OrganisatieSelector";
 import HelpLink from "@/ui/components/HelpLink";
 import { sterren, loadPakketRows, loadSuggesties } from "./helpers";
 import TabLink from "./TabLink";
@@ -73,7 +73,7 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
   const activeTab = sp.tab || "dashboard";
 
   // Admin gemeente selector data + dashboard data in parallel
-  const [gemeenten, dashboardGemeente] = await Promise.all([
+  const [organisaties, dashboardGemeente] = await Promise.all([
     isAdmin ? getGemeentenForAdmin() : Promise.resolve([]),
     isAuth ? getGemeenteForDashboard(slug) : Promise.resolve(null),
   ]);
@@ -88,8 +88,8 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
         getGemeenteDashboardStats(slug),
         getSimilarGemeenten(slug),
       ])
-    : [null, { gemeenten: [], totalCount: 0 }];
-  const similarGemeenten = similarResult.gemeenten;
+    : [null, { organisaties: [], totalCount: 0 }];
+  const similarOrganisaties = similarResult?.organisaties ?? [];
   const similarTotalCount = similarResult.totalCount;
 
   // Pakketten tab — parallel pakketRows + standaardFilters
@@ -106,7 +106,7 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
   // Suggesties tab
   const suggesties = activeTab === "suggesties" && isAuth ? await loadSuggesties(slug) : null;
   const suggestieCount = suggesties
-    ? suggesties.nieuwePakketten.length + suggesties.nieuweVersies.length + suggesties.buitengemeentelijkeKoppelingen.length
+    ? suggesties.nieuwePakketten.length + suggesties.nieuweVersies.length + suggesties.buitenOrganisatieKoppelingen.length
     : (dashboardStats?.suggestieCount || 0);
 
   // Views for kaart bar (pakketten and koppelingen tabs)
@@ -130,8 +130,8 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
   return (
     <div>
       {/* Admin gemeente selector */}
-      {isAdmin && gemeenten.length > 1 && (
-        <GemeenteSelector gemeenten={gemeenten} selectedId={slug} currentTab={activeTab} />
+      {isAdmin && organisaties.length > 1 && (
+        <OrganisatieSelector organisaties={organisaties} selectedId={slug} currentTab={activeTab} />
       )}
 
       {/* Breadcrumbs */}
@@ -198,7 +198,7 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
                 <p className="font-medium">{gemeente.contactpersoon || "\u2014"}</p>
                 {canEdit && (
                   <GemeenteEditButton
-                    gemeenteId={gemeente.id}
+                    organisatieId={gemeente.id}
                     contactpersoon={gemeente.contactpersoon || ""}
                     email={gemeente.email || ""}
                     telefoon={gemeente.telefoon || ""}
@@ -247,8 +247,8 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
       {activeTab === "dashboard" && isAuth && dashboardStats && (
         <DashboardTab
           stats={dashboardStats}
-          gemeenteId={slug}
-          similarGemeenten={similarGemeenten}
+          organisatieId={slug}
+          similarOrganisaties={similarOrganisaties}
           similarTotalCount={similarTotalCount}
           samenwerkingen={gemeente.samenwerkingen}
         />
@@ -263,8 +263,8 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
           testrapportFilter={sp.testrapport}
           standaardFilters={standaardFilters}
           views={views}
-          gemeenteId={slug}
-          gemeenteNaam={gemeente.naam}
+          organisatieId={slug}
+          organisatieNaam={gemeente.naam}
           canEdit={canEdit}
         />
       )}
@@ -273,11 +273,11 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
         <KoppelingenTab
           koppelingen={koppelingen}
           views={views}
-          gemeenteId={slug}
-          gemeenteNaam={gemeente.naam}
+          organisatieId={slug}
+          organisatieNaam={gemeente.naam}
           filterStandaard={sp.standaard}
           filterBron={sp.bron}
-          filterBuitengemeentelijk={sp.buitengemeentelijk}
+          filterBuitenOrganisatie={sp.buitengemeentelijk}
           canEdit={canEdit}
         />
       )}
@@ -291,7 +291,7 @@ export default async function GemeenteDetailPage({ params, searchParams }: Props
           <div className="flex items-center gap-2 mb-3">
             <HelpLink section="ai-adviseur" label="Help over de AI-adviseur" />
           </div>
-          <AIAdviseur gemeenteId={slug} gemeenteNaam={gemeente.naam} />
+          <AIAdviseur organisatieId={slug} organisatieNaam={gemeente.naam} />
         </div>
       )}
 

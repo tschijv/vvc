@@ -16,19 +16,19 @@ export default async function KaartPage() {
     orderBy: [{ domein: "asc" }, { volgorde: "asc" }],
   });
 
-  // Voor ADMIN: haal alle gemeenten op
-  let gemeenten: { id: string; naam: string }[] = [];
+  // Voor ADMIN: haal alle organisaties op
+  let organisaties: { id: string; naam: string }[] = [];
   if (user.role === "ADMIN") {
-    gemeenten = await prisma.organisatie.findMany({
+    organisaties = await prisma.organisatie.findMany({
       select: { id: true, naam: true },
       orderBy: { naam: "asc" },
     });
   }
 
-  // Voor GEMEENTE users: haal hun gemeente op
-  let eigenGemeente: { id: string; naam: string } | null = null;
+  // Voor GEMEENTE users: haal hun organisatie op
+  let eigenOrganisatie: { id: string; naam: string } | null = null;
   if (user.role === "GEMEENTE" && user.organisatieId) {
-    eigenGemeente = await prisma.organisatie.findUnique({
+    eigenOrganisatie = await prisma.organisatie.findUnique({
       where: { id: user.organisatieId },
       select: { id: true, naam: true },
     });
@@ -39,8 +39,8 @@ export default async function KaartPage() {
       <Breadcrumbs items={[{ label: "Kaart", href: "/kaart" }]} />
       <KaartPageClient
         views={views}
-        gemeenten={gemeenten}
-        eigenGemeente={eigenGemeente}
+        organisaties={organisaties}
+        eigenOrganisatie={eigenOrganisatie}
         isAdmin={user.role === "ADMIN"}
       />
     </>

@@ -22,15 +22,15 @@ export default async function FavorietenPage() {
   const items: { id: string; type: string; naam: string; href: string; createdAt: Date }[] = [];
 
   const pakketIds = favorieten.filter((f) => f.entityType === "pakket").map((f) => f.entityId);
-  const gemeenteIds = favorieten.filter((f) => f.entityType === "gemeente").map((f) => f.entityId);
+  const organisatieIds = favorieten.filter((f) => f.entityType === "gemeente").map((f) => f.entityId);
   const leverancierIds = favorieten.filter((f) => f.entityType === "leverancier").map((f) => f.entityId);
 
   const [pakketten, gemeenten, leveranciers] = await Promise.all([
     pakketIds.length > 0
       ? prisma.pakket.findMany({ where: { id: { in: pakketIds } }, select: { id: true, naam: true, slug: true } })
       : [],
-    gemeenteIds.length > 0
-      ? prisma.organisatie.findMany({ where: { id: { in: gemeenteIds } }, select: { id: true, naam: true } })
+    organisatieIds.length > 0
+      ? prisma.organisatie.findMany({ where: { id: { in: organisatieIds } }, select: { id: true, naam: true } })
       : [],
     leverancierIds.length > 0
       ? prisma.leverancier.findMany({ where: { id: { in: leverancierIds } }, select: { id: true, naam: true, slug: true } })
