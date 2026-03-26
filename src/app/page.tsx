@@ -21,7 +21,7 @@ const getHomepageStats = unstable_cache(
     ]);
     return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang };
   },
-  ["homepage-stats"],
+  ["homepage-stats-v2"],
   { revalidate: 300 }, // 5 minutes
 );
 
