@@ -27,6 +27,12 @@ export type TenantConfig = {
     modelId: string;
     wikiBaseUrl: string;
     nieuwsbriefNaam: string;
+    smwCategories: {
+      referentiecomponenten: string;
+      applicatiefuncties: string;
+      applicatieservices: string;
+      standaarden: string;
+    };
   };
 
   branding: {

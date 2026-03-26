@@ -29,6 +29,12 @@ export const config: TenantConfig = {
     modelId: "",
     wikiBaseUrl: "https://www.wilmaonline.nl/wiki/WILMA",
     nieuwsbriefNaam: "WILMA",
+    smwCategories: {
+      referentiecomponenten: "Category:ApplicationComponents",
+      applicatiefuncties: "Category:ApplicationFunctions",
+      applicatieservices: "Category:ApplicationServices",
+      standaarden: "Category:Standaarden",
+    },
   },
 
   branding: {

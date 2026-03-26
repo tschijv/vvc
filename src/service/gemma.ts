@@ -1,7 +1,8 @@
 import { prisma } from "@/data/prisma";
+import { tenant } from "@/process/tenant-config";
 
-const GEMMA_API = "https://www.gemmaonline.nl/api.php";
-const GEMMA_MODEL_ID = "2b2b88ba-8efe-46d3-8b40-47af290bc418";
+const GEMMA_API = tenant.architectuur.apiUrl;
+const GEMMA_MODEL_ID = tenant.architectuur.modelId;
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -345,19 +346,12 @@ export async function runFullSync(): Promise<{
   results: SyncResult[];
   viewSync: ViewSyncResult;
 }> {
+  const cats = tenant.architectuur.smwCategories;
   const [rcResults, afResults, asResults, stResults] = await Promise.all([
-    smwQuery(
-      "[[Categorie:Referentiecomponenten]]|?Label|?Object_ID|?Documentation"
-    ),
-    smwQuery(
-      "[[Categorie:ApplicationFunctions]]|?Label|?Object_ID|?Documentation"
-    ),
-    smwQuery(
-      "[[Categorie:ApplicationServices]]|?Label|?Object_ID|?Documentation"
-    ),
-    smwQuery(
-      "[[Categorie:Standaarden]]|?Label|?Object_ID|?Documentation"
-    ),
+    smwQuery(`[[${cats.referentiecomponenten}]]|?Label|?Object_ID|?Documentation`),
+    smwQuery(`[[${cats.applicatiefuncties}]]|?Label|?Object_ID|?Documentation`),
+    smwQuery(`[[${cats.applicatieservices}]]|?Label|?Object_ID|?Documentation`),
+    smwQuery(`[[${cats.standaarden}]]|?Label|?Object_ID|?Documentation`),
   ]);
 
   const rcItems = extractFromResults(rcResults);

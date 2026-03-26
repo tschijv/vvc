@@ -29,6 +29,12 @@ export const config: TenantConfig = {
     modelId: "2b2b88ba-8efe-46d3-8b40-47af290bc418",
     wikiBaseUrl: "https://www.gemmaonline.nl/wiki/GEMMA",
     nieuwsbriefNaam: "GEMMA",
+    smwCategories: {
+      referentiecomponenten: "Categorie:Referentiecomponenten",
+      applicatiefuncties: "Categorie:ApplicationFunctions",
+      applicatieservices: "Categorie:ApplicationServices",
+      standaarden: "Categorie:Standaarden",
+    },
   },
 
   branding: {
