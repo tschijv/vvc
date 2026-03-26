@@ -26,7 +26,7 @@ export const config: TenantConfig = {
   architectuur: {
     naam: "GEMMA",
     apiUrl: "https://www.gemmaonline.nl/api.php",
-    modelId: "GEMMA/id-2b2b88ba-8efe-46d3-8b40-47af290bc418",
+    modelId: "2b2b88ba-8efe-46d3-8b40-47af290bc418",
     wikiBaseUrl: "https://www.gemmaonline.nl/wiki/GEMMA",
     nieuwsbriefNaam: "GEMMA",
     smwCategories: {

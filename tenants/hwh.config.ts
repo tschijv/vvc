@@ -26,7 +26,7 @@ export const config: TenantConfig = {
   architectuur: {
     naam: "WILMA",
     apiUrl: "https://www.wilmaonline.nl/api.php",
-    modelId: "WILMA/id-48af3206-a19e-40e8-bc8c-79ffb63e606d",
+    modelId: "48af3206-a19e-40e8-bc8c-79ffb63e606d",
     wikiBaseUrl: "https://www.wilmaonline.nl/wiki/WILMA",
     nieuwsbriefNaam: "WILMA",
     smwCategories: {
