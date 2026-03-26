@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Breadcrumbs from "@/ui/components/Breadcrumbs";
 import { getUsers, getUserCount, ROLLEN_LABELS } from "@/service/user";
-import { Role } from "@prisma/client";
+
 import { startImpersonation } from "@/process/actions/impersonation";
 
 const PER_PAGE = 25;
@@ -13,7 +13,7 @@ export default async function GebruikersPage({
 }) {
   const sp = await searchParams;
   const zoek = sp.zoek || undefined;
-  const rol = (sp.rol as Role) || undefined;
+  const rol = (sp.rol as string) || undefined;
   const actiefParam = sp.actief;
   const actief =
     actiefParam === "ja" ? true : actiefParam === "nee" ? false : undefined;

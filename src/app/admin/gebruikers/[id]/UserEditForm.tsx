@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Role } from "@prisma/client";
+
 
 type UserData = {
   id: string;
   email: string;
   naam: string;
   actief: boolean;
-  rollen: Role[];
+  rollen: string[];
   organisatieId: string | null;
   leverancierId: string | null;
 };

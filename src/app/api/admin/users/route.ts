@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getUsers, getUserCount, createUser } from "@/service/user";
-import { Role } from "@prisma/client";
+
 import { parseBody, emailSchema, naamSchema } from "@/process/validation";
 import { getSessionUser } from "@/process/auth-helpers";
 
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const zoek = searchParams.get("zoek") || undefined;
-  const rol = (searchParams.get("rol") as Role) || undefined;
+  const rol = (searchParams.get("rol") as string) || undefined;
   const actiefParam = searchParams.get("actief");
   const actief =
     actiefParam === "true" ? true : actiefParam === "false" ? false : undefined;

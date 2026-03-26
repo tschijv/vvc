@@ -73,18 +73,9 @@ model GemmaView {
 
 // ─── Gebruikers & Autorisatie ────────────────────────────────────────────────
 
-enum Role {
-  GEVERIFIEERD
-  GEMEENTE_RAADPLEGER
-  GEMEENTE_BEHEERDER
-  SAMENWERKING_BEHEERDER
-  LEVERANCIER
-  REDACTEUR
-  KING_RAADPLEGER
-  KING_BEHEERDER
-  ADMIN
-  API_USER
-}
+// Rollen als String[] i.p.v. enum — flexibel per tenant
+// Standaard rollen: GEVERIFIEERD, ADMIN, LEVERANCIER, API_USER, REDACTEUR
+// Tenant-specifiek: GEMEENTE_BEHEERDER, WATERSCHAP_BEHEERDER, etc. (via tenant config)
 
 model User {
   id            String       @id @default(uuid())
@@ -92,7 +83,7 @@ model User {
   naam          String
   passwordHash  String?
   actief        Boolean      @default(true)
-  rollen        Role[]       @default([GEVERIFIEERD])
+  rollen        String[]     @default(["GEVERIFIEERD"])
   organisatieId String?      @map("gemeenteId")
   organisatie   Organisatie? @relation(fields: [organisatieId], references: [id])
   leverancierId String?

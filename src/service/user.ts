@@ -1,5 +1,5 @@
 import { prisma } from "@/data/prisma";
-import { Role } from "@prisma/client";
+
 import { hash } from "bcryptjs";
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
@@ -9,7 +9,7 @@ export type UserListItem = {
   email: string;
   naam: string;
   actief: boolean;
-  rollen: Role[];
+  rollen: string[];
   organisatieNaam: string | null;
   leverancierNaam: string | null;
   laatsteToegangOp: Date | null;
@@ -25,7 +25,7 @@ export type UserDetail = UserListItem & {
 
 export async function getUsers(options?: {
   zoek?: string;
-  rol?: Role;
+  rol?: string;
   actief?: boolean;
   skip?: number;
   take?: number;
@@ -72,7 +72,7 @@ export async function getUsers(options?: {
 
 export async function getUserCount(options?: {
   zoek?: string;
-  rol?: Role;
+  rol?: string;
   actief?: boolean;
 }): Promise<number> {
   const { zoek, rol, actief } = options || {};
@@ -128,7 +128,7 @@ export async function createUser(data: {
   email: string;
   naam: string;
   wachtwoord?: string;
-  rollen: Role[];
+  rollen: string[];
   organisatieId?: string | null;
   leverancierId?: string | null;
 }) {
@@ -155,7 +155,7 @@ export async function updateUser(
     email?: string;
     wachtwoord?: string;
     actief?: boolean;
-    rollen?: Role[];
+    rollen?: string[];
     organisatieId?: string | null;
     leverancierId?: string | null;
   }
@@ -194,7 +194,7 @@ export const ROLLEN_LABELS: Record<Role, string> = {
   API_USER: "API user",
 };
 
-export const ALL_ROLES = Object.keys(ROLLEN_LABELS) as Role[];
+export const ALL_ROLES = Object.keys(ROLLEN_LABELS) as string[];
 
 // ─── Zelf-registratie ────────────────────────────────────────────────────────
 
@@ -265,7 +265,7 @@ export async function getPendingRegistrationCount(): Promise<number> {
 export async function approveRegistration(
   id: string,
   data: {
-    rollen: Role[];
+    rollen: string[];
     organisatieId?: string | null;
     leverancierId?: string | null;
   }
