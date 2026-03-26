@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useRef, useCallback } from "react";
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import { useGlossary, type GlossaryTermInfo } from "./GlossaryProvider";
 
 interface GlossaryHighlighterProps {
