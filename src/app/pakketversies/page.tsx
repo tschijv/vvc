@@ -212,9 +212,9 @@ export default async function PakketversiesPage({ searchParams }: Props) {
                     </span>
                   </td>
                   <td className="py-2 hidden lg:table-cell">
-                    {pv._count.referentiecomponenten > 0 && (
+                    {pv.pakket._count.referentiecomponenten > 0 && (
                       <span className="inline-block text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-                        {pv._count.referentiecomponenten}
+                        {pv.pakket._count.referentiecomponenten}
                       </span>
                     )}
                   </td>

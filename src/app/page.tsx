@@ -9,7 +9,7 @@ export const revalidate = 3600; // ISR: regenerate every hour
 
 const getHomepageStats = unstable_cache(
   async () => {
-    const [aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang] = await Promise.all([
+    const [aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, organisatieVoortgang] = await Promise.all([
       prisma.pakket.count(),
       prisma.pakketversie.count(),
       prisma.leverancier.count(),
@@ -20,7 +20,7 @@ const getHomepageStats = unstable_cache(
       prisma.applicatiefunctie.count(),
       prisma.organisatie.findMany({ select: { progress: true } }),
     ]);
-    return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang };
+    return { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, organisatieVoortgang };
   },
   ["homepage-stats-v3"],
   { revalidate: 300 }, // 5 minutes
@@ -245,14 +245,14 @@ export default async function HomePage() {
       take: 10,
     }),
   ]);
-  const { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, gemeentenVoortgang } = stats;
+  const { aantalPakketten, aantalPakketversies, aantalLeveranciers, aantalOrganisaties, aantalStandaarden, aantalRefComps, aantalAddenda, aantalAppFuncties, organisatieVoortgang } = stats;
 
   const magBewerken = canEditPagina(user);
 
   const sterVerdeling = [5, 4, 3, 2, 1, 0].map((ster) => {
     const min = (ster - 1) * 20 + 1;
     const max = ster * 20;
-    const count = gemeentenVoortgang.filter(
+    const count = organisatieVoortgang.filter(
       (g) => ster === 0 ? g.progress === 0 : g.progress >= min && g.progress <= max
     ).length;
     return { ster, count };

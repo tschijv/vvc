@@ -32,8 +32,10 @@ function buildWhere(filters: PakketversieFilters) {
     ...(leverancierId && { pakket: { leverancierId } }),
     ...(status && { status }),
     ...(referentiecomponentId && {
-      referentiecomponenten: {
-        some: { referentiecomponentId },
+      pakket: {
+        referentiecomponenten: {
+          some: { referentiecomponentId },
+        },
       },
     }),
   };
@@ -59,9 +61,9 @@ export async function getPakketversies(options?: PakketversieFilters & {
           naam: true,
           slug: true,
           leverancier: { select: { id: true, naam: true, slug: true } },
+          _count: { select: { referentiecomponenten: true } },
         },
       },
-      _count: { select: { referentiecomponenten: true } },
     },
     orderBy: { naam: "asc" },
     ...(skip !== undefined && { skip }),
