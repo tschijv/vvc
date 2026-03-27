@@ -40,6 +40,7 @@ export const config: TenantConfig = {
   branding: {
     primaryColor: "#1a6ca8",
     accentColor: "#e35b10",
+    headerBg: "#1a6ca8",
     contactEmail: "voorzieningencatalogus@vng.nl",
   },
 

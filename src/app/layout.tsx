@@ -86,7 +86,7 @@ export default function RootLayout({
         </header>
 
         {/* Blue nav bar with dropdowns */}
-        <nav aria-label="Hoofdnavigatie" className="bg-[#1a6ca8] dark:bg-[#0f4c75] text-white text-sm relative z-[1000]">
+        <nav aria-label="Hoofdnavigatie" className="text-white text-sm relative z-[1000]" style={{ backgroundColor: tenant.branding.headerBg }}>
           <div className="max-w-7xl mx-auto px-4 flex items-center gap-0">
             {/* Mobile hamburger */}
             <MobileNav />

@@ -38,8 +38,9 @@ export const config: TenantConfig = {
   },
 
   branding: {
-    primaryColor: "#1a6ca8",
-    accentColor: "#e35b10",
+    primaryColor: "#18407f",
+    accentColor: "#f18900",
+    headerBg: "#18407f",
     contactEmail: "voorzieningencatalogus@hetwaterschapshuis.nl",
   },
 

@@ -38,6 +38,7 @@ export type TenantConfig = {
   branding: {
     primaryColor: string;
     accentColor: string;
+    headerBg: string;
     contactEmail: string;
   };
 

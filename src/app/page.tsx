@@ -269,7 +269,7 @@ export default async function HomePage() {
     <div className="-mt-6">
       <h1 className="sr-only">{tenant.naam}</h1>
       {/* Orange tile navigation */}
-      <div className="bg-[#e35b10] -mx-4 px-2 sm:px-6 py-5 mb-8">
+      <div className="-mx-4 px-2 sm:px-6 py-5 mb-8" style={{ backgroundColor: tenant.branding.accentColor }}>
         <div className="flex flex-wrap gap-0 justify-center max-w-5xl mx-auto">
           {/* Orange tiles */}
           {[
