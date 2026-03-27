@@ -74,6 +74,7 @@ export const config: TenantConfig = {
       label: "Wie doet er mee",
       items: [
         { label: "Gebruik Voorzieningencatalogus (kaart)", href: "/kaart/nederland" },
+        { label: "Samenwerkingsverbanden (kaart)", href: "/kaart/samenwerkingen" },
         { label: "Hoe meld ik mij aan als gemeente of samenwerking", href: "/info/aanmelden-gemeente" },
         { label: "Welke leveranciers doen mee", href: "/leveranciers" },
         { label: "Hoe meld ik mij aan als leverancier", href: "/info/aanmelden-leverancier" },
