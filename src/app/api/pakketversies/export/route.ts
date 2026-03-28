@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/data/prisma";
 import { getSessionUser } from "@/process/auth-helpers";
 
-function escapeCsv(value: string): string {
-  if (value.includes(",") || value.includes('"') || value.includes("\n")) {
-    return `"${value.replace(/"/g, '""')}"`;
+function escapeCsv(val: unknown): string {
+  const str = val == null ? "" : String(val);
+  // Prevent CSV injection: prefix formula characters with single quote
+  const safe = /^[=+\-@\t\r]/.test(str) ? "'" + str : str;
+  // Then handle commas/quotes/newlines as before
+  if (safe.includes('"') || safe.includes(",") || safe.includes("\n")) {
+    return '"' + safe.replace(/"/g, '""') + '"';
   }
-  return value;
+  return safe;
 }
 
 export async function GET(request: NextRequest) {

@@ -94,7 +94,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         prisma.user.update({
           where: { id: user.id },
           data: { laatsteToegangOp: new Date() },
-        }).catch(() => {});
+        }).catch((err) => console.error("Failed to update lastAccess:", err));
 
         // Fetch user organisaties for multi-org support
         const userOrganisaties = await prisma.userOrganisatie.findMany({

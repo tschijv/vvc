@@ -43,7 +43,7 @@ export default function NotificatieBel() {
         setNotificaties(data.notificaties || []);
         setOngelezen(data.ongelezen || 0);
       })
-      .catch(() => {});
+      .catch((err) => console.error("Failed to fetch notificaties:", err));
   }, [session]);
 
   // Close dropdown on outside click

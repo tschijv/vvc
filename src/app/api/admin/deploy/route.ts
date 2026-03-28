@@ -90,7 +90,8 @@ export async function POST() {
         });
 
         child.on("error", (err) => {
-          send("error", err.message);
+          console.error("Deploy process error:", err);
+          send("error", "Kan deploy niet starten");
           controller.close();
         });
 
@@ -103,7 +104,8 @@ export async function POST() {
       });
 
       buildChild.on("error", (err) => {
-        send("error", `Build fout: ${err.message}`);
+        console.error("Build process error:", err);
+        send("error", "Build fout: kan build niet starten");
         controller.close();
       });
 

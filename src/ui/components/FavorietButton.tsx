@@ -24,7 +24,7 @@ export default function FavorietButton({ entityType, entityId }: Props) {
         );
         setIsFavoriet(!!found);
       })
-      .catch(() => {});
+      .catch((err) => console.error("Failed to fetch favorieten:", err));
   }, [session, entityType, entityId]);
 
   if (!session?.user) return null;

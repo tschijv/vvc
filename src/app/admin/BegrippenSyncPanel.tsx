@@ -42,7 +42,7 @@ export default function BegrippenSyncPanel() {
         setCacheInfo(data);
         setVocabs(data.vocabulaires || []);
       })
-      .catch(() => {});
+      .catch((err) => console.error("Failed to fetch begrippen sync info:", err));
   }, [result]);
 
   async function handleRefresh() {

@@ -48,7 +48,8 @@ export async function POST(request: NextRequest) {
       });
 
       child.on("error", (err) => {
-        send("error", `Proces fout: ${err.message}`);
+        console.error("Test process error:", err);
+        send("error", "Proces fout: kan test niet starten");
         send("done", "failed");
         try { controller.close(); } catch {}
       });
