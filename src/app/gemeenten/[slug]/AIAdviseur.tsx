@@ -73,19 +73,23 @@ export default function AIAdviseur({
 
     try {
       const result = await getAIAdvies(organisatieId, q);
-      setAntwoord(result);
+      if (result.ok) {
+        setAntwoord(result.text);
+      } else {
+        const msg = result.error;
+        if (msg.includes("overloaded") || msg.includes("529") || msg.includes("503")) {
+          setError("De AI-adviseur is tijdelijk niet beschikbaar door hoge belasting. Probeer het over enkele minuten opnieuw.");
+        } else if (msg.includes("rate") || msg.includes("429")) {
+          setError("U heeft te veel vragen achter elkaar gesteld. Wacht even en probeer het opnieuw.");
+        } else if (msg.includes("401") || msg.includes("403") || msg.includes("API key") || msg.includes("config")) {
+          setError("De AI-adviseur is niet correct geconfigureerd. Neem contact op met de beheerder.");
+        } else {
+          setError(`Er ging iets mis: ${msg}`);
+        }
+      }
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
-      if (msg.includes("overloaded") || msg.includes("529") || msg.includes("503")) {
-        setError("De AI-adviseur is tijdelijk niet beschikbaar door hoge belasting. Probeer het over enkele minuten opnieuw.");
-      } else if (msg.includes("rate") || msg.includes("429")) {
-        setError("U heeft te veel vragen achter elkaar gesteld. Wacht even en probeer het opnieuw.");
-      } else if (msg.includes("401") || msg.includes("403") || msg.includes("API key")) {
-        setError("De AI-adviseur is niet correct geconfigureerd. Neem contact op met de beheerder.");
-      } else {
-        console.error("AI-adviseur client error:", msg);
-        setError(`Er ging iets mis bij het ophalen van het advies: ${msg}`);
-      }
+      setError(`Onverwachte fout: ${msg}`);
     } finally {
       setLoading(false);
     }

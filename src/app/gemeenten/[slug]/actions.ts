@@ -17,62 +17,65 @@ const ALLOWED_ROLES = [
   "KING_RAADPLEGER",
 ];
 
-export async function getAIAdvies(organisatieId: string, vraag: string) {
-  const user = await getSessionUser();
-  if (!user || !ALLOWED_ROLES.includes(user.role)) {
-    throw new Error("Geen toegang tot AI-advisering");
-  }
+type AIResult = { ok: true; text: string } | { ok: false; error: string };
 
-  if (!vraag.trim()) {
-    throw new Error("Stel een vraag");
-  }
+export async function getAIAdvies(organisatieId: string, vraag: string): Promise<AIResult> {
+  try {
+    const user = await getSessionUser();
+    if (!user || !ALLOWED_ROLES.includes(user.role)) {
+      return { ok: false, error: "403: Geen toegang tot AI-advisering" };
+    }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    throw new Error("AI-advisering is niet geconfigureerd");
-  }
+    if (!vraag.trim()) {
+      return { ok: false, error: "Stel een vraag" };
+    }
 
-  // Haal alle context op
-  const [gemeente, pakketten, stats, koppelingen] = await Promise.all([
-    prisma.organisatie.findUnique({
-      where: { id: organisatieId },
-      select: { naam: true, cbsCode: true, progress: true },
-    }),
-    getGemeentePakketten(organisatieId),
-    getGemeenteDashboardStats(organisatieId),
-    getGemeenteKoppelingen(organisatieId),
-  ]);
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      return { ok: false, error: "config: ANTHROPIC_API_KEY is niet geconfigureerd" };
+    }
 
-  if (!gemeente) {
-    throw new Error("Gemeente niet gevonden");
-  }
+    // Haal alle context op
+    const [gemeente, pakketten, stats, koppelingen] = await Promise.all([
+      prisma.organisatie.findUnique({
+        where: { id: organisatieId },
+        select: { naam: true, cbsCode: true, progress: true },
+      }),
+      getGemeentePakketten(organisatieId),
+      getGemeenteDashboardStats(organisatieId),
+      getGemeenteKoppelingen(organisatieId),
+    ]);
 
-  // Bouw context-tekst
-  const pakkettenTekst = pakketten
-    .map((gp) => {
-      const pv = gp.pakketversie;
-      const refcomps = pv.referentiecomponenten
-        .map((r) => r.referentiecomponent.naam)
-        .join(", ");
-      const standaarden = pv.standaarden
-        .map(
-          (s) =>
-            `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}`
-        )
-        .join(", ");
-      return `- ${pv.pakket.naam} (${pv.pakket.leverancier.naam}) v${pv.naam} — status: ${gp.status || pv.status}${refcomps ? ` | refcomponenten: ${refcomps}` : ""}${standaarden ? ` | standaarden: ${standaarden}` : ""}${gp.maatwerk ? ` | maatwerk: ${gp.maatwerk}` : ""}`;
-    })
-    .join("\n");
+    if (!gemeente) {
+      return { ok: false, error: "Organisatie niet gevonden" };
+    }
 
-  const koppelingenTekst = koppelingen
-    .slice(0, 30) // Beperk voor context-limiet
-    .map(
-      (k) =>
-        `- ${k.bron} ${k.richting} ${k.doel} (${k.status || "onbekend"})${k.standaard ? ` [${k.standaard}]` : ""}`
-    )
-    .join("\n");
+    // Bouw context-tekst
+    const pakkettenTekst = pakketten
+      .map((gp) => {
+        const pv = gp.pakketversie;
+        const refcomps = pv.referentiecomponenten
+          .map((r) => r.referentiecomponent.naam)
+          .join(", ");
+        const standaarden = pv.standaarden
+          .map(
+            (s) =>
+              `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}`
+          )
+          .join(", ");
+        return `- ${pv.pakket.naam} (${pv.pakket.leverancier.naam}) v${pv.naam} — status: ${gp.status || pv.status}${refcomps ? ` | refcomponenten: ${refcomps}` : ""}${standaarden ? ` | standaarden: ${standaarden}` : ""}${gp.maatwerk ? ` | maatwerk: ${gp.maatwerk}` : ""}`;
+      })
+      .join("\n");
 
-  const systemPrompt = `Je bent een deskundige ICT-adviseur voor Nederlandse gemeenten, gespecialiseerd in applicatieportfolio-management en de GEMMA-architectuur. Je geeft advies op basis van de data uit de VNG Voorzieningencatalogus.
+    const koppelingenTekst = koppelingen
+      .slice(0, 30) // Beperk voor context-limiet
+      .map(
+        (k) =>
+          `- ${k.bron} ${k.richting} ${k.doel} (${k.status || "onbekend"})${k.standaard ? ` [${k.standaard}]` : ""}`
+      )
+      .join("\n");
+
+    const systemPrompt = `Je bent een deskundige ICT-adviseur voor Nederlandse gemeenten, gespecialiseerd in applicatieportfolio-management en de GEMMA-architectuur. Je geeft advies op basis van de data uit de VNG Voorzieningencatalogus.
 
 Antwoord in het Nederlands. Wees concreet en praktisch. Verwijs naar specifieke pakketten, leveranciers en standaarden uit de data.
 
@@ -103,7 +106,6 @@ ${pakkettenTekst || "Geen pakketten geregistreerd."}
 ### Koppelingen (top ${Math.min(koppelingen.length, 30)})
 ${koppelingenTekst || "Geen koppelingen geregistreerd."}`;
 
-  try {
     const client = new Anthropic({ apiKey });
 
     const message = await client.messages.create({
@@ -114,12 +116,11 @@ ${koppelingenTekst || "Geen koppelingen geregistreerd."}`;
     });
 
     const textBlock = message.content.find((b) => b.type === "text");
-    return textBlock?.text || "Geen antwoord ontvangen.";
+    return { ok: true, text: textBlock?.text || "Geen antwoord ontvangen." };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     const status = (err as { status?: number }).status;
-    console.error("AI-adviseur error:", { status, message: msg, stack: (err as Error).stack?.slice(0, 500) });
-    // Re-throw with status info so client can show specific message
-    throw new Error(`${status || "unknown"}: ${msg}`);
+    console.error("AI-adviseur error:", { status, message: msg });
+    return { ok: false, error: `${status || "unknown"}: ${msg}` };
   }
 }
