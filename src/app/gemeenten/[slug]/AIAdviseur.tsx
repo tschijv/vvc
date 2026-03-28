@@ -83,7 +83,8 @@ export default function AIAdviseur({
       } else if (msg.includes("401") || msg.includes("403") || msg.includes("API key")) {
         setError("De AI-adviseur is niet correct geconfigureerd. Neem contact op met de beheerder.");
       } else {
-        setError("Er ging iets mis bij het ophalen van het advies. Probeer het later opnieuw.");
+        console.error("AI-adviseur client error:", msg);
+        setError(`Er ging iets mis bij het ophalen van het advies: ${msg}`);
       }
     } finally {
       setLoading(false);

@@ -103,15 +103,23 @@ ${pakkettenTekst || "Geen pakketten geregistreerd."}
 ### Koppelingen (top ${Math.min(koppelingen.length, 30)})
 ${koppelingenTekst || "Geen koppelingen geregistreerd."}`;
 
-  const client = new Anthropic({ apiKey });
+  try {
+    const client = new Anthropic({ apiKey });
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 2048,
-    system: systemPrompt,
-    messages: [{ role: "user", content: vraag }],
-  });
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 2048,
+      system: systemPrompt,
+      messages: [{ role: "user", content: vraag }],
+    });
 
-  const textBlock = message.content.find((b) => b.type === "text");
-  return textBlock?.text || "Geen antwoord ontvangen.";
+    const textBlock = message.content.find((b) => b.type === "text");
+    return textBlock?.text || "Geen antwoord ontvangen.";
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    const status = (err as { status?: number }).status;
+    console.error("AI-adviseur error:", { status, message: msg, stack: (err as Error).stack?.slice(0, 500) });
+    // Re-throw with status info so client can show specific message
+    throw new Error(`${status || "unknown"}: ${msg}`);
+  }
 }
