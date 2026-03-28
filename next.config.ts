@@ -51,6 +51,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: "standalone",
   transpilePackages: ["gvc"],
+  serverExternalPackages: ["@anthropic-ai/sdk"],
   typescript: {
     // TypeScript 5.9 + Prisma 6/7 veroorzaakt "Maximum call stack size exceeded"
     // bij deep nested type resolution. Compilatie werkt wel, alleen tsc --noEmit crasht.
