@@ -54,13 +54,13 @@ export async function getAIAdvies(organisatieId: string, vraag: string): Promise
     const pakkettenTekst = pakketten
       .map((gp) => {
         const pv = gp.pakketversie;
-        const refcomps = pv.referentiecomponenten
+        const refcomps = (pv.pakket.referentiecomponenten ?? [])
           .map((r) => r.referentiecomponent.naam)
           .join(", ");
-        const standaarden = pv.standaarden
+        const standaarden = (pv.pakket.standaarden ?? [])
           .map(
             (s) =>
-              `${s.standaardversie.standaard.naam} ${s.standaardversie.naam}`
+              `${s.standaardversie?.standaard?.naam ?? ""} ${s.standaardversie?.naam ?? ""}`.trim()
           )
           .join(", ");
         return `- ${pv.pakket.naam} (${pv.pakket.leverancier.naam}) v${pv.naam} — status: ${gp.status || pv.status}${refcomps ? ` | refcomponenten: ${refcomps}` : ""}${standaarden ? ` | standaarden: ${standaarden}` : ""}${gp.maatwerk ? ` | maatwerk: ${gp.maatwerk}` : ""}`;
